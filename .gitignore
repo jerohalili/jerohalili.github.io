@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Environment (never commit API keys)
+.env
+.env.local
+.env.production
+
+# Build artifacts (none for this project, but future-proof)
+dist/
+build/
+.cache/
+
+# Dependencies (none for this project)
+node_modules/

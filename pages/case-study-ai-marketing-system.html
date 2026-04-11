@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study: Automated AI Marketing System — Jero Halili</title>
+  <meta name="description" content="How Jero built a fully automated AI marketing pipeline that reduced content production cost to near-zero while dramatically increasing posting frequency." />
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/dark.css" />
+  <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+
+  <header class="nav-header scrolled" role="banner">
+    <nav class="nav-inner" aria-label="Main navigation">
+      <a href="../index.html" class="nav-logo" aria-label="Back to portfolio">
+        <span class="nav-logo-mark">JH</span>
+        <span class="nav-logo-text">Jero Halili</span>
+      </a>
+      <div class="nav-actions">
+        <a href="../index.html#work" class="btn btn-ghost" style="font-size:var(--text-sm)">← All work</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" type="button">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main style="padding-top: 80px;">
+
+    <!-- Hero -->
+    <section class="cs-hero">
+      <div class="container">
+        <div class="cs-meta reveal-up">
+          <span class="tag">AI & Automation</span>
+          <span class="tag">Marketing Tech</span>
+          <span class="tag">SaaS</span>
+        </div>
+        <h1 class="cs-title reveal-up" style="--delay:0.05s">
+          Automated AI<br /><em>Marketing System</em>
+        </h1>
+        <p class="cs-subtitle reveal-up" style="--delay:0.1s">
+          A fully autonomous content pipeline that generates, designs, and publishes
+          marketing material 24/7 — at near-zero marginal cost.
+        </p>
+        <div class="cs-stats reveal-up" style="--delay:0.15s">
+          <div class="cs-stat">
+            <span class="cs-stat-val">$0</span>
+            <span class="cs-stat-label">Marginal content cost</span>
+          </div>
+          <div class="cs-stat">
+            <span class="cs-stat-val">∞</span>
+            <span class="cs-stat-label">Scalable output</span>
+          </div>
+          <div class="cs-stat">
+            <span class="cs-stat-val">↑</span>
+            <span class="cs-stat-label">Engagement & reach</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case study body -->
+    <div class="container cs-body">
+
+      <!-- STAR: Situation -->
+      <section class="cs-section reveal-up">
+        <div class="cs-section-label">Situation</div>
+        <h2 class="cs-section-title">The problem worth solving</h2>
+        <p>A SaaS company was producing content manually — a slow, expensive, and fundamentally unscalable process. Their social presence was inconsistent, which directly hurt algorithmic reach and audience growth. The team had ideas but no bandwidth.</p>
+        <p>The core insight: <em>content volume compounds.</em> More posts mean more impressions, more data, more targeting opportunity. The constraint wasn't ideas — it was the cost and time of production.</p>
+      </section>
+
+      <!-- STAR: Task -->
+      <section class="cs-section reveal-up">
+        <div class="cs-section-label">Task</div>
+        <h2 class="cs-section-title">What I was hired to build</h2>
+        <p>Design and build a fully automated marketing pipeline that could:</p>
+        <ul class="cs-list">
+          <li>Generate on-brand marketing copy using AI with no human writing time</li>
+          <li>Produce matching visual assets automatically</li>
+          <li>Schedule and publish content across social platforms on a set cadence</li>
+          <li>Operate continuously with an optional human approval loop</li>
+          <li>Run locally to preserve data privacy and eliminate API costs</li>
+        </ul>
+      </section>
+
+      <!-- STAR: Action -->
+      <section class="cs-section reveal-up">
+        <div class="cs-section-label">Action</div>
+        <h2 class="cs-section-title">How I built it</h2>
+
+        <div class="cs-steps">
+          <div class="cs-step">
+            <div class="cs-step-num">01</div>
+            <div class="cs-step-body">
+              <h3>Local LLM for copy generation</h3>
+              <p>Deployed LLaMA locally via Ollama, crafted a structured prompt system for generating varied, on-brand post copy — headlines, captions, and hashtags tailored to the company's tone. Local inference means zero per-token costs and full data privacy.</p>
+              <div class="cs-tech-pill">LLaMA · Ollama · Prompt Engineering</div>
+            </div>
+          </div>
+          <div class="cs-step">
+            <div class="cs-step-num">02</div>
+            <div class="cs-step-body">
+              <h3>Automated image generation</h3>
+              <p>Integrated ComfyUI with Z-Image Turbo for fast, high-quality image generation. Each post triggers a paired image creation workflow — prompt derived from copy context. The output is consistent, on-brand visual content without a designer in the loop.</p>
+              <div class="cs-tech-pill">ComfyUI · Z-Image Turbo · SDXL</div>
+            </div>
+          </div>
+          <div class="cs-step">
+            <div class="cs-step-num">03</div>
+            <div class="cs-step-body">
+              <h3>n8n orchestration & scheduling</h3>
+              <p>Built the entire workflow in n8n — the orchestration layer that triggers LLM generation, passes output to image generation, assembles the final post package, and publishes via platform APIs on a defined schedule. Added an optional approval node for human review before publish.</p>
+              <div class="cs-tech-pill">n8n · Workflow Automation · API Orchestration</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAR: Result -->
+      <section class="cs-section reveal-up">
+        <div class="cs-section-label">Result</div>
+        <h2 class="cs-section-title">What changed</h2>
+        <div class="cs-results">
+          <div class="cs-result-card">
+            <div class="cs-result-icon">📈</div>
+            <h3>Content volume exploded</h3>
+            <p>Posting frequency increased dramatically — moving from occasional manual posts to a consistent, high-cadence schedule. Algorithms reward consistency; this system delivered it reliably.</p>
+          </div>
+          <div class="cs-result-card">
+            <div class="cs-result-icon">💰</div>
+            <h3>Cost dropped to near zero</h3>
+            <p>With local inference and local image generation, the ongoing marginal cost per post was effectively zero — no API fees, no designer hours, no copywriter time.</p>
+          </div>
+          <div class="cs-result-card">
+            <div class="cs-result-icon">🔄</div>
+            <h3>Compounding growth flywheel</h3>
+            <p>More content → more impressions → more follower data → better targeting. The system created a self-reinforcing loop that improves over time without additional human effort.</p>
+          </div>
+        </div>
+
+        <blockquote class="cs-quote">
+          <p>"Our content output increased dramatically without increasing our team size. The automation system allowed us to maintain consistent posting across platforms, which directly improved engagement and visibility."</p>
+          <cite>— Marketing Lead, Technobyte</cite>
+        </blockquote>
+      </section>
+
+      <!-- Tech stack summary -->
+      <section class="cs-section reveal-up">
+        <div class="cs-section-label">Tech stack</div>
+        <h2 class="cs-section-title">What powered it</h2>
+        <div class="cs-tech-grid">
+          <div class="cs-tech-item"><span>LLaMA (local LLM)</span><span class="tag">AI / NLP</span></div>
+          <div class="cs-tech-item"><span>Ollama</span><span class="tag">Local inference</span></div>
+          <div class="cs-tech-item"><span>ComfyUI</span><span class="tag">Image generation</span></div>
+          <div class="cs-tech-item"><span>Z-Image Turbo</span><span class="tag">SDXL model</span></div>
+          <div class="cs-tech-item"><span>n8n</span><span class="tag">Workflow automation</span></div>
+          <div class="cs-tech-item"><span>REST APIs</span><span class="tag">Platform publishing</span></div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cs-cta reveal-up">
+        <h2>Want something like this built?</h2>
+        <p>I'm available for freelance AI automation projects. Let's talk about what's possible for your workflow.</p>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; justify-content:center;">
+          <a href="../index.html#contact" class="btn btn-primary">Get in touch</a>
+          <a href="../index.html#work" class="btn btn-ghost">See more work</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <span class="nav-logo-mark">JH</span>
+        <span class="footer-copy">© <span id="footerYear"></span> Jero Halili</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/jerohalili" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://linkedin.com/in/jerohalili" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/animations.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>
