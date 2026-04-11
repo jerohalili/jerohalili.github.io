@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function () {
     ctx.fillStyle = isDark ? 'rgba(245,245,240,0.4)' : 'rgba(15,15,13,0.3)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Jero', W / 2, H / 2 - 7);
-    ctx.fillText('Halili', W / 2, H / 2 + 7);
+    // ctx.fillText('Jero', W / 2, H / 2 - 7);
+    // ctx.fillText('Halili', W / 2, H / 2 + 7);
 
     // Lines from center to nodes
     skillNodes.forEach(node => {

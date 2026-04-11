@@ -632,7 +632,7 @@
 ══════════════════════════════════════ */
 .skills-orbit-wrapper {
   position: relative;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto var(--space-12);
 }
 
@@ -644,15 +644,16 @@
 
 .skills-center-label {
   position: absolute;
-  top: 50%;
+  top: 49%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: var(--text-sm);
+  font-size: var(--text-lg);
   color: var(--color-text-muted);
   text-align: center;
   pointer-events: none;
   transition: all var(--duration-base);
   font-style: italic;
+  font-weight: bold;
 }
 
 .skills-categories {
@@ -695,7 +696,7 @@
   align-items: center;
 }
 
-.skill-name { font-size: var(--text-sm); color: var(--color-text-primary); }
+.skill-name { font-size: var(--text-sm); color: var(--color-text-primary); margin-right: 5px; }
 .skill-level-text { font-size: var(--text-xs); color: var(--color-text-muted); }
 
 .skill-bar {
