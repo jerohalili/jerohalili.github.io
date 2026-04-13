@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contact | Jero Halili">
+  <main class="max-w-4xl mx-auto px-6 py-32">
+    <div class="text-center mb-16">
+      <h1 class="text-6xl font-black dark:text-white mb-4">Let's <span class="text-orange-500 italic">connect.</span></h1>
+      <p class="text-xl text-gray-600 dark:text-zinc-400">Have a project in mind or a position to fill?</p>
+    </div>
+
+    <form action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
+      <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-bold dark:text-white mb-2">Name</label>
+          <input type="text" name="name" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-orange-500 dark:text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-bold dark:text-white mb-2">Email Address</label>
+          <input type="email" name="email" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-orange-500 dark:text-white outline-none">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold dark:text-white mb-2">Message</label>
+        <textarea name="message" rows="5" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-orange-500 dark:text-white outline-none"></textarea>
+      </div>
+
+      <button type="submit" class="w-full bg-orange-500 text-white font-black py-5 rounded-2xl text-xl hover:bg-orange-600 transition-all transform hover:scale-[1.02]">
+        Send Message
+      </button>
+    </form>
+  </main>
+</Layout>
