@@ -1,0 +1,115 @@
+---
+import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const posts = [
+  {
+    category: "AI & Automation",
+    date: "Jan 15, 2025",
+    readTime: "5 min read",
+    title: "Why local LLMs are changing how I build automation systems",
+    desc: "Running LLaMA locally isn't just about privacy — it's about owning the stack. Here's what I learned after building a full marketing engine on local inference.",
+    tags: ["LLaMA", "n8n", "Local-First"]
+  },
+  {
+    category: "Engineering",
+    date: "Nov 8, 2024",
+    readTime: "7 min read",
+    title: "Database design lessons from replacing a paper system",
+    desc: "When you're digitizing an organization's entire workflow, the schema choices you make on day one echo forever. Here's what I'd do differently.",
+    tags: ["SQL", "Architecture", "Systems"]
+  },
+  {
+    category: "AI & Automation",
+    date: "Sep 22, 2024",
+    readTime: "9 min read",
+    title: "How I built a content flywheel that runs without me",
+    desc: "Combining n8n, a local LLM, and ComfyUI to create a zero-marginal-cost content engine. The architecture, the tradeoffs, and what actually worked.",
+    tags: ["n8n", "ComfyUI", "Automation"]
+  },
+  {
+    category: "SaaS Dev",
+    date: "Aug 12, 2024",
+    readTime: "6 min read",
+    title: "Building for 'One': The micro-SaaS approach to problem solving",
+    desc: "Why the most successful tools I've built started by solving a hyper-specific problem for a single person, and how that scales into a product.",
+    tags: ["Product", "Strategy", "Build"]
+  },
+  {
+    category: "Design",
+    date: "July 04, 2024",
+    readTime: "4 min read",
+    title: "Visual Hierarchy: Why your UI feels 'wrong' and how to fix it",
+    desc: "Engineering-led design often misses the subtle cues that guide a user's eye. A deep dive into spacing, weight, and the 'squint test'.",
+    tags: ["UI/UX", "Visuals", "Design"]
+  },
+  {
+    category: "Career",
+    date: "May 19, 2024",
+    readTime: "8 min read",
+    title: "The CS Degree vs. The Real World: Bridging the gap",
+    desc: "How I balance academic rigor with the speed of modern shipping. Using university projects to stress-test production-ready architectures.",
+    tags: ["CS", "Learning", "Career"]
+  }
+];
+---
+
+<Layout title="Blog | Jero Halili">
+  <main class="pt-32 pb-24 px-4 md:px-10 max-w-[1200px] mx-auto">
+    
+    <header class="mb-20 space-y-4">
+      <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none dark:text-white italic">
+        Systems <br/> <span class="text-orange-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">Thinking.</span>
+      </h1>
+      <p class="text-xl text-zinc-500 dark:text-zinc-400 font-medium max-w-xl leading-relaxed">
+        Writing about building local-first AI, scalable engineering, and the intersection of code and creativity.
+      </p>
+    </header>
+
+    <div class="space-y-12">
+      {posts.map((post) => (
+        <article class="group cursor-pointer">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <div class="lg:col-span-3 pt-2">
+              <div class="flex flex-col gap-1">
+                <span class="text-orange-500 font-black uppercase tracking-widest text-xs">
+                  {post.category}
+                </span>
+                <span class="text-zinc-400 dark:text-zinc-500 font-mono text-[10px] uppercase">
+                  {post.date} · {post.readTime}
+                </span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-9 space-y-4">
+              <h2 class="text-3xl md:text-4xl font-black tracking-tight dark:text-white group-hover:text-orange-500 transition-colors duration-300">
+                {post.title}
+              </h2>
+              <p class="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed max-w-3xl">
+                {post.desc}
+              </p>
+              
+              <div class="flex flex-wrap gap-2 pt-2">
+                {post.tags.map(tag => (
+                  <span class="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full text-[10px] font-bold uppercase text-zinc-600 dark:text-zinc-400">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <div class="h-px w-full bg-zinc-100 dark:bg-zinc-900 mt-12 group-last:hidden"></div>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-20 flex justify-center">
+        <button class="px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-full font-black uppercase text-xs tracking-widest hover:scale-105 transition-transform">
+            Load More Posts
+        </button>
+    </div>
+
+  </main>
+</Layout>
