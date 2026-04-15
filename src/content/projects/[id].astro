@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 
-// 1. Tell Astro which pages to build based on your .md files
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects.map((project: CollectionEntry<'projects'>) => ({
@@ -11,20 +10,18 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. Define Props for TypeScript and grab data
 interface Props {
   project: CollectionEntry<'projects'>;
 }
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title={`${project.data.title} | Jero Halili`}>
   <main class="pt-32 pb-32 px-4 md:px-10 max-w-[900px] mx-auto">
     
-    <a href={`${base}/#works`} class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-block hover:-translate-x-1 transition-transform">
+    <a href="/#works" class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-block hover:-translate-x-1 transition-transform">
       ← Back to Systems
     </a>
 
@@ -49,7 +46,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     <div class="w-full aspect-video bg-zinc-50 dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 mb-16 overflow-hidden flex items-center justify-center">
       {project.data.image ? (
-        <img src={`${base}${project.data.image}`} alt={project.data.title} class="w-full h-full object-cover" />
+        <img src={project.data.image} alt={project.data.title} class="w-full h-full object-cover" />
       ) : (
         <span class="text-9xl font-black text-zinc-100 dark:text-zinc-800 italic select-none">SYSTEM</span>
       )}
