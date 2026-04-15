@@ -5,6 +5,7 @@
 @layer base {
   :root {
     --accent: #ff5d22;
+    color-scheme: light dark;
   }
   
   html {

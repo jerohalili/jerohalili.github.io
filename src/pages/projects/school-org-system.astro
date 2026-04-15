@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const project = {
+title: "School Org System",
+subtitle: "Management System",
+description: "A comprehensive administrative dashboard designed to streamline event approval, member tracking, and budget management for student organizations.",
+tags: ["Next.js", "PostgreSQL", "Prisma", "Auth.js"],
+image: "/images/school-system-hero.jpg"
+};
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={`${project.title} | Jero Halili`}>
+<main class="pt-32 pb-32 px-4 md:px-10 max-w-[900px] mx-auto">
+    
+    <a href={`${base}/#works`} class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-block hover:-translate-x-1 transition-transform">
+    ← Back to Systems
+    </a>
+
+    <header class="mb-16">
+    <div class="flex items-center gap-3 mb-6">
+        <span class="px-3 py-1 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
+        {project.subtitle}
+        </span>
+    </div>
+    <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none dark:text-white mb-8">
+        {project.title}
+    </h1>
+    
+    <div class="flex flex-wrap gap-2">
+        {project.tags.map(tag => (
+        <span class="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            {tag}
+        </span>
+        ))}
+    </div>
+    </header>
+
+    <div class="w-full aspect-video bg-zinc-50 dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 mb-16 overflow-hidden flex items-center justify-center">
+    <img 
+        src={`${base}${project.image}`} 
+        alt={project.title} 
+        class="w-full h-full object-cover" 
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+    />
+    <div style="display:none;" class="w-full h-full items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+        <span class="text-8xl font-black text-zinc-200 dark:text-zinc-800 italic select-none">03</span>
+    </div>
+    </div>
+
+    <article class="prose prose-zinc dark:prose-invert max-w-none 
+    prose-h3:text-3xl prose-h3:font-black prose-h3:tracking-tighter prose-h3:uppercase prose-h3:mt-12
+    prose-p:text-lg prose-p:leading-relaxed prose-p:text-zinc-600 dark:prose-p:text-zinc-400
+    prose-li:text-zinc-600 dark:prose-li:text-zinc-400
+    prose-strong:text-orange-600 dark:prose-strong:text-orange-500">
+    
+    <h3>The Challenge</h3>
+    <p>
+        Student organizations often struggle with fragmented communication and paper-heavy approval processes. Administrators needed a <strong>centralized "Single Source of Truth"</strong> to monitor organization activities, compliance, and financial health in real-time.
+    </p>
+
+    <h3>The Architecture</h3>
+    <ul>
+        <li><strong>Database:</strong> PostgreSQL hosted on Supabase for robust relational data.</li>
+        <li><strong>Server Logic:</strong> Server Actions for secure, type-safe data mutations.</li>
+        <li><strong>Authentication:</strong> Role-based access control (RBAC) to separate student and admin views.</li>
+        <li><strong>UI Components:</strong> Custom Shadcn/ui dashboard elements for high density data display.</li>
+    </ul>
+
+    <h3>The Solution</h3>
+    <p>
+        The system replaced manual PDF submissions with a digital workflow engine. Now, when a student organization wants to host an event:
+    </p>
+    <ol>
+        <li>They submit a digital request form with budget attachments.</li>
+        <li>Administrators receive an instant notification and can approve/reject with feedback.</li>
+        <li>The system automatically updates the organization's public calendar upon approval.</li>
+    </ol>
+    </article>
+
+</main>
+</Layout>

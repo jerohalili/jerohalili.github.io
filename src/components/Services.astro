@@ -1,0 +1,75 @@
+---
+import { services } from '../data/services';
+---
+
+<section id="services" class="w-full px-4 md:px-10 py-24 bg-white dark:bg-[#050505] transition-colors duration-500">
+  <div class="max-w-[1400px] mx-auto">
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-4">
+      <div class="space-y-2">
+        <h2 class="text-4xl md:text-6xl font-black tracking-tighter dark:text-white uppercase">Services</h2>
+        <p class="text-zinc-500 dark:text-zinc-400 max-w-md">Bridging the gap between complex engineering and conversion-led design.</p>
+      </div>
+      <div class="hidden md:block">
+        <span class="text-orange-500 font-mono text-xs font-bold uppercase tracking-[0.3em]">Angeles City, PH // 2026</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {services.map((service) => (
+        <div class={`group p-8 md:p-10 rounded-[2.5rem] transition-all duration-500 ${
+          service.isFeatured 
+          ? 'bg-orange-500 border border-orange-600 dark:border-orange-400 shadow-2xl shadow-orange-500/20' 
+          : 'bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800'
+        }`}>
+          
+          <div class={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-125 ${
+            service.isFeatured 
+            ? 'bg-white dark:bg-zinc-900 group-hover:-rotate-12' 
+            : 'bg-orange-500 shadow-lg shadow-orange-500/20 group-hover:rotate-12'
+          }`}>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              stroke-width="2.5"
+              class={service.isFeatured ? 'stroke-orange-500 dark:stroke-white' : 'stroke-white'}
+            >
+              {/* Special case for the Product icon which has a circle */}
+              {service.titleTop === "Product" && <circle cx="12" cy="12" r="10"/>}
+              <path d={service.iconPath} />
+            </svg>
+          </div>
+
+          <h3 class={`text-3xl font-black tracking-tighter mb-4 uppercase leading-[0.9] ${
+            service.isFeatured ? 'text-white' : 'dark:text-white'
+          }`}>
+            {service.titleTop} <br/> {service.titleBottom}
+          </h3>
+
+          <p class={`mb-8 leading-relaxed ${
+            service.isFeatured ? 'text-orange-50 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'
+          }`}>
+            {service.description}
+          </p>
+
+          <ul class="space-y-3">
+            {service.features.map(item => (
+              <li class={`flex items-center gap-3 text-sm font-bold ${
+                service.isFeatured ? 'text-white' : 'dark:text-zinc-300'
+              }`}>
+                <span class={`w-1.5 h-1.5 rounded-full ${
+                  service.isFeatured ? 'bg-white' : 'bg-orange-500'
+                }`}></span> 
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

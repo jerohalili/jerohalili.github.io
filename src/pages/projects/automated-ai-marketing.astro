@@ -1,0 +1,95 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Manual data for this project
+const project = {
+  title: "Automated AI Marketing System",
+  subtitle: "Local AI Content Engine",
+  description: "A fully automated marketing pipeline that generates posts using a local LLM, creates images, schedules and publishes to social media.",
+  tags: ["AI Automation", "LLM", "n8n", "ComfyUI"],
+  image: "/images/ai-marketing-hero.jpg"
+};
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={`${project.title} | Jero Halili`}>
+  <main class="pt-32 pb-32 px-4 md:px-10 max-w-[900px] mx-auto">
+    
+    <a href={`${base}/#works`} class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-block hover:-translate-x-1 transition-transform">
+      ← Back to Systems
+    </a>
+
+    <header class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="px-3 py-1 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
+          {project.subtitle}
+        </span>
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none dark:text-white mb-8">
+        {project.title}
+      </h1>
+      
+      <div class="flex flex-wrap gap-2">
+        {project.tags.map(tag => (
+          <span class="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </header>
+
+    <div class="w-full aspect-video bg-zinc-50 dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 mb-16 overflow-hidden flex items-center justify-center">
+      <img 
+        src={`${base}${project.image}`} 
+        alt={project.title} 
+        class="w-full h-full object-cover" 
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div style="display:none;" class="w-full h-full items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+        <span class="text-8xl font-black text-zinc-200 dark:text-zinc-800 italic select-none">01</span>
+        </div>
+    </div>
+
+    <article class="prose prose-zinc dark:prose-invert max-w-none 
+      prose-h3:text-3xl prose-h3:font-black prose-h3:tracking-tighter prose-h3:uppercase prose-h3:mt-12
+      prose-p:text-lg prose-p:leading-relaxed prose-p:text-zinc-600 dark:prose-p:text-zinc-400
+      prose-li:text-zinc-600 dark:prose-li:text-zinc-400
+      prose-strong:text-orange-600 dark:prose-strong:text-orange-500
+      prose-ol:list-decimal prose-ul:list-disc">
+      
+      <h3>The Challenge</h3>
+      <p>
+        Marketing teams often face a <strong>"content treadmill"</strong>—the need to post daily across multiple platforms. Cloud-based AI tools (like OpenAI or Midjourney) offer great results but come with high subscription costs and data privacy concerns. I needed a system that was free to run, private, and fully autonomous.
+      </p>
+
+      <h3>The Architecture</h3>
+      <p>The system operates on a "Local-First" philosophy:</p>
+      <ul>
+        <li><strong>Intelligence:</strong> Meta-Llama-3.1-8B running on <strong>LM Studio</strong>.</li>
+        <li><strong>Orchestration:</strong> <strong>n8n</strong> self-hosted via Docker.</li>
+        <li><strong>Visuals:</strong> <strong>ComfyUI</strong> for Stable Diffusion image generation.</li>
+        <li><strong>Tunneling:</strong> <strong>Ngrok</strong> to allow social media webhooks to talk to my local machine safely.</li>
+      </ul>
+
+      <h3>The Solution</h3>
+      <p>
+        I built a multi-stage n8n workflow. It starts with a cron trigger every morning that:
+      </p>
+      <ol>
+        <li>Scrapes trending topics in the tech industry.</li>
+        <li>Sends a prompt to <strong>Llama 3.1</strong> to write a 3rd-person educational post.</li>
+        <li>Triggers a <strong>Stable Diffusion</strong> prompt to generate a matching 4K image.</li>
+        <li>Automatically formats and pushes the content to the LinkedIn and Instagram APIs.</li>
+      </ol>
+
+      <h3>Results</h3>
+      <ul>
+        <li><strong>Cost:</strong> $0/month in API fees (after hardware).</li>
+        <li><strong>Efficiency:</strong> 100% autonomous; content is ready before I wake up.</li>
+        <li><strong>Privacy:</strong> No training data ever leaves the local network.</li>
+      </ul>
+    </article>
+
+  </main>
+</Layout>
