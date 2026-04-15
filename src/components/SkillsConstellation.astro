@@ -1,0 +1,198 @@
+---
+const skills = [
+  // Engineering - Orange
+  { name: "Full-Stack Dev", group: "eng", radius: 0.38, angle: 2.1 },
+  { name: "Database Arch.", group: "eng", radius: 0.38, angle: 1.8 },
+  { name: "REST API", group: "eng", radius: 0.32, angle: 2.4 },
+  { name: "MERN Stack", group: "eng", radius: 0.44, angle: 2.7 },
+  // AI - Blue
+  { name: "AI Workflows", group: "ai", radius: 0.30, angle: 4.2 },
+  { name: "LLM Integration", group: "ai", radius: 0.40, angle: 4.5 },
+  { name: "n8n / Make", group: "ai", radius: 0.22, angle: 3.9 },
+  // Design & Marketing - Purple
+  { name: "UI/UX Design", group: "des", radius: 0.34, angle: 0.2 },
+  { name: "Landing Pages", group: "des", radius: 0.46, angle: 0.5 },
+  // Tools - Zinc
+  { name: "JS / CSS / HTML", group: "tool", radius: 0.20, angle: 5.4 },
+  { name: "Git & GitHub", group: "tool", radius: 0.36, angle: 5.7 },
+  { name: "Figma", group: "tool", radius: 0.42, angle: 0.8 },
+];
+
+const legend = [
+  { name: "Engineering", group: "eng" },
+  { name: "AI & Automation", group: "ai" },
+  { name: "Design & Marketing", group: "des" },
+  { name: "Tools", group: "tool" },
+];
+---
+
+<div class="relative w-full aspect-square md:aspect-video bg-white dark:bg-[#050505] rounded-[2.5rem] border border-zinc-200 dark:border-white/5 overflow-hidden transition-colors duration-500 shadow-inner group">
+  <canvas id="skillsCanvas" class="w-full h-full"></canvas>
+  
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div class="bg-zinc-950 dark:bg-white text-white dark:text-black px-10 py-4 rounded-full font-black text-sm uppercase tracking-[0.3em] shadow-2xl border border-zinc-800 dark:border-zinc-200 z-10 transition-all">
+      Jero Halili
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 right-10 flex flex-col gap-3 pointer-events-none hidden lg:flex bg-white/70 dark:bg-zinc-900/50 backdrop-blur-sm p-5 rounded-2xl border border-zinc-200 dark:border-white/5">
+    <h4 class="text-[11px] font-black uppercase text-zinc-500 tracking-wider mb-1">Skill Areas</h4>
+    {legend.map(item => (
+      <div class="flex items-center gap-3">
+        <span class={`legend-dot w-2 h-2 rounded-full`} data-group={item.group}></span>
+        <span class="text-[10px] font-medium uppercase text-zinc-600 dark:text-zinc-400 tracking-widest">{item.name}</span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script define:vars={{ skills }}>
+  const canvas = document.getElementById('skillsCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  let nodes = [];
+  let mouse = { x: null, y: null };
+  let raf;
+
+  const COLORS = {
+    eng: { node: '#f97316', text: '#ea580c' },
+    ai: { node: '#3b82f6', text: '#2563eb' },
+    des: { node: '#a855f7', text: '#9333ea' },
+    tool: { node: '#71717a', text: '#52525b' }
+  };
+
+  class Node {
+    constructor(config) {
+      this.name = config.name;
+      this.group = config.group;
+      this.relRadius = config.radius;
+      this.angle = config.angle;
+      this.speed = (Math.random() - 0.5) * 0.0008;
+      this.x = 0;
+      this.y = 0;
+      this.offsetX = 0;
+      this.offsetY = 0;
+      this.colorNode = COLORS[this.group].node;
+      this.colorText = COLORS[this.group].text;
+    }
+
+    update() {
+      this.angle += this.speed;
+      const w = canvas.width / devicePixelRatio;
+      const h = canvas.height / devicePixelRatio;
+      const centerX = w / 2;
+      const centerY = h / 2;
+      
+      const dynamicRadius = Math.min(centerX, centerY) * (this.relRadius * 2);
+      const targetX = centerX + Math.cos(this.angle) * dynamicRadius;
+      const targetY = centerY + Math.sin(this.angle) * dynamicRadius;
+
+      if (mouse.x && mouse.y) {
+        const dx = mouse.x - targetX;
+        const dy = mouse.y - targetY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 180;
+
+        if (dist < maxDist) {
+          const force = (maxDist - dist) / maxDist;
+          this.offsetX -= dx * force * 0.18;
+          this.offsetY -= dy * force * 0.18;
+        }
+      }
+
+      this.offsetX *= 0.93;
+      this.offsetY *= 0.93;
+      this.x = targetX + this.offsetX;
+      this.y = targetY + this.offsetY;
+    }
+
+    draw() {
+      if (!ctx) return;
+      const isDark = document.documentElement.classList.contains('dark');
+      const w = canvas.width / devicePixelRatio;
+      const centerX = w / 2;
+      const centerY = (canvas.height / devicePixelRatio) / 2;
+
+      // Scaling Font Logic: Base 12px, scales with width
+      const fontSize = Math.max(12, Math.min(18, w * 0.014));
+      ctx.font = `500 ${fontSize}px "Inter", sans-serif`;
+      
+      const textWidth = ctx.measureText(this.name).width;
+      const paddingX = fontSize * 1.2;
+      const paddingY = fontSize * 0.6;
+      const bubbleW = textWidth + (paddingX * 2.2); // Extra space for the side dot
+      const bubbleH = fontSize + (paddingY * 2.2);
+      
+      const bubbleX = this.x - (bubbleW / 2);
+      const bubbleY = this.y - (bubbleH / 2);
+
+      // Connection Line
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(centerX, centerY);
+      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+      ctx.stroke();
+
+      // Bubble background
+      ctx.beginPath();
+      const r = bubbleH / 2; // Fully rounded ends
+      ctx.roundRect(bubbleX, bubbleY, bubbleW, bubbleH, r);
+      ctx.fillStyle = isDark ? 'rgba(24,24,27,0.85)' : 'rgba(255,255,255,0.95)';
+      ctx.fill();
+      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+      ctx.stroke();
+
+      // Node Dot (Now on the left side inside the bubble)
+      ctx.beginPath();
+      ctx.arc(bubbleX + (paddingX * 0.8), this.y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = this.colorNode;
+      ctx.fill();
+
+      // Text (Nudged right to make room for dot)
+      ctx.fillStyle = isDark ? '#e4e4e7' : this.colorText;
+      ctx.textAlign = 'left';
+      ctx.fillText(this.name, bubbleX + (paddingX * 1.4), this.y + (fontSize * 0.35));
+    }
+  }
+
+  function init() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    ctx.scale(dpr, dpr);
+    nodes = skills.map(s => new Node(s));
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    nodes.forEach(n => {
+      n.update();
+      n.draw();
+    });
+    raf = requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', init);
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+  init();
+  animate();
+  document.addEventListener('astro:after-swap', () => {
+    cancelAnimationFrame(raf);
+    init();
+    animate();
+  });
+</script>
+
+<style>
+  canvas { touch-action: none; }
+  .legend-dot[data-group="eng"] { background-color: #f97316; }
+  .legend-dot[data-group="ai"] { background-color: #3b82f6; }
+  .legend-dot[data-group="des"] { background-color: #a855f7; }
+  .legend-dot[data-group="tool"] { background-color: #71717a; }
+</style>

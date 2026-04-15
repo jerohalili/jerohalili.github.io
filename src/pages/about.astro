@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SkillsConstellation from '../components/SkillsConstellation.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const journey = [
+  { year: "2022", title: "Started CS degree", desc: "From curious student, immediately drawn to databases, systems thinking, and scale." },
+  { year: "2023", title: "First real project shipped", desc: "Built Artist Portfolio. Learned that building for someone's livelihood is a different responsibility." },
+  { year: "2023", title: "Dean's List recognition", desc: "Achieved academic honors while simultaneously working on side projects." },
+  { year: "2024", title: "School Organization System", desc: "Led full MERN-stack development, replacing paper workflows for an entire organization." },
+  { year: "2024", title: "Went deep on AI automation", desc: "Built Automated AI Marketing System using local LLMs, ComfyUI, and n8n." },
+  { year: "2025 →", title: "Targeting global remote roles", desc: "Seeking full-stack or AI roles with startups. Building, shipping, and learning weekly." },
+];
+---
+
+<Layout title="About | Jero Halili">
+  <main class="pt-32 pb-24 px-4 md:px-10 max-w-[1400px] mx-auto">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-32">
+      <div class="lg:col-span-7 space-y-8">
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] dark:text-white">
+          Engineering <br/> <span class="text-orange-500 italic">& Creativity.</span>
+        </h1>
+        <div class="space-y-6 text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl leading-relaxed">
+          <p>I'm a Computer Science student and full-stack developer who sits at the intersection of engineering and creativity. I don't just build things — I build things that work, grow, and make a difference.</p>
+          <p>My background spans database architecture, AI workflow automation, SaaS development, digital marketing, and visual design. That rare overlap is my edge: I can own a project from the database schema all the way to the marketing funnel.</p>
+          <p>Currently pursuing my CS degree (Dean's List) while shipping real-world systems and working toward remote opportunities with ambitious teams globally.</p>
+        </div>
+        <div class="flex flex-wrap gap-4 pt-4">
+          <a href={`${base}/contact`} class="bg-orange-500 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform">Work with me</a>
+          <a href={`${base}/resume.pdf`} class="border border-zinc-200 dark:border-zinc-800 dark:text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">Resume (PDF)</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 md:p-10 sticky top-32">
+          <div class="space-y-8">
+            <div class="flex justify-between items-start">
+              <div>
+                <h2 class="text-3xl font-black tracking-tighter dark:text-white uppercase italic">Jero Halili</h2>
+                <p class="text-orange-500 font-mono text-xs font-bold uppercase tracking-widest">Angeles, Philippines · Remote</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              {["Full-Stack Dev", "AI Automation", "Database Arch.", "SaaS Builder", "Marketing Tech", "UI Design"].map(tag => (
+                <span class="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 rounded-full text-[10px] font-bold uppercase">{tag}</span>
+              ))}
+            </div>
+            <div class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <div class="flex gap-4 items-center text-sm font-medium">
+                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                <span class="dark:text-zinc-300 font-bold uppercase tracking-tighter">Dean's List — Academic Honors</span>
+              </div>
+              <div class="flex gap-4 items-center text-sm font-medium">
+                <span class="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+                <span class="dark:text-zinc-300 font-bold uppercase tracking-tighter">BS Computer Science — In Progress</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="mb-32">
+      <h2 class="text-4xl font-black uppercase tracking-tighter mb-12 dark:text-white italic underline decoration-orange-500 underline-offset-8">Skill Constellation</h2>
+      <SkillsConstellation />
+    </section>
+
+    <section>
+      <h2 class="text-4xl font-black uppercase tracking-tighter mb-12 dark:text-white italic underline decoration-orange-500 underline-offset-8">The Journey</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {journey.map(item => (
+          <div class="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/50 transition-all group">
+            <span class="text-4xl font-black text-zinc-100 dark:text-zinc-800 group-hover:text-orange-500/20 transition-colors">{item.year}</span>
+            <h3 class="text-xl font-bold dark:text-white mt-4 mb-2 uppercase tracking-tight leading-tight">{item.title}</h3>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</Layout>
