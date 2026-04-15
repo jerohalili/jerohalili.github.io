@@ -12,7 +12,7 @@ const secondaries = featuredProjects.filter(p => !p.isFlagship);
     <div class="flex justify-between items-end border-b border-zinc-100 dark:border-zinc-800 pb-6">
       <div class="space-y-1">
         <h2 class="text-4xl md:text-5xl font-black tracking-tighter dark:text-white uppercase">Featured Projects</h2>
-        <p class="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Engineered solutions for marketing, education, and creative industries.</p>
+        <p class="text-zinc-700 dark:text-zinc-300 text-sm font-medium">Engineered solutions for marketing, education, and creative industries.</p>
       </div>
       <a href={`${base}/projects`} class="text-orange-500 font-bold text-xs uppercase tracking-widest hover:translate-x-1 transition-transform mb-1">
         All Projects →
@@ -25,7 +25,7 @@ const secondaries = featuredProjects.filter(p => !p.isFlagship);
           <div class="space-y-4">
             <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest border border-orange-500/20">{flagship.tag}</span>
             <h3 class="text-5xl md:text-6xl font-black tracking-tighter dark:text-white leading-[0.9]">{flagship.title}</h3>
-            <p class="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed max-w-md">{flagship.description}</p>
+            <p class="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed max-w-md">{flagship.description}</p>
           </div>
           
           <div class="relative mt-8 bg-zinc-50 dark:bg-zinc-800/50 rounded-[2rem] flex-1 flex items-center justify-center overflow-hidden border border-zinc-100 dark:border-zinc-800">
@@ -55,7 +55,7 @@ const secondaries = featuredProjects.filter(p => !p.isFlagship);
                         <span class="text-orange-500 font-mono text-[10px] font-bold uppercase tracking-widest">{project.tag}</span>
                         <h3 class="text-3xl font-black tracking-tighter dark:text-white leading-tight mt-1 uppercase italic">{project.title}</h3>
                     </div>
-                    <p class="text-zinc-500 dark:text-zinc-400 text-base leading-relaxed">{project.description}</p>
+                    <p class="text-zinc-700 dark:text-zinc-300 text-base leading-relaxed">{project.description}</p>
                     <div>
                         <a href={`${base}${project.link}`} class="inline-flex items-center gap-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black hover:bg-orange-500 hover:text-white transition-all px-6 py-3 rounded-full text-xs font-black tracking-widest active:scale-95 uppercase">
                             View Project
