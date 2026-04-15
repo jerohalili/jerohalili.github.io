@@ -5,6 +5,7 @@ description: "A permanent digital portfolio for a painter featuring a curated ga
 tags: ["Web Design", "Static Site", "UI/UX"]
 image: "/projects/artist.jpg"
 impact: "Create"
+buttonText: "View case study"
 ---
 
 ### The Challenge
