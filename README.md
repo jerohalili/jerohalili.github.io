@@ -31,6 +31,7 @@ Led the transition for Presbyterian Bible Seminary Inc., moving manual record sy
 
 ### **Astro Portfolio**
 A high-performance portfolio featuring a custom theme-memory system that defaults to light mode for accessibility while remembering user preferences.
+
 ---
 
 ## Local Development
