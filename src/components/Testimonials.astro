@@ -56,25 +56,22 @@ import { testimonials } from '../data/testimonials';
 
     if (!slider || !slider.parentElement || !prevBtn || !nextBtn) return;
 
-    // 1. Get original cards and clone them
-    // We clear existing clones first to prevent stacking on Astro refreshes
     const originalCards = Array.from(slider.children).filter(child => !child.classList.contains('is-clone'));
     const cardCount = originalCards.length;
     if (cardCount === 0) return;
 
-    slider.innerHTML = ''; // Clear and rebuild
-    
-    // Create 3 sets: [Clones] [Originals] [Clones]
-    const allCards = [...originalCards, ...originalCards, ...originalCards];
-    allCards.forEach((card, i) => {
-      const newCard = card.cloneNode(true) as HTMLElement;
-      if (i < cardCount || i >= cardCount * 2) {
+    // 1. Build a HUGE buffer (7 sets) so you can spam-click like a maniac
+    slider.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      originalCards.forEach(card => {
+        const newCard = card.cloneNode(true) as HTMLElement;
         newCard.classList.add('is-clone');
-      }
-      slider.appendChild(newCard);
-    });
+        slider.appendChild(newCard);
+      });
+    }
 
-    let index = cardCount;
+    // Start in the center set (index = cardCount * 3)
+    let index = cardCount * 3;
     
     const updateSlider = (smooth = true) => {
       const parentWidth = (slider.parentElement as HTMLElement).offsetWidth;
@@ -82,50 +79,34 @@ import { testimonials } from '../data/testimonials';
       const gap = 24; 
       const cardWidth = (parentWidth - (gap * (visible - 1))) / visible;
       
-      slider.style.transition = smooth ? 'transform 300ms ease-out' : 'none';
+      slider.style.transition = smooth ? 'transform 250ms cubic-bezier(0.2, 0, 0, 1)' : 'none';
       slider.style.transform = `translateX(-${index * (cardWidth + gap)}px)`;
     };
 
-    // 2. The Loop Guard
-    // This checks if we are out of bounds and snaps back INSTANTLY
-    const checkBounds = () => {
-      if (index >= cardCount * 2) {
-        index = cardCount;
+    // 2. The Proactive Reset
+    // Instead of waiting for the animation to end, we check bounds on EVERY CLICK
+    const ensureSafeBounds = () => {
+      // If we are getting too close to either end (within 1 set of the edge)
+      if (index >= cardCount * 5 || index <= cardCount) {
+        // Jump back to the center set instantly
+        index = cardCount * 3 + (index % cardCount);
         updateSlider(false);
-      } else if (index <= 0) {
-        index = cardCount;
-        updateSlider(false);
+        // Force reflow
+        void slider.offsetWidth;
       }
     };
 
-    nextBtn.onclick = () => { 
+    nextBtn.onclick = () => {
+      ensureSafeBounds();
       index++;
       updateSlider(true);
-      
-      // If we hit the end of the clones, snap back to center after a tiny delay
-      // so the user doesn't see the "empty" space
-      if (index >= cardCount * 2) {
-        setTimeout(() => {
-          index = cardCount;
-          updateSlider(false);
-        }, 300); // matches the 300ms transition
-      }
     };
 
-    prevBtn.onclick = () => { 
+    prevBtn.onclick = () => {
+      ensureSafeBounds();
       index--;
       updateSlider(true);
-
-      if (index <= 0) {
-        setTimeout(() => {
-          index = cardCount;
-          updateSlider(false);
-        }, 300);
-      }
     };
-
-    // 3. Fallback for the snap
-    slider.addEventListener('transitionend', checkBounds);
 
     window.addEventListener('resize', () => updateSlider(false));
     updateSlider(false);
