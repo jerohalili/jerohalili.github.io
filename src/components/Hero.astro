@@ -20,11 +20,6 @@ const stats = [
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    /* DUAL MASKING STRATEGY: 
-       1. Radial: Keeps the center-left bloom visible.
-       2. Linear: Soft-fades the bottom to 0% to prevent hard edges on the layout blobs.
-    */
     mask-image: 
       radial-gradient(circle at 40% 50%, black 15%, transparent 80%),
       linear-gradient(to bottom, black 70%, transparent 95%);
@@ -48,10 +43,8 @@ const stats = [
     stroke-width: 2.5;
     vector-effect: non-scaling-stroke;
     stroke-linecap: round;
-    
     stroke-dasharray: 1000; 
     stroke-dashoffset: 1000;
-    
     animation: 
       topo-drift 55s ease-in-out infinite alternate,
       pulse-draw 18s ease-in-out infinite;
@@ -67,12 +60,18 @@ const stats = [
     25%, 75% { stroke-dashoffset: 0; opacity: 0.8; }
   }
 
-  /* 2. ADAPTIVE CARDS */
+  /* 2. WEAKER GLASS & OPAQUE CARDS */
   .glass-card {
-    @apply bg-white/30 dark:bg-zinc-900/30 backdrop-blur-2xl border border-white/20 dark:border-zinc-800/50 shadow-2xl;
+    @apply bg-white/75 dark:bg-zinc-950/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl transition-all duration-500;
   }
 
-  /* 3. ENTRANCE ANIMATIONS */
+  /* 3. BORDER GLOW EFFECTS (Small Bentos Only) */
+  .glow-border:hover {
+    @apply border-orange-500 shadow-orange-500/20;
+    box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.4);
+  }
+
+  /* 4. ENTRANCE ANIMATIONS */
   .reveal-text {
     opacity: 0;
     animation: reveal-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -93,25 +92,15 @@ const stats = [
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="220" xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </defs>
-      
       <g filter="url(#organic-warp)">
-        {[
-          {x: 200, y: 400}, 
-          {x: 450, y: 300}, 
-          {x: 350, y: 700}
-        ].map((pos, peakIndex) => (
+        {[ {x: 200, y: 400}, {x: 450, y: 300}, {x: 350, y: 700} ].map((pos, peakIndex) => (
           [...Array(3)].map((_, ringIndex) => (
             <ellipse 
-              class="topo-shape"
-              cx={pos.x}
-              cy={pos.y}
-              rx={100 + (ringIndex * 120)}
-              ry={80 + (ringIndex * 90)}
+              class="topo-shape" cx={pos.x} cy={pos.y} rx={100 + (ringIndex * 120)} ry={80 + (ringIndex * 90)}
               style={`animation-delay: ${(peakIndex + ringIndex) * -4}s;`}
             />
           ))
         ))}
-        
         <path class="topo-shape" d="M -200,500 C 100,200 600,800 1200,500" style="animation-delay: -9s; opacity: 0.5;" />
         <path class="topo-shape" d="M -200,300 Q 400,600 1200,200" style="animation-delay: -15s; opacity: 0.5;" />
       </g>
@@ -119,6 +108,7 @@ const stats = [
   </div>
 
   <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 w-full">
+    
     <div class="lg:col-span-8 glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col justify-center">
         <p class="reveal-text text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
           Computer Scientist · Full-Stack Developer · AI Engineer
@@ -131,13 +121,13 @@ const stats = [
         </p>
     </div>
 
-    <div class="lg:col-span-4 bg-zinc-100/10 dark:bg-zinc-900/10 rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden relative group min-h-[450px] flex flex-col justify-end shadow-xl border border-white/10 dark:border-zinc-800/50">
+    <div class="lg:col-span-4 glass-card glow-border overflow-hidden relative group min-h-[450px] flex flex-col justify-end rounded-[2.5rem] md:rounded-[3.5rem]">
         <div class="absolute inset-0 z-0">
           <img src={`${base}/images/jero-portrait.png`} alt="Jero Halili" class="w-full h-full object-cover object-top transition-transform duration-1000 group-hover:scale-105" />
         </div>
         <div class="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-white/95 dark:to-zinc-950/95 pointer-events-none"></div>
         <div class="relative z-20 w-full p-6">
-          <div class="bg-white/20 dark:bg-zinc-900/20 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
+          <div class="bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
               <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <p class="text-[10px] uppercase tracking-[0.2em] font-black text-orange-500">Jero Halili</p>
@@ -157,7 +147,7 @@ const stats = [
 
     <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
         {stats.map((stat) => (
-        <div class="glass-card p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:border-orange-500 transition-all duration-500">
+        <div class="glass-card glow-border p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group">
             <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-orange-500/70 transition-colors">{stat.label}</p>
             <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors">{stat.val}</p>
         </div>
