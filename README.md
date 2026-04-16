@@ -61,7 +61,10 @@ npm run dev
 ## Getting Started
 
 To set up the project locally, run the following commands:
-git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://github.com/jerohalili/jerohalili.github.io.git) && cd jerohalili.github.io && npm install && npm run dev
+* git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://github.com/jerohalili/jerohalili.github.io.git) 
+* cd jerohalili.github.io 
+* npm install 
+* npm run dev
 
 ## Connect With Me
 * **LinkedIn:** www.linkedin.com/in/jero-halili-bb385b295
