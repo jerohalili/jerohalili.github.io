@@ -1,15 +1,15 @@
-# 🚀 Jero Halili | Portfolio
+# Jero Halili | Portfolio
 
 ![Jero Halili Portfolio Header](./public/og-image.jpg)
 
 ### **Computer Scientist • Full-Stack Developer • AI Engineer**
 **Turning workflows into code.** Modern portfolio showcasing full-stack development, database management, and AI automation projects with scalable, real-world impact.
 
-🔗 **Live Site:** [https://jerohalili.github.io/](https://jerohalili.github.io/)
+**Live Site:** [https://jerohalili.github.io/](https://jerohalili.github.io/)
 
 ---
 
-## 🛠️ Tech Stack & Language Distribution
+## Tech Stack & Language Distribution
 
 This site is a high-performance, content-driven application built with **Astro**.
 
@@ -36,16 +36,16 @@ A high-performance portfolio featuring a custom theme-memory system that default
 ## Local Development
 To run this project locally, follow these commands:
 
-# Clone the repository
+### Clone the repository
 git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://github.com/jerohalili/jerohalili.github.io.git)
 
-# Enter the directory
+### Enter the directory
 cd jerohalili.github.io
 
-# Install dependencies
+### Install dependencies
 npm install
 
-# Start the development server
+### Start the development server
 npm run dev
 
 ## Certifications & Experience
@@ -57,13 +57,11 @@ npm run dev
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 To set up the project locally, run the following commands:
 git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://github.com/jerohalili/jerohalili.github.io.git) && cd jerohalili.github.io && npm install && npm run dev
 
-## 📬 Connect With Me
+## Connect With Me
 * **LinkedIn:** www.linkedin.com/in/jero-halili-bb385b295
 * **Email:** jerobusiness20@gmail.com
-
-Built with ❤️ in Angeles, Philippines.
