@@ -1,6 +1,6 @@
 # 🚀 Jero Halili | Portfolio
 
-![Jero Halili Portfolio Header](./og-image.jpg)
+![Jero Halili Portfolio Header](./public/og-image.jpg)
 
 ### **Computer Scientist • Full-Stack Developer • AI Engineer**
 **Turning workflows into code.** Modern portfolio showcasing full-stack development, database management, and AI automation projects with scalable, real-world impact.
