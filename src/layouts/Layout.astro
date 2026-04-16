@@ -2,6 +2,10 @@
 import Navbar from '../components/Navbar.astro';
 interface Props { title: string; }
 const { title } = Astro.props;
+
+// Change this to your actual domain
+const canonicalURL = new URL(Astro.url.pathname, 'https://jerohalili.github.io');
+const socialImageURL = new URL('/og-image.jpg', canonicalURL);
 ---
 
 <!doctype html>
@@ -10,6 +14,22 @@ const { title } = Astro.props;
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <title>{title}</title>
+
+        <meta name="title" content={title} />
+        <meta name="description" content="Portfolio of Jero Halili - Computer Scientist & Full-stack Developer" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content="Check out my full-stack projects and AI workflows." />
+        <meta property="og:image" content={socialImageURL} />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={canonicalURL} />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content="Check out my full-stack projects and AI workflows." />
+        <meta property="twitter:image" content={socialImageURL} />
         <title>{title}</title>
 
         <script is:inline>
