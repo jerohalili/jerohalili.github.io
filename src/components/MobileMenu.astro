@@ -1,0 +1,63 @@
+---
+interface Link {
+  name: string;
+  href: string;
+}
+interface Props {
+  links: Link[];
+}
+const { links } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<div id="mobile-menu" class="fixed inset-0 bg-white dark:bg-zinc-950 z-[10000] flex flex-col translate-x-full transition-transform duration-500 ease-in-out lg:hidden pointer-events-auto">
+  <div class="flex justify-between items-center p-8 border-b border-zinc-100 dark:border-zinc-900">
+    <span class="font-black text-xl tracking-tighter dark:text-white uppercase italic">Menu</span>
+    <button id="mobile-close" type="button" class="p-3 bg-zinc-100 dark:bg-zinc-900 rounded-full dark:text-white">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="pointer-events-none"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  
+  <div class="flex flex-col items-center gap-6 p-8 pt-12 text-center overflow-y-auto">
+    {links.map((link: Link) => (
+      <a 
+        href={link.href} 
+        class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-orange-500 transition-colors"
+      >
+        {link.name}
+      </a>
+    ))}
+    
+    <div class="mt-4 flex justify-center w-full">
+      <a 
+        href={`${base}/contact`} 
+        class="mobile-link group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-orange-500/10 px-10 py-5 transition-all hover:bg-orange-500 active:scale-95"
+      >
+        <span class="relative z-10 text-5xl font-black tracking-tighter uppercase italic text-orange-500 transition-colors group-hover:text-white">
+          Let's Talk
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  function toggleMenu(open) {
+    const menu = document.getElementById('mobile-menu');
+    if (menu) {
+      menu.style.transform = open ? 'translateX(0)' : 'translateX(100%)';
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+  }
+
+  function setupMenu() {
+    const closeBtn = document.getElementById('mobile-close');
+    const links = document.querySelectorAll('.mobile-link');
+    if (closeBtn) closeBtn.onclick = () => toggleMenu(false);
+    links.forEach(l => l.onclick = () => toggleMenu(false));
+    document.removeEventListener('open-menu', () => toggleMenu(true));
+    document.addEventListener('open-menu', () => toggleMenu(true));
+  }
+
+  setupMenu();
+  document.addEventListener('astro:after-swap', setupMenu);
+</script>
