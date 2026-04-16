@@ -50,7 +50,7 @@ const { title } = Astro.props;
                     // Instead of following, place it subtly in the top right and leave it.
                     if (blob) {
                         blob.style.opacity = "0.6";
-                        blob.style.transform = `translate3d(50vw, -10vh, 0)`;
+                        blob.style.transform = `translate3d(calc(70vw - 150px), calc(20vh - 150px), 0)`;
                     }
                     return; // Stop the follow logic for mobile
                 }
