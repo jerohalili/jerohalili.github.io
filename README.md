@@ -64,6 +64,6 @@ git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://githu
 
 ## 📬 Connect With Me
 * **LinkedIn:** www.linkedin.com/in/jero-halili-bb385b295
-* **Email:** [Insert your Email]
+* **Email:** jerobusiness20@gmail.com
 
 Built with ❤️ in Angeles, Philippines.
