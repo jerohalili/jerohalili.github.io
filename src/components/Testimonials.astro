@@ -22,9 +22,8 @@ import { testimonials } from '../data/testimonials';
     </div>
 
     <div class="relative w-full overflow-hidden">
-      <div id="testimonial-slider" class="flex gap-6 transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
+      <div id="testimonial-slider" class="flex gap-6 will-change-transform">
         {testimonials.map((t) => (
-          /* Cards are now solid again: bg-white and bg-zinc-900 */
           <div class="testimonial-card min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-orange-500/50 transition-all shadow-sm">
             <div>
               <div class="text-orange-500 mb-6">
@@ -54,40 +53,82 @@ import { testimonials } from '../data/testimonials';
     const slider = document.getElementById('testimonial-slider');
     const prevBtn = document.getElementById('prev-test');
     const nextBtn = document.getElementById('next-test');
-    if (!slider || !prevBtn || !nextBtn) return;
 
-    let index = 0;
-    const cards = slider.children.length;
+    if (!slider || !slider.parentElement || !prevBtn || !nextBtn) return;
+
+    // 1. Get original cards and clone them
+    // We clear existing clones first to prevent stacking on Astro refreshes
+    const originalCards = Array.from(slider.children).filter(child => !child.classList.contains('is-clone'));
+    const cardCount = originalCards.length;
+    if (cardCount === 0) return;
+
+    slider.innerHTML = ''; // Clear and rebuild
     
-    const updateSlider = () => {
+    // Create 3 sets: [Clones] [Originals] [Clones]
+    const allCards = [...originalCards, ...originalCards, ...originalCards];
+    allCards.forEach((card, i) => {
+      const newCard = card.cloneNode(true) as HTMLElement;
+      if (i < cardCount || i >= cardCount * 2) {
+        newCard.classList.add('is-clone');
+      }
+      slider.appendChild(newCard);
+    });
+
+    let index = cardCount;
+    
+    const updateSlider = (smooth = true) => {
+      const parentWidth = (slider.parentElement as HTMLElement).offsetWidth;
       const visible = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-      const maxIndex = cards - visible;
-      
-      if (index > maxIndex) index = maxIndex;
-      if (index < 0) index = 0;
-      
       const gap = 24; 
-      const cardWidth = (slider.offsetWidth - (gap * (visible - 1))) / visible;
+      const cardWidth = (parentWidth - (gap * (visible - 1))) / visible;
+      
+      slider.style.transition = smooth ? 'transform 300ms ease-out' : 'none';
       slider.style.transform = `translateX(-${index * (cardWidth + gap)}px)`;
     };
 
+    // 2. The Loop Guard
+    // This checks if we are out of bounds and snaps back INSTANTLY
+    const checkBounds = () => {
+      if (index >= cardCount * 2) {
+        index = cardCount;
+        updateSlider(false);
+      } else if (index <= 0) {
+        index = cardCount;
+        updateSlider(false);
+      }
+    };
+
     nextBtn.onclick = () => { 
-      const visible = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-      if (index < cards - visible) {
-        index++; 
-        updateSlider(); 
+      index++;
+      updateSlider(true);
+      
+      // If we hit the end of the clones, snap back to center after a tiny delay
+      // so the user doesn't see the "empty" space
+      if (index >= cardCount * 2) {
+        setTimeout(() => {
+          index = cardCount;
+          updateSlider(false);
+        }, 300); // matches the 300ms transition
       }
     };
 
     prevBtn.onclick = () => { 
-      if (index > 0) {
-        index--; 
-        updateSlider(); 
+      index--;
+      updateSlider(true);
+
+      if (index <= 0) {
+        setTimeout(() => {
+          index = cardCount;
+          updateSlider(false);
+        }, 300);
       }
     };
 
-    window.onresize = updateSlider;
-    updateSlider();
+    // 3. Fallback for the snap
+    slider.addEventListener('transitionend', checkBounds);
+
+    window.addEventListener('resize', () => updateSlider(false));
+    updateSlider(false);
   }
 
   initCarousel();
