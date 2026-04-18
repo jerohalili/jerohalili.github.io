@@ -4,24 +4,40 @@
   id="theme-toggle" 
   type="button"
   aria-label="Toggle Dark Mode"
-  class="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 hover:border-orange-500/50 transition-colors pointer-events-auto"
+  class="group relative w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 hover:border-orange-500/50 hover:scale-110 active:scale-95 transition-all duration-300 overflow-hidden pointer-events-auto"
 >
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 block dark:hidden text-zinc-600 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    class="w-5 h-5 block dark:hidden text-zinc-600 rotate-0 group-hover:-rotate-12 transition-transform duration-500 pointer-events-none" 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+  >
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
   </svg>
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden dark:block text-orange-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    class="w-5 h-5 hidden dark:block text-orange-400 -rotate-90 group-hover:rotate-0 transition-transform duration-500 pointer-events-none" 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+  >
     <circle cx="12" cy="12" r="4" stroke-width="2" />
-    
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
       d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41" 
     />
   </svg>
+
+  <div class="absolute inset-0 bg-orange-500/0 dark:group-hover:bg-white/5 group-hover:bg-black/5 transition-colors duration-300"></div>
 </button>
 
 <script is:inline>
   function applyTheme() {
     const localStorageTheme = localStorage.getItem('theme');
-    if (localStorageTheme === 'dark' || (!localStorageTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (localStorageTheme === 'dark' || (!localStorageTheme && systemPrefersDark)) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -31,7 +47,7 @@
   function setupThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle');
     if (toggleBtn) {
-      // Your original "replaceWith" fix to prevent stacking
+      // Prevents event listener stacking during View Transition swaps
       const newBtn = toggleBtn.cloneNode(true);
       toggleBtn.replaceWith(newBtn);
       
@@ -42,11 +58,11 @@
     }
   }
 
-  // Run immediately
+  // Run on initial load
   applyTheme();
   setupThemeToggle();
 
-  // Re-run for View Transitions
+  // Re-run after Astro View Transitions swap
   document.addEventListener('astro:after-swap', () => {
     applyTheme();
     setupThemeToggle();
