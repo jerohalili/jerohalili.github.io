@@ -76,6 +76,13 @@ const stats = [
     @apply lg:border-orange-500 lg:shadow-orange-500/20;
     box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.4);
   }
+
+  /* Fix for blurry animation */
+  .animate-stable {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    will-change: transform;
+  }
 </style>
 
 <section class="relative w-full pt-32 pb-12 md:pt-40 md:pb-24 px-4 md:px-10 bg-transparent overflow-visible min-h-[85vh] flex flex-col justify-center">
@@ -117,7 +124,7 @@ const stats = [
         </p>
     </div>
 
-    <div class="lg:col-span-4 glass-card glow-border overflow-hidden relative group min-h-[450px] flex flex-col justify-end rounded-[2.5rem] md:rounded-[3.5rem]">
+    <a href={`${base}/about`} class="lg:col-span-4 glass-card glow-border overflow-hidden relative group min-h-[450px] flex flex-col justify-end rounded-[2.5rem] md:rounded-[3.5rem] block">
         <div class="absolute inset-0 z-0">
           <img src={`${base}/images/jero-portrait.png`} alt="Jero Halili" class="w-full h-full object-cover object-top transition-transform duration-1000 group-hover:scale-105" />
         </div>
@@ -126,7 +133,7 @@ const stats = [
           <div class="bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
               <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-orange-500">Jero Halili</p>
+                    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-orange-500">View Bio</p>
                     <div class="bg-orange-500 p-1.5 rounded-full shadow-lg">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M7 7l10 10M17 7H7v10"/></svg>
                     </div>
@@ -139,7 +146,7 @@ const stats = [
               </div>
           </div>
         </div>
-    </div>
+    </a>
 
     <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
         {stats.map((stat) => (
@@ -148,8 +155,9 @@ const stats = [
             <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors">{stat.val}</p>
         </div>
         ))}
-        <a href={`${base}/about`} class="bg-orange-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-all duration-500 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20">
-          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors">More info</p>
+        
+        <a href={`${base}/blogs`} class="animate-stable bg-orange-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-all duration-500 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20">
+          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors">My Blog</p>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-orange-500 mt-1 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <path d="M7 17l10-10M17 17V7H7"/>
           </svg>
