@@ -10,21 +10,16 @@ const stats = [
 ---
 
 <style>
-  /* 1. THE TOPOGRAPHIC SCENE */
   .hero-topo-container {
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    
-    /* HIDDEN BY DEFAULT (Mobile/Tablet) */
     display: none;
-    
     align-items: center;
     justify-content: center;
     transform: translateZ(0);
-    
     mask-image: 
       radial-gradient(circle at 40% 50%, black 15%, transparent 80%),
       linear-gradient(to bottom, black 70%, transparent 95%);
@@ -35,7 +30,6 @@ const stats = [
     -webkit-mask-composite: source-in;
   }
 
-  /* ONLY SHOW ON DESKTOP */
   @media (min-width: 1024px) {
     .hero-topo-container {
       display: flex;
@@ -74,25 +68,13 @@ const stats = [
     25%, 75% { stroke-dashoffset: 0; opacity: 0.8; }
   }
 
-  /* 2. WEAKER GLASS & OPAQUE CARDS */
   .glass-card {
     @apply bg-white/75 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl transition-all duration-500;
   }
 
-  /* 3. BORDER GLOW EFFECTS (Small Bentos Only) */
   .glow-border:hover {
     @apply lg:border-orange-500 lg:shadow-orange-500/20;
     box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.4);
-  }
-
-  /* 4. ENTRANCE ANIMATIONS */
-  .reveal-text {
-    opacity: 0;
-    animation: reveal-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  }
-  @keyframes reveal-up {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
   }
 </style>
 
@@ -124,13 +106,13 @@ const stats = [
   <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 w-full">
     
     <div class="lg:col-span-8 glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col justify-center">
-        <p class="reveal-text text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
+        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
           Computer Scientist · Full-Stack Developer · AI Engineer
         </p>
-        <h1 class="reveal-text text-5xl md:text-7xl xl:text-[90px] font-black tracking-tighter leading-[0.9] text-zinc-900 dark:text-white mb-8">
+        <h1 class="text-5xl md:text-7xl xl:text-[90px] font-black tracking-tighter leading-[0.9] text-zinc-900 dark:text-white mb-8">
           I BUILD SYSTEMS <br /> THAT <span class="text-orange-500 italic">SCALE & GROW</span>
         </h1>
-        <p class="reveal-text text-zinc-500 dark:text-zinc-300 text-lg md:text-xl max-w-xl leading-relaxed">
+        <p class="text-zinc-500 dark:text-zinc-300 text-lg md:text-xl max-w-xl leading-relaxed">
           Full-stack developer & AI automation engineer based in Angeles, Philippines.
         </p>
     </div>

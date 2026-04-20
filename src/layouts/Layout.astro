@@ -1,9 +1,9 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
 interface Props { title: string; }
 const { title } = Astro.props;
 
-// Change this to your actual domain
 const canonicalURL = new URL(Astro.url.pathname, 'https://jerohalili.github.io');
 const socialImageURL = new URL('/og-image.jpg', canonicalURL);
 ---
@@ -14,35 +14,36 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <ClientRouter />
         <title>{title}</title>
 
         <meta name="title" content={title} />
         <meta name="description" content="Portfolio of Jero Halili - Computer Scientist & Full-stack Developer" />
 
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalURL} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content="Check out my full-stack projects and AI workflows." />
-        <meta property="og:image" content={socialImageURL} />
-
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalURL} />
-        <meta property="twitter:title" content={title} />
-        <meta property="twitter:description" content="Check out my full-stack projects and AI workflows." />
-        <meta property="twitter:image" content={socialImageURL} />
-        <title>{title}</title>
-
         <script is:inline>
-            // Critical Theme Script (Prevents White Flash)
             const theme = (() => {
                 if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
                     return localStorage.getItem('theme');
                 }
                 return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             })();
-
             document.documentElement.classList[theme === 'dark' ? 'add' : 'remove']('dark');
         </script>
+
+        <style is:global>
+            .animate-in {
+                animation: fadeIn 0.8s ease-out forwards;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+        </style>
     </head>
     <body class="bg-[#FDFDFD] dark:bg-[#050505] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 antialiased selection:bg-orange-500/30 overflow-x-hidden">
         
@@ -52,56 +53,72 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         ></div>
         
         <Navbar />
-        <slot />
+        
+        <main id="main-content" class="animate-in">
+            <slot />
+        </main>
 
         <script is:inline>
             let blob;
             let curX = 0, curY = 0, tgX = 0, tgY = 0;
             let animationFrameId;
             
-            // Check if the device has a mouse
             const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
             function initBlob() {
                 blob = document.getElementById('cursor-blob');
-                
                 if (isTouchDevice) {
-                    // MOBILE BEHAVIOR: 
-                    // Instead of following, place it subtly in the top right and leave it.
                     if (blob) {
                         blob.style.opacity = "0.6";
                         blob.style.transform = `translate3d(calc(70vw - 150px), calc(20vh - 150px), 0)`;
                     }
-                    return; // Stop the follow logic for mobile
+                    return; 
                 }
-
-                // DESKTOP BEHAVIOR:
                 window.addEventListener('mousemove', (e) => {
                     tgX = e.clientX;
                     tgY = e.clientY;
                     if (blob) blob.style.opacity = "1";
                 });
-                
                 render();
             }
 
             function render() {
                 curX += (tgX - curX) * 0.03; 
                 curY += (tgY - curY) * 0.03;
-                
                 if (blob) {
-                    // Use 150 offset for mobile size, 300 for desktop
                     const offset = window.innerWidth < 640 ? 150 : 300;
                     blob.style.transform = `translate3d(${curX - offset}px, ${curY - offset}px, 0)`;
                 }
                 animationFrameId = requestAnimationFrame(render);
             }
 
+            // RE-TRIGGER ANIMATION ON ANCHOR CLICKS
+            function handleAnchorAnimation() {
+                const main = document.getElementById('main-content');
+                const links = document.querySelectorAll('a[href*="#"]');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (main) {
+                            // Briefly remove class to reset animation state
+                            main.classList.remove('animate-in');
+                            // Trigger reflow to ensure the browser notices the removal
+                            void main.offsetWidth; 
+                            // Re-add the class
+                            main.classList.add('animate-in');
+                        }
+                    });
+                });
+            }
+
+            // Initialize everything
             initBlob();
+            handleAnchorAnimation();
 
             document.addEventListener('astro:after-swap', () => {
                 cancelAnimationFrame(animationFrameId);
                 initBlob();
+                handleAnchorAnimation();
             });
         </script>
     </body>
