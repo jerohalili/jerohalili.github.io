@@ -3,7 +3,7 @@ export interface Project {
   tag: string;
   title: string;
   description: string;
-  slug: string; // Changed from 'link' to 'slug' for clarity
+  slug: string;
   isFlagship?: boolean;
   details: {
     subtitle: string;

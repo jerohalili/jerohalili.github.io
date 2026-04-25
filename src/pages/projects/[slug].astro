@@ -5,7 +5,6 @@ import Layout from '../../layouts/Layout.astro';
 export async function getStaticPaths() {
   const projectEntries = await getCollection('projects');
   return projectEntries.map(entry => ({
-    // This 'slug' must match the filename '[slug].astro'
     params: { slug: entry.id }, 
     props: { entry },
   }));

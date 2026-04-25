@@ -3,11 +3,9 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
-  // 1. MUST fetch from 'blog' collection, not 'projects'
   const blogEntries = await getCollection('blog');
   
   return blogEntries.map(entry => ({
-    // 2. The key MUST be 'slug' to match the filename [slug].astro
     params: { slug: entry.id }, 
     props: { entry },
   }));
