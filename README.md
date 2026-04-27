@@ -5,7 +5,7 @@
 ### **Computer Scientist • Full-Stack Developer • AI Engineer**
 **Turning workflows into code.** Modern portfolio showcasing full-stack development, database management, and AI automation projects with scalable, real-world impact.
 
-**Live Site:** [https://jerohalili.github.io/](https://jerohalili.github.io/)
+**Live Site:** [https://jerohalili.github.io/](https://jerohalili.is-a.dev)
 
 ---
 
