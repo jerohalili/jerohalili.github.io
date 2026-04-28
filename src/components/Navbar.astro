@@ -27,16 +27,18 @@ const navLinks = [
       ))}
     </div>
 
-    <div class="flex items-center gap-3 pr-2">
-      <button id="mobile-trigger" type="button" class="lg:hidden w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 dark:text-white pointer-events-auto">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="pointer-events-none"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-      </button>
-
+    <div class="flex items-center gap-2 md:gap-3 pr-2">
       <ThemeIcon />
       
       <a href={`${base}/contact`} class="hidden sm:block bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform">
         Let's Talk
       </a>
+
+      <button id="mobile-trigger" type="button" class="lg:hidden w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 dark:text-white pointer-events-auto">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="pointer-events-none">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
     </div>
   </nav>
 </header>
