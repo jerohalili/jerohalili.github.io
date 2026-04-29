@@ -90,3 +90,8 @@ Ready to own your infrastructure?
    git clone [https://github.com/jerohalili/Content-Creation-AI-Automation.git](https://github.com/jerohalili/Content-Creation-AI-Automation.git)
    cd Content-Creation-AI-Automation
    docker-compose up -d
+3. **Run ComfyUI:** Link the Custom Model Workflows API to n8n
+4. **Run AnythingLLM:** Link the Custom Model LLM API to n8n
+5. **Ready n8n:** Import then link the n8n Workflow to Telegram
+5. **Run n8n:** Customize the n8n Workflow with prompts and parameters
+6. **Use Telegram:** Publish the n8n Workflow and use online in Telegram
