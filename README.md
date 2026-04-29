@@ -34,21 +34,6 @@ A high-performance portfolio featuring a custom theme-memory system that default
 
 ---
 
-## Local Development
-To run this project locally, follow these commands:
-
-### Clone the repository
-git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://github.com/jerohalili/jerohalili.github.io.git)
-
-### Enter the directory
-cd jerohalili.github.io
-
-### Install dependencies
-npm install
-
-### Start the development server
-npm run dev
-
 ## Certifications & Experience
 
 * **AWS Academy Graduate** - Cloud Foundations (Feb 2026)
@@ -65,6 +50,21 @@ To set up the project locally, run the following commands:
 * cd jerohalili.github.io 
 * npm install 
 * npm run dev
+
+## Local Development
+To run this project locally, follow these commands:
+
+### Clone the repository
+git clone [https://github.com/jerohalili/jerohalili.github.io.git](https://github.com/jerohalili/jerohalili.github.io.git)
+
+### Enter the directory
+cd jerohalili.github.io
+
+### Install dependencies
+npm install
+
+### Start the development server
+npm run dev
 
 ## Connect With Me
 * **LinkedIn:** www.linkedin.com/in/jero-halili-bb385b295
