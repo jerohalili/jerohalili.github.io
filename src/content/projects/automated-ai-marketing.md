@@ -4,7 +4,7 @@ title: "Autonomous AI Marketing Engine"
 subtitle: "Local LLM Automation"
 description: "A private, zero-cost content pipeline leveraging local Llama 3.1 and Stable Diffusion to automate multi-channel marketing."
 tags: ["AI Automation", "Local LLMs", "n8n", "Docker"]
-image: "/images/projects/ai-marketing.jpg"
+image: "/images/projects/ai-marketing.png"
 impact: "Efficiency"
 isFlagship: true
 order: 1

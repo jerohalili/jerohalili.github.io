@@ -13,6 +13,10 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const imageSrc = entry.data.image && entry.data.image.startsWith('/') 
+  ? `${base}${entry.data.image}` 
+  : entry.data.image;
 ---
 
 <Layout title={`${entry.data.title} | Jero Halili`}>
@@ -36,8 +40,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     </header>
 
     {entry.data.image && (
-      <div class="w-full aspect-video bg-zinc-100 dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 mb-16 overflow-hidden flex items-center justify-center">
-         <img src={entry.data.image} alt={entry.data.title} class="w-full h-full object-cover" />
+      <div class="w-full aspect-video bg-zinc-100 dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 mb-16 overflow-hidden flex items-center justify-center shadow-xl">
+         <img src={imageSrc} alt={entry.data.title} class="w-full h-full object-cover" />
       </div>
     )}
 

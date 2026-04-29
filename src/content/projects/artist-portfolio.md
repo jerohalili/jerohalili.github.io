@@ -4,7 +4,7 @@ title: "Minimalist Artist Showcase"
 subtitle: "High-Performance Portfolio"
 description: "A speed-optimized, image-heavy portfolio for visual artists featuring seamless page transitions and zero-flicker navigation."
 tags: ["Astro", "Framer Motion", "Tailwind", "UI/UX"]
-image: "/images/projects/artist-portfolio.jpg"
+image: "/images/projects/artist-portfolio.png"
 impact: "Visuals"
 isFlagship: false
 order: 3

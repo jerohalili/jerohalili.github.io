@@ -3,29 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-
-// Fetch all projects from the content collection
 const allProjects = await getCollection('projects');
-
-// Sort projects by the 'order' field defined in Markdown frontmatter
 const sortedProjects = allProjects.sort((a, b) => a.data.order - b.data.order);
 
 const labs = [
-  { 
-    title: "Custom CSS Grid Engine", 
-    tech: "TypeScript", 
-    desc: "A lightweight utility for generating dynamic layouts with zero runtime overhead." 
-  },
-  { 
-    title: "Local LLM Wrapper", 
-    tech: "Python", 
-    desc: "FastAPI bridge for local LLaMA inference, optimized for low-latency n8n calls." 
-  },
-  { 
-    title: "Tailwind Component Kit", 
-    tech: "Astro", 
-    desc: "Internal design system for rapid prototyping with glassmorphism and motion defaults." 
-  },
+  { title: "Custom CSS Grid Engine", tech: "TypeScript", desc: "A lightweight utility for generating dynamic layouts with zero runtime overhead." },
+  { title: "Local LLM Wrapper", tech: "Python", desc: "FastAPI bridge for local LLaMA inference, optimized for low-latency n8n calls." },
+  { title: "Tailwind Component Kit", tech: "Astro", desc: "Internal design system for rapid prototyping with glassmorphism and motion defaults." },
 ];
 ---
 
@@ -49,7 +33,6 @@ const labs = [
         <div class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 md:p-10 overflow-hidden transition-all duration-500 hover:border-orange-500/40 shadow-sm">
           
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10 items-stretch">
-            {/* Project Content */}
             <div class="lg:col-span-7 flex flex-col justify-center items-start space-y-6">
               <div class="space-y-4">
                 <div class="flex items-center gap-3">
@@ -57,9 +40,7 @@ const labs = [
                     {project.data.subtitle}
                   </span>
                   {project.data.isFlagship && (
-                    <span class="text-[9px] font-normal uppercase text-zinc-400 tracking-widest">
-                      Main Focus
-                    </span>
+                    <span class="text-[9px] font-normal uppercase text-zinc-400 tracking-widest">Main Focus</span>
                   )}
                 </div>
                 
@@ -72,27 +53,28 @@ const labs = [
                 </p>
               </div>
 
-              {/* Link uses project.id which corresponds to the [slug].astro parameter */}
               <a 
                 href={`${base}/projects/${project.id}`} 
                 class="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-orange-500 hover:text-white transition-all transform active:scale-95 flex items-center gap-3"
               >
                 Full Case Study
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <path d="M5 12h14m-7-7 7 7-7 7"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
               </a>
             </div>
 
-            {/* Visual Representation (ID Background) */}
-            <div class="lg:col-span-5 min-h-[240px] flex items-center justify-center bg-zinc-50 dark:bg-zinc-800/30 rounded-[1.5rem] border border-zinc-100 dark:border-zinc-800 overflow-hidden relative">
-              <span class="text-8xl font-black italic text-zinc-200 dark:text-zinc-700/10 select-none group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700">
-                {project.data.id}
-              </span>
+            {/* Visual Container: Clean Image, No Placeholders */}
+            <div class="lg:col-span-5 min-h-[280px] bg-zinc-100 dark:bg-zinc-800 rounded-[1.5rem] border border-zinc-100 dark:border-zinc-800 overflow-hidden relative shadow-inner">
+              {project.data.image && (
+                <img 
+                  src={`${base}${project.data.image}`} 
+                  alt={project.data.title} 
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              )}
               
-              <div class="absolute bottom-4 right-4 flex gap-1.5">
+              <div class="absolute bottom-4 right-4 flex gap-1.5 z-20">
                 {project.data.tags.slice(0,3).map(tech => (
-                   <span class="px-2.5 py-1 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md rounded-full text-[8px] font-bold uppercase text-zinc-600 dark:text-zinc-300 border border-zinc-200/50 dark:border-white/5">
+                   <span class="px-2.5 py-1 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-full text-[8px] font-bold uppercase text-zinc-800 dark:text-zinc-200 border border-zinc-200/50 dark:border-white/5 shadow-sm">
                      {tech}
                    </span>
                 ))}
@@ -103,29 +85,18 @@ const labs = [
       ))}
     </div>
 
-    {/* The Lab - Small Experiments */}
     <section class="border-t border-zinc-200 dark:border-zinc-800 pt-16">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-        <h2 class="text-3xl font-black uppercase tracking-tighter dark:text-white italic">
-          The Lab
-        </h2>
-        <p class="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
-          Experimental Snippets & Tools
-        </p>
+        <h2 class="text-3xl font-black uppercase tracking-tighter dark:text-white italic">The Lab</h2>
+        <p class="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">Experimental Snippets & Tools</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         {labs.map(lab => (
           <div class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/30 transition-all group">
-            <span class="text-[9px] font-mono text-orange-500 font-bold uppercase">
-              {lab.tech}
-            </span>
-            <h3 class="text-lg font-bold dark:text-white mt-1 mb-2 uppercase tracking-tight">
-              {lab.title}
-            </h3>
-            <p class="text-zinc-600 dark:text-zinc-400 text-[13px] leading-relaxed">
-              {lab.desc}
-            </p>
+            <span class="text-[9px] font-mono text-orange-500 font-bold uppercase">{lab.tech}</span>
+            <h3 class="text-lg font-bold dark:text-white mt-1 mb-2 uppercase tracking-tight">{lab.title}</h3>
+            <p class="text-zinc-600 dark:text-zinc-400 text-[13px] leading-relaxed">{lab.desc}</p>
           </div>
         ))}
       </div>

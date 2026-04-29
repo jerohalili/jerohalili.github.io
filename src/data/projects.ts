@@ -26,7 +26,7 @@ export const featuredProjects: Project[] = [
     details: {
       subtitle: "Local AI Content Engine",
       tags: ["AI Automation", "LLM", "n8n", "ComfyUI"],
-      image: "/images/ai-marketing-hero.jpg",
+      image: "/images/projects/ai-marketing.png",
       challenge: "Marketing teams face a content treadmill. I needed a system that was free, private, and fully autonomous.",
       architecture: ["Meta-Llama-3.1-8B via LM Studio", "n8n via Docker", "ComfyUI", "Ngrok"],
       features: ["Daily Tech Scraper", "Llama 3.1 Copywriting", "Stable Diffusion Visuals", "Auto-push to LinkedIn/IG"]
@@ -35,13 +35,13 @@ export const featuredProjects: Project[] = [
   {
     id: "02",
     tag: "Management System",
-    title: "School Org System",
+    title: "School Management System",
     description: "Administrative dashboard for managing student organizations and events.",
-    slug: "school-org-system",
+    slug: "school-management-system",
     details: {
       subtitle: "Management System",
       tags: ["Next.js", "PostgreSQL", "Prisma", "Auth.js"],
-      image: "/images/school-system-hero.jpg",
+      image: "/images/projects/school-management.png",
       challenge: "Student organizations struggle with fragmented communication and paper-heavy approval processes.",
       architecture: ["PostgreSQL on Supabase", "Next.js Server Actions", "Role-based Access Control", "Shadcn UI"],
       features: ["Digital Workflow Engine", "Instant Admin Notifications", "Auto-updating Public Calendar"]
@@ -56,7 +56,7 @@ export const featuredProjects: Project[] = [
     details: {
       subtitle: "Creative Showcase",
       tags: ["Astro", "Framer Motion", "Tailwind", "Vercel"],
-      image: "/images/artist-portfolio-hero.jpg",
+      image: "/images/projects/artist-portfolio.png",
       challenge: "Visual artists need a digital space that doesn't distract from their work.",
       architecture: ["Astro Static Generation", "Framer Motion Transitions", "Tailwind CSS", "Cloudinary Optimization"],
       features: ["Immersive Masonry Galleries", "Zero-flicker Navigation", "Color-accurate Dark Mode"]

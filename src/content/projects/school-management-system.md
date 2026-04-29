@@ -4,7 +4,7 @@ title: "Academic Governance Portal"
 subtitle: "Full-Stack Management"
 description: "A centralized administrative dashboard for student organizations to manage digital approvals, event tracking, and member databases."
 tags: ["Next.js", "PostgreSQL", "Prisma", "RBAC"]
-image: "/images/projects/school-org.jpg"
+image: "/images/projects/school-management.png"
 impact: "Governance"
 isFlagship: false
 order: 2

@@ -19,21 +19,10 @@ const secondaries = featuredProjects.filter(p => !p.isFlagship);
         href={`${base}/projects`} 
         class="bg-orange-500 px-8 py-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-zinc-900 dark:hover:bg-white transition-all duration-500 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20"
       >
-        <div class="flex flex-col items-start">
-          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-white dark:group-hover:text-orange-500 transition-colors">
-            All Projects
-          </p>
-        </div>
-        
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="22" height="22" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="3" 
-          class="text-white group-hover:text-white dark:group-hover:text-orange-500 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-        >
+        <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-white dark:group-hover:text-orange-500 transition-colors">
+          All Projects
+        </p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-white dark:group-hover:text-orange-500 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
           <path d="M7 17l10-10M17 17V7H7"/>
         </svg>
       </a>
@@ -48,8 +37,8 @@ const secondaries = featuredProjects.filter(p => !p.isFlagship);
             <p class="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed max-w-md">{flagship.description}</p>
           </div>
           
-          <div class="relative mt-8 bg-zinc-50 dark:bg-zinc-800/50 rounded-[2rem] flex-1 flex items-center justify-center overflow-hidden border border-zinc-100 dark:border-zinc-800">
-             <span class="text-9xl font-black text-zinc-200 dark:text-zinc-700/10 italic uppercase tracking-tighter group-hover:scale-110 transition-transform duration-700">{flagship.id}</span>
+          <div class="relative mt-8 bg-zinc-100 dark:bg-zinc-800 rounded-[2rem] flex-1 overflow-hidden border border-zinc-100 dark:border-zinc-800">
+              <img src={`${base}${flagship.details.image}`} alt={flagship.title} class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
           </div>
           
           <div class="pt-6">
@@ -65,8 +54,8 @@ const secondaries = featuredProjects.filter(p => !p.isFlagship);
         {secondaries.map((project) => (
           <div class="flex-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 md:p-10 flex flex-col justify-center group hover:border-orange-500/50 transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center gap-8">
-              <div class="relative w-full md:w-44 bg-zinc-50 dark:bg-zinc-800/50 rounded-[1.5rem] aspect-square flex items-center justify-center shrink-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden">
-                <span class="text-6xl font-black italic text-zinc-200 dark:text-zinc-700/20 group-hover:scale-110 transition-transform duration-500">{project.id}</span>
+              <div class="relative w-full md:w-44 bg-zinc-100 dark:bg-zinc-800 rounded-[1.5rem] aspect-square shrink-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+                <img src={`${base}${project.details.image}`} alt={project.title} class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               </div>
               
               <div class="flex flex-col justify-center space-y-4">
