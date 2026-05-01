@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
+import Contact from '../components/Contact.astro';
 interface Props { title: string; }
 const { title } = Astro.props;
 
@@ -57,6 +58,8 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         <main id="main-content" class="animate-in">
             <slot />
         </main>
+
+        <Contact />
 
         <script is:inline>
             let blob;

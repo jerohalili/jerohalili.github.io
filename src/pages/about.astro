@@ -3,6 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import SkillsConstellation from '../components/SkillsConstellation.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+const socialLinks = [
+  { name: 'GitHub', url: 'https://github.com/jerohalili' },
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/jero-halili-bb385b295' },
+  { name: 'Hugging Face', url: 'https://huggingface.co/jerohalili' },
+];
+
 const journey = [
   { year: "2022", title: "Started CS degree", desc: "From curious student, immediately drawn to databases, systems thinking, and scale." },
   { year: "2023", title: "First real project shipped", desc: "Built Artist Portfolio. Learned that building for someone's livelihood is a different responsibility." },
@@ -33,7 +39,7 @@ const journey = [
       </div>
 
       <div class="lg:col-span-5">
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 md:p-10 sticky top-32">
+        <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 md:p-10 sticky top-32 shadow-2xl shadow-orange-500/5">
           <div class="space-y-8">
             <div class="flex justify-between items-start">
               <div>
@@ -41,19 +47,44 @@ const journey = [
                 <p class="text-orange-500 font-mono text-xs font-bold uppercase tracking-widest">Angeles, Philippines · Remote</p>
               </div>
             </div>
+            
             <div class="flex flex-wrap gap-2">
               {["Full-Stack Dev", "AI Automation", "Database Arch.", "SaaS Builder", "Marketing Tech", "UI Design"].map(tag => (
                 <span class="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 rounded-full text-[10px] font-bold uppercase">{tag}</span>
               ))}
             </div>
+
             <div class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
               <div class="flex gap-4 items-center text-sm font-medium">
-                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                 <span class="dark:text-zinc-300 font-bold uppercase tracking-tighter">Dean's List — Academic Honors</span>
               </div>
               <div class="flex gap-4 items-center text-sm font-medium">
                 <span class="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
                 <span class="dark:text-zinc-300 font-bold uppercase tracking-tighter">BS Computer Science — In Progress</span>
+              </div>
+            </div>
+
+            {/* Optimized Compact Social Links */}
+            <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 mb-4">My Socials</p>
+              <div class="grid grid-cols-1 gap-2">
+                {socialLinks.map(link => (
+                  <a 
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="flex justify-between items-center px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 hover:bg-orange-500 dark:hover:bg-orange-500 hover:border-orange-500 transition-all duration-200 group"
+                  >
+                    <span class="text-xs font-bold uppercase tracking-widest dark:text-white group-hover:text-white transition-colors">{link.name}</span>
+                    <div class="p-1 rounded-md transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400 group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                      </svg>
+                    </div>
+                  </a>
+                ))}
               </div>
             </div>
           </div>
@@ -70,7 +101,7 @@ const journey = [
       <h2 class="text-4xl font-black uppercase tracking-tighter mb-12 dark:text-white italic underline decoration-orange-500 underline-offset-8">The Journey</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {journey.map(item => (
-          <div class="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-900/50 transition-all group">
+          <div class="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/50 transition-all group">
             <span class="text-4xl font-black text-zinc-600 dark:text-zinc-400 group-hover:text-orange-500 transition-colors">{item.year}</span>
             <h3 class="text-xl font-bold dark:text-white mt-4 mb-2 uppercase tracking-tight leading-tight">{item.title}</h3>
             <p class="text-zinc-800 dark:text-zinc-200 text-sm leading-relaxed">{item.desc}</p>
