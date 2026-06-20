@@ -41,7 +41,7 @@ export const featuredProjects: Project[] = [
     details: {
       subtitle: "Management System",
       tags: ["Next.js", "PostgreSQL", "Prisma", "Auth.js"],
-      image: "/images/projects/school-management.png",
+      image: "/images/projects/pbsi-platform.png",
       challenge: "Student organizations struggle with fragmented communication and paper-heavy approval processes.",
       architecture: ["PostgreSQL on Supabase", "Next.js Server Actions", "Role-based Access Control", "Shadcn UI"],
       features: ["Digital Workflow Engine", "Instant Admin Notifications", "Auto-updating Public Calendar"]
@@ -56,7 +56,7 @@ export const featuredProjects: Project[] = [
     details: {
       subtitle: "Creative Showcase",
       tags: ["Astro", "Framer Motion", "Tailwind", "Vercel"],
-      image: "/images/projects/artist-portfolio.png",
+      image: "/images/projects/jkisinamal-portfolio.png",
       challenge: "Visual artists need a digital space that doesn't distract from their work.",
       architecture: ["Astro Static Generation", "Framer Motion Transitions", "Tailwind CSS", "Cloudinary Optimization"],
       features: ["Immersive Masonry Galleries", "Zero-flicker Navigation", "Color-accurate Dark Mode"]
