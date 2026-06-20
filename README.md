@@ -1,6 +1,6 @@
 # Jero Halili | Portfolio
 
-![Jero Halili Portfolio Header](./public/og-image.jpg)
+![Jero Halili Portfolio Header](./public/og-image.png)
 
 ## Short Introduction
 
