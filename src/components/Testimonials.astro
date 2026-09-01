@@ -1,21 +1,23 @@
 ---
-import { testimonials } from '../data/testimonials';
+import { getCollection } from 'astro:content';
+const allTestimonials = await getCollection('testimonials');
+const testimonials = allTestimonials.sort((a, b) => a.data.order - b.data.order);
 ---
 
 <section id="testimonials" class="w-full px-4 md:px-10 py-24 transition-colors duration-500 overflow-hidden relative">
   <div class="max-w-[1400px] mx-auto relative z-10">
     
-    <div class="flex justify-between items-end mb-12 border-b border-zinc-200 dark:border-zinc-800 pb-8">
+    <div data-reveal class="flex justify-between items-end mb-12 border-b border-zinc-200 dark:border-zinc-800 pb-8">
       <div class="space-y-2">
         <h2 class="text-4xl md:text-5xl font-black tracking-tighter dark:text-white uppercase italic">Client Voice</h2>
         <p class="text-zinc-700 dark:text-zinc-300 text-sm font-medium">Real feedback from automated workflows and digital systems.</p>
       </div>
       
       <div class="flex gap-2">
-        <button id="prev-test" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous">
+        <button id="prev-test" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
-        <button id="next-test" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next">
+        <button id="next-test" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
         </button>
       </div>
@@ -24,21 +26,21 @@ import { testimonials } from '../data/testimonials';
     <div class="relative w-full overflow-hidden">
       <div id="testimonial-slider" class="flex gap-6 will-change-transform">
         {testimonials.map((t) => (
-          <div class="testimonial-card min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-orange-500/50 transition-all shadow-sm">
+          <div class="testimonial-card min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-orange-500/50 transition-colors duration-300 shadow-sm">
             <div>
               <div class="text-orange-500 mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="opacity-20 group-hover:opacity-40 transition-opacity"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H16.017C15.4647 8 15.017 8.44772 15.017 9V12C15.017 12.5523 14.5693 13 14.017 13H13.017V21H14.017ZM6.017 21L6.017 18C6.017 16.8954 6.91243 16 8.017 16H11.017C11.5693 16 12.017 15.5523 12.017 15V9C12.017 8.44772 11.5693 8 11.017 8H8.017C7.46472 8 7.017 8.44772 7.017 9V12C7.017 12.5523 6.5693 13 6.017 13H5.017V21H6.017Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="opacity-20 group-hover:opacity-40 transition-opacity duration-300"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H16.017C15.4647 8 15.017 8.44772 15.017 9V12C15.017 12.5523 14.5693 13 14.017 13H13.017V21H14.017ZM6.017 21L6.017 18C6.017 16.8954 6.91243 16 8.017 16H11.017C11.5693 16 12.017 15.5523 12.017 15V9C12.017 8.44772 11.5693 8 11.017 8H8.017C7.46472 8 7.017 8.44772 7.017 9V12C7.017 12.5523 6.5693 13 6.017 13H5.017V21H6.017Z"/></svg>
               </div>
-              <p class="text-zinc-600 dark:text-zinc-300 text-lg italic leading-relaxed mb-8">"{t.quote}"</p>
+              <p class="text-zinc-600 dark:text-zinc-300 text-lg italic leading-relaxed mb-8">"{t.data.quote}"</p>
             </div>
             
             <div class="flex items-center gap-4 border-t border-zinc-100 dark:border-zinc-800 pt-6">
               <div class="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-orange-500/10">
-                {t.author[0]}
+                {t.data.author[0]}
               </div>
               <div>
-                <h4 class="font-bold text-zinc-900 dark:text-white leading-none">{t.author}</h4>
-                <p class="text-xs text-orange-500 font-mono mt-1 uppercase tracking-tighter font-bold">{t.role}</p>
+                <h4 class="font-bold text-zinc-900 dark:text-white leading-none">{t.data.author}</h4>
+                <p class="text-xs text-orange-500 font-mono mt-1 uppercase tracking-tighter font-bold">{t.data.role}</p>
               </div>
             </div>
           </div>
@@ -60,7 +62,6 @@ import { testimonials } from '../data/testimonials';
     const cardCount = originalCards.length;
     if (cardCount === 0) return;
 
-    // 1. Build a HUGE buffer (7 sets) so you can spam-click like a maniac WAHAHAHA
     slider.innerHTML = '';
     for (let i = 0; i < 7; i++) {
       originalCards.forEach(card => {
@@ -70,7 +71,6 @@ import { testimonials } from '../data/testimonials';
       });
     }
 
-    // Start in the center set (index = cardCount * 3)
     let index = cardCount * 3;
     
     const updateSlider = (smooth = true) => {
@@ -83,15 +83,10 @@ import { testimonials } from '../data/testimonials';
       slider.style.transform = `translateX(-${index * (cardWidth + gap)}px)`;
     };
 
-    // 2. The Proactive Reset
-    // Instead of waiting for the animation to end, we check bounds on EVERY CLICK
     const ensureSafeBounds = () => {
-      // If we are getting too close to either end (within 1 set of the edge)
       if (index >= cardCount * 5 || index <= cardCount) {
-        // Jump back to the center set instantly
         index = cardCount * 3 + (index % cardCount);
         updateSlider(false);
-        // Force reflow
         void slider.offsetWidth;
       }
     };

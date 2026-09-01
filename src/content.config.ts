@@ -29,4 +29,27 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { projects, blog };
+const services = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: "./src/content/services" }),
+  schema: z.object({
+    titleTop: z.string(),
+    titleBottom: z.string(),
+    description: z.string(),
+    features: z.array(z.string()),
+    isFeatured: z.boolean().default(false),
+    iconPath: z.string(),
+    order: z.number().default(99),
+  }),
+});
+
+const testimonials = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: "./src/content/testimonials" }),
+  schema: z.object({
+    quote: z.string(),
+    author: z.string(),
+    role: z.string(),
+    order: z.number().default(99),
+  }),
+});
+
+export const collections = { projects, blog, services, testimonials };

@@ -18,12 +18,15 @@
   }
 }
 
-.bento-card {
-  @apply bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 backdrop-blur-md transition-all duration-500;
-}
+@layer components {
+  .bento-card {
+    @apply bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 backdrop-blur-md;
+    transition: transform 300ms, border-color 300ms, box-shadow 300ms;
+  }
 
-.bento-card:hover {
-  @apply -translate-y-1 border-orange-500/30 shadow-2xl shadow-orange-500/10;
+  .bento-card:hover {
+    @apply -translate-y-1 border-orange-500/30 shadow-2xl shadow-orange-500/10;
+  }
 }
 
 @keyframes marquee {

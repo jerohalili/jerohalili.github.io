@@ -4,6 +4,20 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      maxWidth: {
+        'site': '1400px',
+      },
+      borderRadius: {
+        'card': '2.5rem',
+        'card-lg': '3.5rem',
+        'pill': '9999px',
+      },
+      colors: {
+        accent: {
+          DEFAULT: '#f97316',
+          dark: '#ea580c',
+        },
+      },
       animation: {
         'marquee': 'marquee 30s linear infinite',
       },

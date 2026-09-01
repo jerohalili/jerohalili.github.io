@@ -16,7 +16,7 @@ const labs = [
 <Layout title="Projects | Jero Halili">
   <main class="pt-32 pb-24 px-4 md:px-10 max-w-[1200px] mx-auto">
     
-    <header class="mb-16 space-y-4">
+    <header data-reveal class="mb-16 space-y-4">
       <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] dark:text-white italic">
         The Projects<br/> 
         <span class="text-orange-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">
@@ -29,8 +29,8 @@ const labs = [
     </header>
 
     <div class="space-y-6 mb-32">
-      {sortedProjects.map((project) => (
-        <div class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 md:p-10 overflow-hidden transition-all duration-500 hover:border-orange-500/40 shadow-sm">
+      {sortedProjects.map((project, i) => (
+        <div data-tilt data-reveal data-reveal-delay={i * 100} class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 md:p-10 overflow-hidden transition-colors duration-300 hover:border-orange-500/40 shadow-sm">
           
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10 items-stretch">
             <div class="lg:col-span-7 flex flex-col justify-center items-start space-y-6">
@@ -55,7 +55,8 @@ const labs = [
 
               <a 
                 href={`${base}/projects/${project.id}`} 
-                class="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-orange-500 hover:text-white transition-all transform active:scale-95 flex items-center gap-3"
+                data-magnetic="0.2"
+                class="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-orange-500 hover:text-white transition-colors duration-300 transform active:scale-95 flex items-center gap-3"
               >
                 Full Case Study
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
@@ -68,7 +69,9 @@ const labs = [
                 <img 
                   src={`${base}${project.data.image}`} 
                   alt={project.data.title} 
-                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                 />
               )}
               
@@ -92,8 +95,8 @@ const labs = [
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {labs.map(lab => (
-          <div class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/30 transition-all group">
+        {labs.map((lab, i) => (
+          <div data-tilt data-reveal data-reveal-delay={i * 80} class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/30 transition-colors duration-300 group">
             <span class="text-[9px] font-mono text-orange-500 font-bold uppercase">{lab.tech}</span>
             <h3 class="text-lg font-bold dark:text-white mt-1 mb-2 uppercase tracking-tight">{lab.title}</h3>
             <p class="text-zinc-600 dark:text-zinc-400 text-[13px] leading-relaxed">{lab.desc}</p>

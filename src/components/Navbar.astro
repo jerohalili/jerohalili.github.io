@@ -5,8 +5,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const navLinks = [
   { name: 'Projects', href: `${base}/projects` },
-  { name: 'Services', href: `${base}/#services` },
-  { name: 'Testimonials', href: `${base}/#testimonials` },
   { name: 'About', href: `${base}/about` },
   { name: 'Blogs', href: `${base}/blogs` },
 ];
@@ -20,8 +18,11 @@ const navLinks = [
     </a>
 
     <div class="hidden lg:flex items-center gap-1">
+      <a href={`${base}/`} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-orange-500 transition-colors duration-300">
+        Home
+      </a>
       {navLinks.map((link) => (
-        <a href={link.href} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-orange-500 transition-all">
+        <a href={link.href} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-orange-500 transition-colors duration-300">
           {link.name}
         </a>
       ))}
@@ -30,7 +31,7 @@ const navLinks = [
     <div class="flex items-center gap-2 md:gap-3 pr-2">
       <ThemeIcon />
       
-      <a href={`${base}/contact`} class="hidden sm:block bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform">
+      <a href={`${base}/contact`} data-magnetic="0.2" class="hidden sm:block bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform duration-300">
         Let's Talk
       </a>
 
@@ -45,7 +46,7 @@ const navLinks = [
 
 <MobileMenu links={navLinks} />
 
-<script is:inline>
+<script>
   function setupNavbar() {
     const trigger = document.getElementById('mobile-trigger');
     if (trigger) {

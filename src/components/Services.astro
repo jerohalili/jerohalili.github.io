@@ -1,11 +1,13 @@
 ---
-import { services } from '../data/services';
+import { getCollection } from 'astro:content';
+const allServices = await getCollection('services');
+const services = allServices.sort((a, b) => a.data.order - b.data.order);
 ---
 
 <section id="services" class="w-full px-4 md:px-10 py-24 bg-white/50 dark:bg-[#050505]/50 backdrop-blur-md transition-colors duration-500">
   <div class="max-w-[1400px] mx-auto">
     
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-4">
+    <div data-reveal class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-4">
       <div class="space-y-2">
         <h2 class="text-4xl md:text-6xl font-black tracking-tighter dark:text-white uppercase">Services</h2>
         <p class="text-zinc-700 dark:text-zinc-300 max-w-md">Bridging the gap between complex engineering and conversion-led design.</p>
@@ -13,15 +15,15 @@ import { services } from '../data/services';
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {services.map((service) => (
-        <div class={`group p-8 md:p-10 rounded-[2.5rem] transition-all duration-500 ${
-          service.isFeatured 
+      {services.map((service, i) => (
+        <div data-reveal data-reveal-delay={i * 100} data-tilt class={`group p-8 md:p-10 rounded-[2.5rem] transition-colors duration-300 ${
+          service.data.isFeatured 
           ? 'bg-orange-500 border border-orange-600 dark:border-orange-400 shadow-2xl shadow-orange-500/20' 
           : 'bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800'
         }`}>
           
           <div class={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-125 ${
-            service.isFeatured 
+            service.data.isFeatured 
             ? 'bg-white dark:bg-zinc-900 group-hover:-rotate-12' 
             : 'bg-orange-500 shadow-lg shadow-orange-500/20 group-hover:rotate-12'
           }`}>
@@ -33,33 +35,32 @@ import { services } from '../data/services';
               fill="none" 
               stroke="currentColor" 
               stroke-width="2.5"
-              class={service.isFeatured ? 'stroke-orange-500 dark:stroke-white' : 'stroke-white'}
+              class={service.data.isFeatured ? 'stroke-orange-500 dark:stroke-white' : 'stroke-white'}
             >
-              {/* Special case for the Product icon which has a circle */}
-              {service.titleTop === "Product" && <circle cx="12" cy="12" r="10"/>}
-              <path d={service.iconPath} />
+              {service.data.titleTop === "Product" && <circle cx="12" cy="12" r="10"/>}
+              <path d={service.data.iconPath} />
             </svg>
           </div>
 
           <h3 class={`text-3xl font-black tracking-tighter mb-4 uppercase leading-[0.9] ${
-            service.isFeatured ? 'text-white' : 'dark:text-white'
+            service.data.isFeatured ? 'text-white' : 'dark:text-white'
           }`}>
-            {service.titleTop} <br/> {service.titleBottom}
+            {service.data.titleTop} <br/> {service.data.titleBottom}
           </h3>
 
           <p class={`mb-8 leading-relaxed ${
-            service.isFeatured ? 'text-orange-50 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'
+            service.data.isFeatured ? 'text-orange-50 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'
           }`}>
-            {service.description}
+            {service.data.description}
           </p>
 
           <ul class="space-y-3">
-            {service.features.map(item => (
+            {service.data.features.map(item => (
               <li class={`flex items-center gap-3 text-sm font-bold ${
-                service.isFeatured ? 'text-white' : 'dark:text-zinc-300'
+                service.data.isFeatured ? 'text-white' : 'dark:text-zinc-300'
               }`}>
                 <span class={`w-1.5 h-1.5 rounded-full ${
-                  service.isFeatured ? 'bg-white' : 'bg-orange-500'
+                  service.data.isFeatured ? 'bg-white' : 'bg-orange-500'
                 }`}></span> 
                 {item}
               </li>

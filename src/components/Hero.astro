@@ -10,66 +10,34 @@ const stats = [
 ---
 
 <style>
-  .hero-topo-container {
+  .hero-canvas-wrap {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    transform: translateZ(0);
-    mask-image: 
-      radial-gradient(circle at 40% 50%, black 10%, transparent 70%),
-      linear-gradient(to bottom, black 60%, transparent 90%);
-    -webkit-mask-image: 
-      radial-gradient(circle at 40% 50%, black 10%, transparent 70%),
-      linear-gradient(to bottom, black 60%, transparent 90%);
-    mask-composite: intersect;
-    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+
+  .hero-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   @media (min-width: 1024px) {
-    .hero-topo-container {
-      display: flex;
+    .hero-canvas-wrap {
+      pointer-events: auto;
     }
   }
 
-  .topo-svg {
-    width: 150%;
-    height: 150%;
-    opacity: 0.35;
-    flex-shrink: 0;
-    backface-visibility: hidden;
-  }
-
-  .topo-shape {
-    fill: none;
-    stroke: #f97316;
-    stroke-width: 2.5;
-    vector-effect: non-scaling-stroke;
-    stroke-linecap: round;
-    stroke-dasharray: 1000; 
-    stroke-dashoffset: 1000;
-    will-change: transform, stroke-dashoffset, opacity;
-    animation: 
-      topo-drift 55s ease-in-out infinite alternate,
-      pulse-draw 18s ease-in-out infinite;
-  }
-
-  @keyframes topo-drift {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(-50px, 40px) rotate(3deg); }
-  }
-
-  @keyframes pulse-draw {
-    0%, 10%, 90%, 100% { stroke-dashoffset: 2500; opacity: 0; }
-    25%, 75% { stroke-dashoffset: 0; opacity: 0.8; }
-  }
-
   .glass-card {
-    @apply bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl transition-all duration-500;
+    @apply bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl;
+    transition: border-color 300ms, box-shadow 300ms;
   }
 
   .glow-border:hover {
@@ -86,33 +54,14 @@ const stats = [
 
 <section class="relative w-full pt-32 pb-12 md:pt-40 md:pb-24 px-4 md:px-10 bg-transparent overflow-visible min-h-[85vh] flex flex-col justify-center">
   
-  <div class="hero-topo-container">
-    <svg class="topo-svg" viewBox="0 0 1000 1000">
-      <defs>
-        <filter id="organic-warp">
-          <feTurbulence type="fractalNoise" baseFrequency="0.007" numOctaves="2" seed="123" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="220" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </defs>
-      <g filter="url(#organic-warp)">
-        {[ {x: 200, y: 400}, {x: 450, y: 300}, {x: 350, y: 700} ].map((pos, peakIndex) => (
-          [...Array(3)].map((_, ringIndex) => (
-            <ellipse 
-              class="topo-shape" cx={pos.x} cy={pos.y} rx={100 + (ringIndex * 120)} ry={80 + (ringIndex * 90)}
-              style={`animation-delay: ${(peakIndex + ringIndex) * -4}s;`}
-            />
-          ))
-        ))}
-        <path class="topo-shape" d="M -200,500 C 100,200 600,800 1200,500" style="animation-delay: -9s; opacity: 0.5;" />
-        <path class="topo-shape" d="M -200,300 Q 400,600 1200,200" style="animation-delay: -15s; opacity: 0.5;" />
-      </g>
-    </svg>
+  <div class="hero-canvas-wrap">
+    <canvas id="hero-constellation"></canvas>
   </div>
 
   <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 w-full">
     
-    <div class="lg:col-span-8 glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col justify-center">
-        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
+    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col justify-center group/card hover:border-orange-500/30 hover:shadow-orange-500/10">
+        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4 transition-transform duration-300 group-hover/card:translate-x-1">
           Computer Scientist · Full-Stack Developer · AI Engineer
         </p>
         <h1 class="text-5xl md:text-7xl xl:text-[90px] font-black tracking-tighter leading-[0.9] text-zinc-900 dark:text-white mb-8">
@@ -123,22 +72,29 @@ const stats = [
         </p>
     </div>
 
-    <a href={`${base}/about`} class="lg:col-span-4 glass-card glow-border overflow-hidden relative group min-h-[450px] flex flex-col justify-end rounded-[2.5rem] md:rounded-[3.5rem]">
-        <div class="absolute inset-0 z-0">
+    <a href={`${base}/about`} data-reveal data-tilt class="lg:col-span-4 glass-card glow-border overflow-visible relative group min-h-[450px] flex flex-col justify-end rounded-[2.5rem] md:rounded-[3.5rem]">
+        <div class="absolute inset-0 z-0 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
           <img 
-            src={`${base}/images/jero-portrait-light.png`} 
-            alt="Jero Halili" 
-            class="w-full h-full object-cover object-top transition-transform duration-1000 group-hover:scale-105 dark:hidden" 
+            src={`${base}/images/light-marble.jpg`} 
+            alt="" 
+            class="parallax-layer absolute inset-0 w-full h-full object-cover transition-transform duration-500 dark:hidden" 
+            data-speed="8"
           />
           <img 
-            src={`${base}/images/jero-portrait-dark.png`} 
-            alt="Jero Halili" 
-            class="w-full h-full object-cover object-top transition-transform duration-1000 group-hover:scale-105 hidden dark:block" 
+            src={`${base}/images/dark-marble.jpg`} 
+            alt="" 
+            class="parallax-layer absolute inset-0 w-full h-full object-cover transition-transform duration-500 hidden dark:block" 
+            data-speed="8"
           />
         </div>
-        <div class="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-white dark:to-zinc-950 pointer-events-none"></div>
-        <div class="relative z-20 w-full p-6">
-          <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
+        <img 
+          src={`${base}/images/jero.png`} 
+          alt="Jero Halili" 
+          data-magnetic
+          class="absolute top-[-40px] left-0 right-0 bottom-0 h-[calc(100%+40px)] object-cover object-top z-0 transition-transform duration-500 [mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)]"
+        />
+        <div class="relative z-20 w-full p-6 pointer-events-none">
+          <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-transform duration-300 group-hover:-translate-y-2">
               <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <p class="text-[10px] uppercase tracking-[0.2em] font-black text-orange-500">View Bio</p>
@@ -146,7 +102,9 @@ const stats = [
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M7 7l10 10M17 7H7v10"/></svg>
                     </div>
                 </div>
-                <h3 class="text-lg md:text-xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight">Turning workflows <span class="italic font-medium text-orange-600">into code.</span></h3>
+                <h3 class="text-lg md:text-xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight">
+                  <span id="typing-prefix">Turning workflows </span><span id="typing-text" class="italic font-medium text-orange-600"></span><span id="typing-cursor" class="italic font-medium text-orange-600 border-r-2 border-orange-600 animate-pulse">&nbsp;</span>
+                </h3>
                 <div class="flex items-center gap-2 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-3">
                     <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
                     <p class="text-xs font-medium text-zinc-700 dark:text-zinc-300">MERN Stack · AI Orchestration</p>
@@ -157,19 +115,331 @@ const stats = [
     </a>
 
     <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
-        {stats.map((stat) => (
-        <div class="glass-card glow-border p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group">
-            <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-orange-500/70 transition-colors">{stat.label}</p>
-            <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors">{stat.val}</p>
+        {stats.map((stat, i) => (
+        <div data-reveal data-reveal-delay={i * 80} class="glass-card glow-border p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group">
+            <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-orange-500/70 transition-colors duration-300">{stat.label}</p>
+            <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300">{stat.val}</p>
         </div>
         ))}
         
-        <a href={`${base}/blogs`} class="animate-stable bg-orange-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-all duration-500 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20">
-          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors">My Blog</p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-orange-500 mt-1 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+        <a href={`${base}/blogs`} data-magnetic="0.2" class="animate-stable bg-orange-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20">
+          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors duration-300">My Blog</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-orange-500 mt-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <path d="M7 17l10-10M17 17V7H7"/>
           </svg>
         </a>
     </div>
   </div>
 </section>
+
+<script>
+  function initHeroConstellation() {
+    const canvas = document.getElementById('hero-constellation') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    if (!ctx) return;
+
+    let raf: number;
+    let mouse = { x: -9999, y: -9999 };
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
+    const DOT_COUNT = 210;
+    const CONNECTION_DIST = 180;
+    const MOUSE_REPEL_DIST = 150;
+    const MOUSE_REPEL_FORCE = 0.04;
+
+    interface Dot {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+      opacity: number;
+    }
+
+    let dots: Dot[] = [];
+    let w = 0;
+    let h = 0;
+
+    function resize() {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      w = parent.clientWidth;
+      h = parent.clientHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function createDots() {
+      dots = [];
+      for (let i = 0; i < DOT_COUNT; i++) {
+        dots.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          radius: Math.random() * 1.8 + 0.4,
+          opacity: Math.random() * 0.5 + 0.2,
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+
+      for (const dot of dots) {
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+
+        if (dot.x < 0) dot.x = w;
+        if (dot.x > w) dot.x = 0;
+        if (dot.y < 0) dot.y = h;
+        if (dot.y > h) dot.y = 0;
+
+        if (!isTouch) {
+          const dx = dot.x - mouse.x;
+          const dy = dot.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MOUSE_REPEL_DIST && dist > 0) {
+            const force = (MOUSE_REPEL_DIST - dist) / MOUSE_REPEL_DIST;
+            dot.vx += (dx / dist) * force * MOUSE_REPEL_FORCE;
+            dot.vy += (dy / dist) * force * MOUSE_REPEL_FORCE;
+          }
+        }
+
+        dot.vx *= 0.995;
+        dot.vy *= 0.995;
+      }
+
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[j].x - dots[i].x;
+          const dy = dots[j].y - dots[i].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DIST) {
+            const alpha = (1 - dist / CONNECTION_DIST) * 0.18;
+            ctx.beginPath();
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.strokeStyle = `rgba(249, 115, 22, ${alpha})`;
+            ctx.lineWidth = 0.7;
+            ctx.stroke();
+          }
+        }
+      }
+
+      for (const dot of dots) {
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(249, 115, 22, ${dot.opacity})`;
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(animate);
+    }
+
+    if (!isTouch) {
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      resize();
+      createDots();
+    });
+
+    resize();
+    createDots();
+    animate();
+  }
+
+  initHeroConstellation();
+  document.addEventListener('astro:page-load', () => {
+    initHeroConstellation();
+  });
+</script>
+
+<script>
+  function initTypingEffect() {
+    const typingEl = document.getElementById('typing-text')!;
+    const prefixEl = document.getElementById('typing-prefix')!;
+    const cursorEl = document.getElementById('typing-cursor')!;
+    if (!typingEl || !prefixEl || !cursorEl) return;
+
+    const sentences = [
+      { prefix: "Turning workflows ", suffix: "into code." },
+      { prefix: "Building systems ", suffix: "that scale." },
+      { prefix: "Automating ", suffix: "the repetitive." },
+      { prefix: "Shipping ", suffix: "products that matter." },
+      { prefix: "Going ", suffix: "from schema to funnel." },
+    ];
+
+    let sentenceIndex = 0;
+    let phase: 'typing-prefix' | 'typing-suffix' | 'pausing' | 'deleting-suffix' | 'deleting-prefix' = 'typing-prefix';
+    let charIndex = 0;
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const typeSpeed = 60;
+    const deleteSpeed = 30;
+    const pauseAfterType = 2000;
+    const pauseBetweenPhases = 150;
+    const pauseAfterDelete = 200;
+
+    function current() { return sentences[sentenceIndex]; }
+
+    function type() {
+      const s = current();
+
+      switch (phase) {
+        case 'typing-prefix': {
+          prefixEl.textContent = s.prefix.substring(0, charIndex + 1);
+          charIndex++;
+          if (charIndex >= s.prefix.length) {
+            phase = 'typing-suffix';
+            charIndex = 0;
+            timeout = setTimeout(type, pauseBetweenPhases);
+            return;
+          }
+          timeout = setTimeout(type, typeSpeed);
+          break;
+        }
+
+        case 'typing-suffix': {
+          typingEl.textContent = s.suffix.substring(0, charIndex + 1);
+          charIndex++;
+          if (charIndex >= s.suffix.length) {
+            phase = 'pausing';
+            timeout = setTimeout(type, pauseAfterType);
+            return;
+          }
+          timeout = setTimeout(type, typeSpeed);
+          break;
+        }
+
+        case 'pausing': {
+          phase = 'deleting-suffix';
+          charIndex = s.suffix.length;
+          timeout = setTimeout(type, 0);
+          return;
+        }
+
+        case 'deleting-suffix': {
+          charIndex--;
+          typingEl.textContent = s.suffix.substring(0, charIndex);
+          if (charIndex <= 0) {
+            phase = 'deleting-prefix';
+            charIndex = s.prefix.length;
+            timeout = setTimeout(type, pauseBetweenPhases);
+            return;
+          }
+          timeout = setTimeout(type, deleteSpeed);
+          break;
+        }
+
+        case 'deleting-prefix': {
+          charIndex--;
+          prefixEl.textContent = s.prefix.substring(0, charIndex);
+          if (charIndex <= 0) {
+            sentenceIndex = (sentenceIndex + 1) % sentences.length;
+            phase = 'typing-prefix';
+            charIndex = 0;
+            timeout = setTimeout(type, pauseAfterDelete);
+            return;
+          }
+          timeout = setTimeout(type, deleteSpeed);
+          break;
+        }
+      }
+    }
+
+    type();
+  }
+
+  initTypingEffect();
+  document.addEventListener('astro:page-load', initTypingEffect);
+</script>
+
+<script>
+  function initProfileCardEffects() {
+    const card = document.querySelector<HTMLElement>('a[href*="/about"]')!;
+    if (!card) return;
+
+    const parallaxLayers = card.querySelectorAll<HTMLElement>('.parallax-layer');
+    const magneticEl = card.querySelector<HTMLElement>('[data-magnetic]');
+
+    const magneticStrength = 0.3;
+    const lerpFactor = 0.08;
+    const returnSpeed = 0.05;
+
+    let magX = 0;
+    let magY = 0;
+    let magTargetX = 0;
+    let magTargetY = 0;
+    let isHovering = false;
+    let raf: number;
+
+    function onPointerMove(e: PointerEvent) {
+      const rect = card.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const percentX = (e.clientX - centerX) / (rect.width / 2);
+      const percentY = (e.clientY - centerY) / (rect.height / 2);
+
+      parallaxLayers.forEach((layer) => {
+        const speed = parseFloat(layer.dataset.speed || '10');
+        const x = percentX * speed;
+        const y = percentY * speed;
+        layer.style.transform = `translate(${x}px, ${y}px)`;
+      });
+
+      if (magneticEl) {
+        isHovering = true;
+        magTargetX = (e.clientX - centerX) * magneticStrength;
+        magTargetY = (e.clientY - centerY) * magneticStrength;
+      }
+    }
+
+    function onPointerLeave() {
+      parallaxLayers.forEach((layer) => {
+        layer.style.transform = 'translate(0px, 0px)';
+      });
+
+      if (magneticEl) {
+        isHovering = false;
+        magTargetX = 0;
+        magTargetY = 0;
+      }
+    }
+
+    function animateMagnetic() {
+      const lerp = isHovering ? lerpFactor : returnSpeed;
+      magX += (magTargetX - magX) * lerp;
+      magY += (magTargetY - magY) * lerp;
+
+      if (magneticEl) {
+        magneticEl.style.transform = `translate(${magX}px, ${magY}px)`;
+      }
+
+      raf = requestAnimationFrame(animateMagnetic);
+    }
+
+    card.addEventListener('pointermove', onPointerMove);
+    card.addEventListener('pointerleave', onPointerLeave);
+
+    raf = requestAnimationFrame(animateMagnetic);
+  }
+
+  initProfileCardEffects();
+  document.addEventListener('astro:page-load', initProfileCardEffects);
+</script>

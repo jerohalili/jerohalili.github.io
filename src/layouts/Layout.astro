@@ -21,6 +21,10 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         <meta name="title" content={title} />
         <meta name="description" content="Portfolio of Jero Halili - Computer Scientist & Full-stack Developer" />
 
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
         <script is:inline>
             const theme = (() => {
                 if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -41,6 +45,17 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
                 to { opacity: 1; transform: translateY(0); }
             }
 
+            [data-reveal] {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            }
+
+            [data-reveal].revealed {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
             html {
                 scroll-behavior: smooth;
             }
@@ -51,6 +66,7 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         <div 
             id="cursor-blob" 
             class="fixed top-0 left-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-orange-500/20 dark:bg-orange-600/25 rounded-full blur-[80px] sm:blur-[140px] pointer-events-none transition-opacity duration-1000 opacity-0 z-[-1]"
+            style="will-change: transform;"
         ></div>
         
         <Navbar />
@@ -61,11 +77,16 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
 
         <Contact />
 
-        <script is:inline>
-            let blob;
+        <script>
+            import { initMagneticElements } from '../scripts/magnetic';
+            import { initTiltElements } from '../scripts/tilt';
+            import { initScrollReveal } from '../scripts/scroll-reveal';
+
+            let blob: HTMLElement | null = null;
             let curX = 0, curY = 0, tgX = 0, tgY = 0;
-            let animationFrameId;
-            
+            let animationFrameId: number;
+            let isVisible = true;
+
             const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
             function initBlob() {
@@ -75,7 +96,7 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
                         blob.style.opacity = "0.6";
                         blob.style.transform = `translate3d(calc(70vw - 150px), calc(20vh - 150px), 0)`;
                     }
-                    return; 
+                    return;
                 }
                 window.addEventListener('mousemove', (e) => {
                     tgX = e.clientX;
@@ -86,7 +107,11 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
             }
 
             function render() {
-                curX += (tgX - curX) * 0.03; 
+                if (!isVisible) {
+                    animationFrameId = requestAnimationFrame(render);
+                    return;
+                }
+                curX += (tgX - curX) * 0.03;
                 curY += (tgY - curY) * 0.03;
                 if (blob) {
                     const offset = window.innerWidth < 640 ? 150 : 300;
@@ -95,33 +120,36 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
                 animationFrameId = requestAnimationFrame(render);
             }
 
-            // RE-TRIGGER ANIMATION ON ANCHOR CLICKS
             function handleAnchorAnimation() {
                 const main = document.getElementById('main-content');
                 const links = document.querySelectorAll('a[href*="#"]');
-                
                 links.forEach(link => {
                     link.addEventListener('click', () => {
                         if (main) {
-                            // Briefly remove class to reset animation state
                             main.classList.remove('animate-in');
-                            // Trigger reflow to ensure the browser notices the removal
-                            void main.offsetWidth; 
-                            // Re-add the class
+                            void main.offsetWidth;
                             main.classList.add('animate-in');
                         }
                     });
                 });
             }
 
-            // Initialize everything
-            initBlob();
-            handleAnchorAnimation();
-
-            document.addEventListener('astro:after-swap', () => {
-                cancelAnimationFrame(animationFrameId);
+            function initAll() {
                 initBlob();
                 handleAnchorAnimation();
+                initMagneticElements();
+                initTiltElements();
+                initScrollReveal();
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                isVisible = !document.hidden;
+            });
+
+            initAll();
+            document.addEventListener('astro:after-swap', () => {
+                cancelAnimationFrame(animationFrameId);
+                initAll();
             });
         </script>
     </body>
