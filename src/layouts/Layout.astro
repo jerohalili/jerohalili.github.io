@@ -2,11 +2,17 @@
 import { ClientRouter } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
 import Contact from '../components/Contact.astro';
-interface Props { title: string; }
-const { title } = Astro.props;
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  publishedTime?: string;
+  type?: string;
+}
+const { title, description = 'Portfolio of Jero Halili - Computer Scientist & Full-stack Developer', image, publishedTime, type = 'website' } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, 'https://jerohalili.github.io');
-const socialImageURL = new URL('/og-image.jpg', canonicalURL);
+const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).href : image || new URL('/og-image.jpg', canonicalURL).href;
 ---
 
 <!doctype html>
@@ -19,7 +25,21 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         <title>{title}</title>
 
         <meta name="title" content={title} />
-        <meta name="description" content="Portfolio of Jero Halili - Computer Scientist & Full-stack Developer" />
+        <meta name="description" content={description} />
+
+        <meta property="og:type" content={type} />
+        <meta property="og:url" content={canonicalURL.href} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalURL.href} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+
+        {publishedTime && <meta property="article:published_time" content={publishedTime} />}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

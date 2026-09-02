@@ -8,8 +8,6 @@ tags: ["Tailwind", "CSS", "Styling"]
 draft: false
 ---
 
-# Tailwind CSS Tips from a Year of Daily Use
-
 I've written over 50,000 lines of Tailwind in the past year. Here are the patterns that actually matter.
 
 ### Extract Components, Not Utility Classes

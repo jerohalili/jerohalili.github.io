@@ -8,8 +8,6 @@ tags: ["Astro", "Performance", "SSG"]
 draft: false
 ---
 
-# Why I Chose Astro Over Next.js
-
 Everyone defaults to Next.js. It's the safe choice. But for a portfolio site where **content is king** and interactivity is surgical, Astro does something Next.js can't: it ships zero JavaScript by default.
 
 ### The Island Architecture

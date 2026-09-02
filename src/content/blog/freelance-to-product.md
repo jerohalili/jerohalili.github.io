@@ -8,8 +8,6 @@ tags: ["Career", "Freelancing", "Growth"]
 draft: false
 ---
 
-# From Freelance to Product: What I Learned
-
 Freelancing teaches you to ship fast. Product engineering teaches you to ship right. The transition isn't about learning new technologies — it's about changing how you think about problems.
 
 ### Freelance Mindset: Deliver and Move On

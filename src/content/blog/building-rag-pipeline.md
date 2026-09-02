@@ -8,8 +8,6 @@ tags: ["Local AI", "RAG", "Automation"]
 draft: false
 ---
 
-# Building a RAG Pipeline with Local Embeddings
-
 RAG — Retrieval-Augmented Generation — is the most practical pattern in AI engineering. Instead of asking an LLM to remember everything, you give it relevant documents and let it answer from context. Running this locally means your data never leaves your machine.
 
 ### The Architecture

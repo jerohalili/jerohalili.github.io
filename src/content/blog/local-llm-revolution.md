@@ -8,8 +8,6 @@ tags: ["LLM", "Self-Hosting", "Privacy", "n8n"]
 draft: false
 ---
 
-# The Case for Local-First AI
-
 For the past two years, the default for AI development has been "Cloud First." We’ve treated GPT-4 as an infinite utility, much like electricity. But as we move into 2026, the cracks in the cloud-only model—latency, privacy concerns, and spiraling API costs—are becoming impossible to ignore.
 
 ### The Shift to Sovereignty

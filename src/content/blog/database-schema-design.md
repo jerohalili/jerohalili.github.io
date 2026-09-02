@@ -8,8 +8,6 @@ tags: ["Database", "PostgreSQL", "Design"]
 draft: false
 ---
 
-# Database Schema Design: Think Before You Migrate
-
 The fastest way to accumulate tech debt in a database project is to skip the design phase. "We'll migrate later" is a lie you tell yourself. Migrations compound. Each one adds edge cases, data transformations, and rollback complexity.
 
 ### Schema-First, Always

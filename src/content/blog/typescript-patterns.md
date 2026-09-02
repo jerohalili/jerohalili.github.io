@@ -8,8 +8,6 @@ tags: ["TypeScript", "Patterns", "DX"]
 draft: false
 ---
 
-# TypeScript Patterns I Use Every Day
-
 Most TypeScript code I review uses TypeScript as "JavaScript with annotations." That misses the point. TypeScript's real power is making invalid states unrepresentable.
 
 ### Discriminated Unions

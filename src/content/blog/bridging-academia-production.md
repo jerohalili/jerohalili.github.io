@@ -8,8 +8,6 @@ tags: ["Learning", "Astro", "TypeScript", "Workflow"]
 draft: false
 ---
 
-# Bridging the Gap
-
 Computer Science programs are excellent at teaching the *what* and the *how* of algorithms, but there is often a "missing semester" when it comes to *production engineering*.
 
 ### Theory vs. The Real World

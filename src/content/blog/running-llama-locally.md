@@ -8,8 +8,6 @@ tags: ["Local AI", "LLM", "Ollama"]
 draft: false
 ---
 
-# Running Llama 3 Locally
-
 The API pricing model is a trap. Every call costs money, every request depends on uptime you don't control, and every prompt leaves someone else's server. Running Llama 3 locally fixes all three.
 
 ### Setting Up Ollama

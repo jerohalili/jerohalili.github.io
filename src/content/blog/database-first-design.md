@@ -8,8 +8,6 @@ tags: ["PostgreSQL", "Architecture", "Prisma", "Scalability"]
 draft: false
 ---
 
-# Database-First Design
-
 UI trends change every season. Glassmorphism is in today; minimal flat design is back tomorrow. But a poorly designed database schema? That will haunt your application for its entire lifecycle.
 
 ### Data is the Source of Truth
