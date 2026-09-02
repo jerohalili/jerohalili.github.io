@@ -1,26 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import BlogCard from '../components/BlogCard.astro';
 import { getCollection } from 'astro:content';
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-
-// Fetch and sort posts by date (newest first)
 const posts = (await getCollection('blog', ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
 })).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Formatting function for dates
 const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'short',
   day: 'numeric'
 });
+
+const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
 ---
 
 <Layout title="Blog | Jero Halili">
   <main class="pt-32 pb-24 px-4 md:px-10 max-w-[1200px] mx-auto">
-    
-    <header class="mb-20 space-y-4">
+
+    <header class="mb-16 space-y-6" data-reveal>
       <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none dark:text-white italic">
         Systems <br/> <span class="text-orange-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">Thinking.</span>
       </h1>
@@ -29,58 +28,85 @@ const formatDate = (date: Date) => date.toLocaleDateString('en-US', {
       </p>
     </header>
 
-    <div class="space-y-12">
-      {posts.map((post) => (
-        <a href={`${base}/blog/${post.id}`} class="group block">
-          <article class="cursor-pointer">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              
-              <div class="lg:col-span-3 pt-2">
-                <div class="flex flex-col gap-1">
-                  <span class="text-orange-500 font-black uppercase tracking-widest text-xs">
-                    {post.data.category}
-                  </span>
-                  <span class="text-zinc-800 dark:text-zinc-200 font-mono text-[10px] uppercase">
-                    {formatDate(post.data.pubDate)} · {post.data.readTime}
-                  </span>
-                </div>
-              </div>
+    <div class="mb-10 space-y-5" data-reveal data-reveal-delay="100">
+      <div class="relative max-w-md">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input
+          id="blog-search"
+          type="text"
+          placeholder="Search posts..."
+          class="w-full pl-11 pr-4 py-3.5 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/50 transition-all duration-300"
+        />
+      </div>
 
-              <div class="lg:col-span-9 space-y-4">
-                <h2 class="text-3xl md:text-4xl font-black tracking-tight dark:text-white group-hover:text-orange-500 transition-colors duration-300">
-                  {post.data.title}
-                </h2>
-                <p class="text-zinc-800 dark:text-zinc-200 text-lg leading-relaxed max-w-3xl">
-                  {post.data.description}
-                </p>
-                
-                <div class="flex flex-wrap gap-2 pt-2">
-                  {post.data.tags.map(tag => (
-                    <span class="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full text-[10px] font-bold uppercase text-zinc-600 dark:text-zinc-200">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+      <div id="blog-filters" class="flex flex-wrap gap-2">
+        {filterOptions.map((opt, i) => (
+          <button
+            data-filter={opt}
+            class:list={[
+              'px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all duration-300 hover:scale-105 active:scale-95',
+              i === 0
+                ? 'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20'
+                : 'bg-transparent text-zinc-500 border-zinc-200 dark:border-zinc-800 dark:text-zinc-400 hover:border-orange-500/40 hover:text-orange-500'
+            ]}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
 
-                <div class="h-px w-full bg-zinc-100 dark:bg-zinc-900 mt-12 group-last:hidden"></div>
-              </div>
-            </div>
-          </article>
-        </a>
+      <div class="flex items-center gap-2 text-xs text-zinc-400 dark:text-zinc-500 font-mono uppercase tracking-wider">
+        <span id="post-count">{posts.length} posts</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {posts.map((post, i) => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          category={post.data.category}
+          date={formatDate(post.data.pubDate)}
+          readTime={post.data.readTime}
+          tags={post.data.tags}
+          slug={post.id}
+          index={i}
+        />
       ))}
     </div>
 
-    {posts.length === 0 && (
-      <p class="text-center text-zinc-500 py-20">No posts found. Start writing!</p>
-    )}
-
-    {posts.length > 10 && (
-      <div class="mt-20 flex justify-center">
-          <button class="px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-full font-black uppercase text-xs tracking-widest hover:scale-105 transition-transform">
-              Load More Posts
-          </button>
+    <div id="blog-empty-state" class="hidden py-20 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-900 mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
       </div>
-    )}
+      <p class="text-zinc-500 dark:text-zinc-400 text-lg font-medium mb-2">No posts found</p>
+      <p class="text-zinc-400 dark:text-zinc-500 text-sm">Try adjusting your search or filter.</p>
+    </div>
+
+    <div class="mt-16 flex justify-center" style="display: none;">
+      <button
+        id="load-more-btn"
+        class="group px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-full font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
+      >
+        <span class="flex items-center gap-2">
+          Load More
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="transition-transform duration-300 group-hover:translate-y-0.5">
+            <path d="M12 5v14m-7-7 7 7 7-7"/>
+          </svg>
+        </span>
+      </button>
+    </div>
 
   </main>
 </Layout>
+
+<script>
+  import { initBlogFilters } from '../scripts/blog-filters';
+
+  initBlogFilters();
+  document.addEventListener('astro:after-swap', initBlogFilters);
+</script>
