@@ -65,13 +65,13 @@ const socialImageURL = new URL('/og-image.jpg', canonicalURL);
         
         <div 
             id="cursor-blob" 
-            class="fixed top-0 left-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-orange-500/20 dark:bg-orange-600/25 rounded-full blur-[80px] sm:blur-[140px] pointer-events-none transition-opacity duration-1000 opacity-0 z-[-1]"
+            class="fixed top-0 left-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-orange-500/20 dark:bg-orange-600/25 rounded-full blur-[80px] sm:blur-[140px] pointer-events-none transition-opacity duration-1000 opacity-0 z-[1]"
             style="will-change: transform;"
         ></div>
         
         <Navbar />
         
-        <main id="main-content" class="animate-in">
+        <main id="main-content" class="relative z-[2] animate-in">
             <slot />
         </main>
 
