@@ -18,6 +18,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   </div>
   
   <div class="flex flex-col items-center gap-6 p-8 pt-12 text-center overflow-y-auto">
+    <a 
+      href={`${base}/`} 
+      class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-orange-500 transition-colors"
+    >
+      Home
+    </a>
     {links.map((link: Link) => (
       <a 
         href={link.href} 
