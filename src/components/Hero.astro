@@ -52,15 +52,15 @@ const stats = [
   }
 </style>
 
-<section class="relative w-full pt-32 pb-12 md:pt-40 md:pb-24 px-4 md:px-10 bg-transparent overflow-visible min-h-[85vh] flex flex-col justify-center">
+<section class="relative w-full pt-32 pb-12 md:pt-40 md:pb-24 px-2 md:px-10 bg-transparent overflow-visible min-h-[85vh] flex flex-col justify-center">
   
   <div class="hero-canvas-wrap">
     <canvas id="hero-constellation"></canvas>
   </div>
 
-  <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 w-full">
+  <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 relative z-10 w-full">
     
-    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col justify-center group/card hover:border-orange-500/30 hover:shadow-orange-500/10">
+    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center group/card hover:border-orange-500/30 hover:shadow-orange-500/10">
         <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4 transition-transform duration-300 group-hover/card:translate-x-1">
           Computer Scientist · Full-Stack Developer · AI Engineer
         </p>
@@ -72,8 +72,8 @@ const stats = [
         </p>
     </div>
 
-    <a href={`${base}/about`} data-reveal data-tilt class="lg:col-span-4 glass-card glow-border overflow-visible relative group min-h-[450px] flex flex-col justify-end rounded-[2.5rem] md:rounded-[3.5rem]">
-        <div class="absolute inset-0 z-0 overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem]">
+    <a href={`${base}/about`} data-reveal data-tilt class="lg:col-span-4 mt-10 lg:mt-0 w-full max-w-full xs:max-w-[400px] xs:mx-auto glass-card glow-border overflow-visible relative group h-[500px] rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem]">
+        <div class="absolute inset-0 z-0 overflow-hidden rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem]">
           <img 
             src={`${base}/images/light-marble.jpg`} 
             alt="" 
@@ -91,9 +91,9 @@ const stats = [
           src={`${base}/images/jero.png`} 
           alt="Jero Halili" 
           data-magnetic
-          class="absolute top-[-40px] left-0 right-0 bottom-0 h-[calc(100%+40px)] object-cover object-top z-0 transition-transform duration-500 [mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)]"
+          class="absolute top-[-20px] lg:top-[-40px] left-0 right-0 bottom-0 h-[calc(100%+40px)] object-cover object-top z-0 transition-transform duration-500 [mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)]"
         />
-        <div class="relative z-20 w-full p-6 pointer-events-none">
+        <div class="absolute bottom-0 left-0 right-0 z-20 w-full p-6 pointer-events-none">
           <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-transform duration-300 group-hover:-translate-y-2">
               <div class="space-y-3">
                 <div class="flex justify-between items-center">
