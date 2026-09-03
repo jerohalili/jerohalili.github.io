@@ -254,9 +254,13 @@ const stats = [
       });
     }
 
+    let resizeTimeout: number | null = null;
     window.addEventListener('resize', () => {
-      resize();
-      createDots();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        resize();
+        createDots();
+      }, 150);
     });
 
     resize();
