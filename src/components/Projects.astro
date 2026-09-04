@@ -5,14 +5,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const allProjects = await getCollection('projects');
 const sortedProjects = allProjects.sort((a, b) => a.data.order - b.data.order);
 
-const topThree = sortedProjects.slice(0, 3);
-
-const flagship = topThree.find(p => p.data.isFlagship) || topThree[0];
-const secondaries = topThree.filter(p => p.id !== flagship?.id);
+const projects = sortedProjects.map(p => ({
+  id: p.id,
+  title: p.data.title,
+  subtitle: p.data.subtitle || p.data.tags?.[0] || '',
+  description: p.data.description,
+  image: p.data.image || '',
+}));
 ---
 
-<section id="projects" class="w-full px-4 md:px-10 py-12">
-  <div class="max-w-[1400px] mx-auto space-y-8">
+<section id="projects" class="w-full py-12">
+  <div class="max-w-[1400px] mx-auto px-4 md:px-10">
     
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-zinc-100 dark:border-zinc-800 pb-8 gap-6">
       <div class="space-y-1">
@@ -20,98 +23,239 @@ const secondaries = topThree.filter(p => p.id !== flagship?.id);
         <p class="text-zinc-700 dark:text-zinc-300 text-sm font-medium">Engineered solutions for marketing, education, and creative industries.</p>
       </div>
       
-      <a 
-        href={`${base}/projects`} 
-        class="bg-orange-500 px-8 py-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20"
-        data-magnetic="0.2"
-      >
-        <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-white dark:group-hover:text-orange-500 transition-colors duration-300">
-          All Projects
-        </p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-white dark:group-hover:text-orange-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-          <path d="M7 17l10-10M17 17V7H7"/>
-        </svg>
-      </a>
+      <div class="flex items-center gap-3">
+        <button id="carouselPrev" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous project">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <button id="carouselNext" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next project">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+        
+        <a 
+          href={`${base}/projects`} 
+          class="bg-orange-500 px-8 py-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20 ml-2"
+          data-magnetic="0.2"
+        >
+          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-white dark:group-hover:text-orange-500 transition-colors duration-300">
+            All Projects
+          </p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-white dark:group-hover:text-orange-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+            <path d="M7 17l10-10M17 17V7H7"/>
+          </svg>
+        </a>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 min-[1301px]:grid-cols-2 gap-6 items-stretch">
-      {flagship && (
-        <div data-tilt class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 md:p-10 flex flex-col justify-between group hover:border-orange-500/50 transition-colors duration-300 h-auto min-[1301px]:min-h-[600px]">
-          
-          <div class="flex flex-col sm:flex-row min-[1301px]:flex-col items-center min-[1301px]:items-start gap-8 w-full">
+    <div class="relative w-full overflow-hidden py-8" id="carouselViewport">
+      <div id="project-slider" class="flex gap-6 will-change-transform">
+        {projects.map((project) => (
+          <a href={`${base}/projects/${project.id}`} class="project-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] overflow-hidden hover:border-orange-500/50 transition-colors duration-300 group flex flex-col shrink-0">
             
-            <div class="relative w-full sm:w-44 min-[1301px]:w-full h-44 sm:h-44 min-[1301px]:h-64 min-[1301px]:min-h-[250px] min-[1301px]:mt-8 bg-zinc-100 dark:bg-zinc-800 rounded-[1.5rem] min-[1301px]:rounded-[2rem] shrink-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden order-1 sm:order-2 min-[1301px]:order-2">
-              {flagship.data.image && (
-                <img src={`${base}${flagship.data.image}`} alt={flagship.data.title} class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
+            <div class="project-image relative w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+              {project.image && (
+                <img src={`${base}${project.image}`} alt={project.title} class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
               )}
             </div>
 
-            <div class="flex flex-col justify-center space-y-4 w-full min-w-0 order-2 sm:order-1 min-[1301px]:order-1">
-              <div>
+            <div class="project-content p-5 md:p-6 flex flex-col justify-between flex-1">
+              <div class="space-y-2">
                 <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest border border-orange-500/20">
-                  {flagship.data.subtitle || flagship.data.tags?.[0]}
+                  {project.subtitle}
+                </span>
+                <h3 class="project-title font-black tracking-tighter dark:text-white leading-tight uppercase italic break-words">
+                  {project.title}
+                </h3>
+                <p class="project-desc text-zinc-700 dark:text-zinc-300 leading-relaxed">{project.description}</p>
+              </div>
+              
+              <div class="project-cta pt-3">
+                <span class="inline-flex items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black group-hover:bg-orange-500 group-hover:text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-300">
+                  View Project
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                 </span>
               </div>
-              
-              <h3 class="text-2xl sm:text-3xl min-[1301px]:text-5xl xl:text-6xl font-black tracking-tighter dark:text-white leading-tight min-[1301px]:leading-[0.9] uppercase italic mt-1 break-words">
-                {flagship.data.title}
-              </h3>
-              <p class="text-zinc-700 dark:text-zinc-300 text-base min-[1301px]:text-lg leading-relaxed min-[1301px]:max-w-md">{flagship.data.description}</p>
-              
-              <div class="pt-2 min-[1301px]:hidden">
-                <a href={`${base}/projects/${flagship.id}`} class="inline-flex items-center gap-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black hover:bg-orange-500 hover:text-white px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-300 shadow-lg active:scale-95">
-                  View Architecture
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </a>
-              </div>
             </div>
 
-          </div>
-          
-          <div class="pt-6 hidden min-[1301px]:block">
-            <a href={`${base}/projects/${flagship.id}`} class="inline-flex items-center gap-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black hover:bg-orange-500 hover:text-white px-8 py-4 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-300 shadow-lg active:scale-95">
-              View Architecture
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-            </a>
-          </div>
-        </div>
-      )}
-
-      <div class="flex flex-col gap-6 justify-between">
-        {secondaries.map((project) => (
-          <div data-tilt class="flex-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 md:p-10 flex flex-col justify-center group hover:border-orange-500/50 transition-colors duration-300">
-            
-            <div class="flex flex-col sm:flex-row items-center gap-8">
-              
-              <div class="relative w-full sm:w-44 h-44 bg-zinc-100 dark:bg-zinc-800 rounded-[1.5rem] aspect-square shrink-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden">
-                {project.data.image && (
-                  <img src={`${base}${project.data.image}`} alt={project.data.title} class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
-                )}
-              </div>
-              
-              <div class="flex flex-col justify-center space-y-4 w-full min-w-0">
-                <div>
-                  <span class="text-orange-500 font-mono text-[10px] font-bold uppercase tracking-widest">
-                    {project.data.subtitle || project.data.tags?.[0]}
-                  </span>
-                  
-                  <h3 class="text-2xl sm:text-3xl font-black tracking-tighter dark:text-white leading-tight mt-1 uppercase italic break-words">
-                    {project.data.title}
-                  </h3>
-                </div>
-                <p class="text-zinc-700 dark:text-zinc-300 text-base leading-relaxed">{project.data.description}</p>
-                <div>
-                  <a href={`${base}/projects/${project.id}`} class="inline-flex items-center gap-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black hover:bg-orange-500 hover:text-white transition-colors duration-300 px-6 py-3 rounded-full text-xs font-black tracking-widest active:scale-95 uppercase">
-                    View Project
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                  </a>
-                </div>
-              </div>
-              
-            </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>
+
   </div>
 </section>
+
+<style>
+  .project-card {
+    min-width: 0;
+    min-height: 460px;
+    transition: min-height 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .project-image {
+    height: 220px;
+    transition: height 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .project-title {
+    font-size: 1.125rem;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .project-card {
+      min-height: 520px;
+    }
+
+    .project-image {
+      height: 200px;
+    }
+
+    .project-title {
+      font-size: 1rem;
+      line-height: 1.15;
+    }
+
+    .project-desc {
+      -webkit-line-clamp: 2;
+      font-size: 0.8rem;
+    }
+
+    /* Center card: wider landscape look */
+    .project-card.is-active {
+      min-height: 480px;
+    }
+
+    .project-card.is-active .project-image {
+      height: 300px;
+    }
+
+    .project-card.is-active .project-title {
+      font-size: 1.75rem;
+      line-height: 1.1;
+    }
+
+    .project-card.is-active .project-desc {
+      -webkit-line-clamp: 3;
+      font-size: 0.95rem;
+    }
+
+    .project-card.is-active .project-content {
+      padding: 1.75rem 2rem;
+    }
+  }
+</style>
+
+<script>
+  function initCarousel() {
+    const viewport = document.getElementById('carouselViewport');
+    const slider = document.getElementById('project-slider');
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+
+    if (!viewport || !slider || !prevBtn || !nextBtn) return;
+
+    const originalCards = Array.from(slider.children).filter(child => !child.classList.contains('is-clone')) as HTMLElement[];
+    const cardCount = originalCards.length;
+    if (cardCount === 0) return;
+
+    // Clone for infinite loop
+    slider.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      originalCards.forEach(card => {
+        const newCard = card.cloneNode(true) as HTMLElement;
+        newCard.classList.add('is-clone');
+        slider.appendChild(newCard);
+      });
+    }
+
+    const allCards = Array.from(slider.querySelectorAll('.project-card')) as HTMLElement[];
+    const gap = 24;
+    let index = cardCount * 3;
+
+    function isDesktop() {
+      return window.innerWidth >= 768;
+    }
+
+    function setCardWidths() {
+      const viewportWidth = viewport.offsetWidth;
+      const sideRatio = isDesktop() ? 0.25 : 1;
+      const centerRatio = isDesktop() ? 0.50 : 1;
+      const totalGap = isDesktop() ? gap * 2 : 0;
+      const available = viewportWidth - totalGap;
+      const sideWidth = available * sideRatio;
+      const centerWidth = available * centerRatio;
+
+      allCards.forEach((card, i) => {
+        if (isDesktop()) {
+          const isCenter = (i === centerIdx);
+          card.style.width = isCenter ? `${centerWidth}px` : `${sideWidth}px`;
+        } else {
+          card.style.width = `${viewportWidth}px`;
+        }
+      });
+    }
+
+    let centerIdx = index + 1;
+
+    function updateSlider(smooth = true) {
+      const viewportWidth = viewport.offsetWidth;
+      centerIdx = index + (isDesktop() ? 1 : 0);
+
+      // Set all card widths based on which is center
+      setCardWidths();
+
+      // Accumulate position from cards before index
+      let pos = 0;
+      for (let i = 0; i < index; i++) {
+        pos += allCards[i].offsetWidth + gap;
+      }
+
+      // Center the 3-card group in viewport
+      const groupWidth = allCards[index].offsetWidth + gap + allCards[index + 1].offsetWidth + gap + allCards[index + 2].offsetWidth;
+      const offsetX = (viewportWidth - groupWidth) / 2;
+      const translateX = offsetX - pos;
+
+      slider.style.transition = smooth ? 'transform 500ms cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
+      slider.style.transform = `translate3d(${translateX}px, 0, 0)`;
+
+      // Update active class
+      allCards.forEach((card, i) => {
+        card.classList.toggle('is-active', i === centerIdx);
+      });
+    }
+
+    function ensureSafeBounds() {
+      if (index >= cardCount * 5 || index < cardCount) {
+        index = cardCount * 3 + (index % cardCount);
+        updateSlider(false);
+        void slider.offsetWidth;
+      }
+    }
+
+    nextBtn.onclick = () => {
+      ensureSafeBounds();
+      index++;
+      updateSlider(true);
+    };
+
+    prevBtn.onclick = () => {
+      ensureSafeBounds();
+      index--;
+      updateSlider(true);
+    };
+
+    window.addEventListener('resize', () => updateSlider(false));
+    updateSlider(false);
+  }
+
+  initCarousel();
+  document.addEventListener('astro:page-load', initCarousel);
+</script>
