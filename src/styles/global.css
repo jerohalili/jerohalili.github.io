@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    --accent: #ff5d22;
     color-scheme: light dark;
   }
   
@@ -12,22 +11,9 @@
     font-family: 'Inter', system-ui, sans-serif;
     scroll-behavior: smooth;
   }
-
-  body {
-    @apply bg-zinc-50 dark:bg-[#050505] text-zinc-900 dark:text-zinc-100;
-  }
 }
 
 @layer components {
-  .bento-card {
-    @apply bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 backdrop-blur-md;
-    transition: transform 300ms, border-color 300ms, box-shadow 300ms;
-  }
-
-  .bento-card:hover {
-    @apply -translate-y-1 border-orange-500/30 shadow-2xl shadow-orange-500/10;
-  }
-
   .prose-content {
     @apply prose-a:text-orange-500 prose-a:underline prose-a:decoration-orange-500/30 hover:prose-a:decoration-orange-500;
     @apply prose-blockquote:border-l-orange-500 prose-blockquote:bg-orange-500/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:not-italic;

@@ -1,12 +1,10 @@
 ---
-id: "02"
 title: "PBSI: Digital Transformation Platform"
 subtitle: "Institutional Infrastructure"
 description: "A high-performance digital platform for Presbyterian Bible Seminary Inc. formally replacing manual student intake and program tracking with an optimized, static-first architecture."
 tags: ["Astro", "React", "Tailwind CSS", "JSON Architecture"]
 image: "/images/projects/pbsi-platform.png"
 impact: "Institutional Efficiency"
-isFlagship: true
 order: 2
 ---
 

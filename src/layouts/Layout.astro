@@ -11,8 +11,8 @@ interface Props {
 }
 const { title, description = 'Portfolio of Jero Halili - Computer Scientist & Full-stack Developer', image, publishedTime, type = 'website' } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, 'https://jerohalili.github.io');
-const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).href : image || new URL('/og-image.jpg', canonicalURL).href;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://jerohalili.is-a.dev');
+const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).href : image || new URL('/og-image.png', canonicalURL).href;
 ---
 
 <!doctype html>
@@ -76,9 +76,6 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                 transform: translateY(0);
             }
 
-            html {
-                scroll-behavior: smooth;
-            }
         </style>
     </head>
     <body class="bg-[#FDFDFD] dark:bg-[#121212] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 antialiased selection:bg-orange-500/30 overflow-x-hidden">

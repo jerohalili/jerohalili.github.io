@@ -1,12 +1,10 @@
 ---
-id: "03"
 title: "JKISINAMAL: Fine Art Gallery & Portfolio"
 subtitle: "High-Performance Visual Design"
 description: "A premium, ultra-fast digital gallery built for visual artist Joval Kisinamal, bypassing social platform compression with a custom glassmorphic masonry engine."
 tags: ["HTML5", "Tailwind CSS", "JavaScript", "Responsive Grid"]
 image: "/images/projects/jkisinamal-portfolio.png"
 impact: "Creative Autonomy"
-isFlagship: false
 order: 3
 ---
 

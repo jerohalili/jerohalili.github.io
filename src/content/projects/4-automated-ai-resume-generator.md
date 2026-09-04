@@ -1,12 +1,10 @@
 ---
-id: "04"
 title: "Synthetic Resume Data Factory"
 subtitle: "Automated Dataset Engineering"
 description: "An end-to-end n8n automation pipeline that generates high-fidelity synthetic resumes using Llama 3.1 and Z Image Turbo."
 tags: ["n8n", "Llama 3.1", "Data Science", "Automation"]
 image: "/images/projects/resume-generator.png"
 impact: "100% Automated Dataset Creation"
-isFlagship: false
 order: 4
 ---
 
