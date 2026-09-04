@@ -35,14 +35,3 @@
     @apply prose-img:rounded-[1.5rem] prose-img:shadow-xl;
   }
 }
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 30s linear infinite;
-}

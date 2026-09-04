@@ -2,7 +2,7 @@
 const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Database Architecture", "n8n Automation", "UI/UX Design" ];
 ---
 
-<section id="marquee-section" class="w-full relative overflow-hidden py-12 border-y border-zinc-100 dark:border-zinc-800 bg-white dark:bg-black transition-colors duration-500 cursor-grab active:cursor-grabbing">
+<section id="marquee-section" class="w-full relative overflow-hidden py-12 border-y border-zinc-100 dark:border-zinc-800 bg-white dark:bg-black transition-colors duration-500 cursor-grab active:cursor-grabbing touch-none">
     <div id="marquee-track" class="flex whitespace-nowrap select-none will-change-transform">
         {[...items, ...items].map((item) => (
         <div class="flex items-center flex-none">
@@ -36,7 +36,6 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
 
     const naturalSpeed = -0.6;
     const friction = 0.02;
-    const dragSmoothing = 0.3;
 
     let offset = 0;
     let velocity = naturalSpeed;
@@ -45,9 +44,10 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
     let lastTime = 0;
     let dragVelocity = 0;
     let raf: number;
+    let isVisible = true;
 
     function animate() {
-      if (!isDragging) {
+      if (!isDragging && isVisible) {
         velocity += (naturalSpeed - velocity) * friction;
         offset += velocity;
 
@@ -55,16 +55,22 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
         if (offset > 0) offset -= setWidth;
       }
 
-      track.style.transform = `translateX(${offset}px)`;
+      track.style.transform = `translate3d(${offset}px, 0, 0)`;
       raf = requestAnimationFrame(animate);
     }
 
     function onPointerDown(e: PointerEvent) {
+      if (e.button !== 0) return;
       isDragging = true;
       lastX = e.clientX;
       lastTime = performance.now();
       dragVelocity = 0;
-      section.setPointerCapture(e.pointerId);
+
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+      document.addEventListener('pointercancel', onPointerCancel);
+
+      e.preventDefault();
     }
 
     function onPointerMove(e: PointerEvent) {
@@ -75,8 +81,7 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
       const dx = e.clientX - lastX;
 
       if (dt > 0) {
-        const rawVelocity = (dx / dt) * 16;
-        dragVelocity = dragVelocity * (1 - dragSmoothing) + rawVelocity * dragSmoothing;
+        dragVelocity = (dx / dt) * 16;
       }
 
       offset += dx;
@@ -84,20 +89,58 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
       lastTime = now;
     }
 
-    function onPointerUp(e: PointerEvent) {
+    function onPointerUp(_e: PointerEvent) {
+      if (!isDragging) return;
       isDragging = false;
       velocity = dragVelocity;
-      section.releasePointerCapture(e.pointerId);
+
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+      document.removeEventListener('pointercancel', onPointerCancel);
     }
 
+    function onPointerCancel(_e: PointerEvent) {
+      if (!isDragging) return;
+      isDragging = false;
+      velocity = dragVelocity;
+
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+      document.removeEventListener('pointercancel', onPointerCancel);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(section);
+
     section.addEventListener('pointerdown', onPointerDown);
-    section.addEventListener('pointermove', onPointerMove);
-    section.addEventListener('pointerup', onPointerUp);
-    section.addEventListener('pointercancel', onPointerUp);
 
     raf = requestAnimationFrame(animate);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(raf);
+      section.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+      document.removeEventListener('pointercancel', onPointerCancel);
+    };
   }
 
-  initDraggableMarquee();
-  document.addEventListener('astro:page-load', initDraggableMarquee);
+  let cleanup: (() => void) | undefined;
+
+  function init() {
+    if (cleanup) cleanup();
+    cleanup = initDraggableMarquee();
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
 </script>
