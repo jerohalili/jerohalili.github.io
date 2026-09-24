@@ -11,6 +11,8 @@ const projects = defineCollection({
     image: z.string().optional(),
     impact: z.string().default('Create'),
     order: z.number().default(99),
+    liveUrl: z.string().url().optional(),
+    repoUrl: z.string().url().optional(),
   }),
 });
 

@@ -11,19 +11,21 @@ const projects = sortedProjects.map(p => ({
   subtitle: p.data.subtitle || p.data.tags?.[0] || '',
   description: p.data.description,
   image: p.data.image || '',
+  liveUrl: p.data.liveUrl || '',
+  repoUrl: p.data.repoUrl || '',
 }));
 ---
 
 <section id="projects" class="w-full py-12">
-  <div class="max-w-[1400px] mx-auto px-4 md:px-10">
+  <div class="max-w-[1400px] mx-auto px-4 lg:px-10">
     
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-zinc-100 dark:border-zinc-800 pb-8 gap-6">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end border-b border-zinc-100 dark:border-zinc-800 pb-8 gap-6">
       <div class="space-y-1">
-        <h2 class="text-4xl md:text-5xl font-black tracking-tighter dark:text-white uppercase italic">Featured Projects</h2>
-        <p class="text-zinc-700 dark:text-zinc-300 text-sm font-medium">Engineered solutions for marketing, education, and creative industries.</p>
+        <h2 class="text-4xl lg:text-5xl font-black tracking-tighter dark:text-white uppercase italic">Featured Projects</h2>
+        <p class="text-zinc-700 dark:text-zinc-300 text-sm font-medium">Full-stack systems, local-AI automation, and decision engines for real-world constraints.</p>
       </div>
       
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3 max-w-full">
         <button id="carouselPrev" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous project">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -49,7 +51,7 @@ const projects = sortedProjects.map(p => ({
     <div class="relative w-full overflow-hidden py-8" id="carouselViewport">
       <div id="project-slider" class="flex gap-6 will-change-transform">
         {projects.map((project) => (
-          <a href={`${base}/projects/${project.id}`} class="project-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] overflow-hidden hover:border-orange-500/50 transition-colors duration-300 group flex flex-col shrink-0">
+          <article class="project-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] overflow-hidden hover:border-orange-500/50 transition-colors duration-300 group flex flex-col shrink-0">
             
             <div class="project-image relative w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
               {project.image && (
@@ -57,7 +59,7 @@ const projects = sortedProjects.map(p => ({
               )}
             </div>
 
-            <div class="project-content p-5 md:p-6 flex flex-col justify-between flex-1">
+            <div class="project-content p-5 lg:p-6 flex flex-col justify-between flex-1">
               <div class="space-y-2">
                 <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest border border-orange-500/20">
                   {project.subtitle}
@@ -68,15 +70,30 @@ const projects = sortedProjects.map(p => ({
                 <p class="project-desc text-zinc-700 dark:text-zinc-300 leading-relaxed">{project.description}</p>
               </div>
               
-              <div class="project-cta pt-3">
-                <span class="inline-flex items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black group-hover:bg-orange-500 group-hover:text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-300">
+              <div class="project-cta pt-3 flex flex-wrap items-center gap-2">
+                <a href={`${base}/projects/${project.id}`} class="inline-flex shrink-0 whitespace-nowrap items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black group-hover:bg-orange-500 group-hover:text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-300">
                   View Project
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </span>
+                </a>
+                {(project.liveUrl || project.repoUrl) && (
+                  <span class="inline-flex flex-nowrap items-center gap-2 min-w-0">
+                    {project.liveUrl && (
+                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300">
+                        Live
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l10-10M17 17V7H7"/></svg>
+                      </a>
+                    )}
+                    {project.repoUrl && (
+                      <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository`} class="inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                      </a>
+                    )}
+                  </span>
+                )}
               </div>
             </div>
 
-          </a>
+          </article>
         ))}
       </div>
     </div>
@@ -85,16 +102,22 @@ const projects = sortedProjects.map(p => ({
 </section>
 
 <style>
+  #project-slider {
+    align-items: stretch;
+  }
+
   .project-card {
     min-width: 0;
     min-height: 460px;
-    transition: 
-      min-height 350ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      width 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: width 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .project-image {
     height: 220px;
+    flex-shrink: 0;
     transition: height 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
@@ -114,10 +137,21 @@ const projects = sortedProjects.map(p => ({
   }
 
   .project-content {
+    min-height: 0;
+    overflow: visible;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     transition: padding 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  @media (min-width: 768px) {
+  .project-cta {
+    margin-top: auto;
+    flex-shrink: 0;
+    padding-bottom: 2px;
+  }
+
+  @media (min-width: 1024px) {
     .project-card {
       min-height: 520px;
     }
@@ -159,6 +193,17 @@ const projects = sortedProjects.map(p => ({
       padding: 1.75rem 2rem;
     }
   }
+
+  /* Keep CTA pinned to bottom so buttons are never clipped when heights lock */
+  .project-content {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+  .project-cta {
+    margin-top: auto;
+    flex-shrink: 0;
+  }
 </style>
 
 <script>
@@ -170,12 +215,23 @@ const projects = sortedProjects.map(p => ({
 
     if (!viewport || !slider || !prevBtn || !nextBtn) return;
 
+    // Narrowed non-nullable aliases for use inside nested closures.
+    // TS resets `if (!x) return` narrowing inside inner functions, so use these.
+    const vp: HTMLElement = viewport;
+    const sl: HTMLElement = slider;
+
+    // Prevent double-init on same DOM (initial call + astro:page-load).
+    if (sl.dataset.carouselInit === '1') return;
+    sl.dataset.carouselInit = '1';
+
     const originalCards = Array.from(slider.children).filter(child => !child.classList.contains('is-clone')) as HTMLElement[];
     const cardCount = originalCards.length;
     if (cardCount === 0) return;
 
+    // Keep large clone buffer so spamming Next never runs out / waits.
+    const CLONE_ROUNDS = 20;
     slider.innerHTML = '';
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < CLONE_ROUNDS; i++) {
       originalCards.forEach(card => {
         const newCard = card.cloneNode(true) as HTMLElement;
         newCard.classList.add('is-clone');
@@ -185,14 +241,17 @@ const projects = sortedProjects.map(p => ({
 
     const allCards = Array.from(slider.querySelectorAll('.project-card')) as HTMLElement[];
     const gap = 24;
-    let index = cardCount * 10;
+    const MIDDLE = cardCount * 10;
+    const SAFE_LO = cardCount * 5;
+    const SAFE_HI = cardCount * 15;
+    let index = MIDDLE;
 
     function isDesktop() {
-      return window.innerWidth >= 768;
+      return window.innerWidth >= 1024;
     }
 
     function getWidths() {
-      const viewportWidth = viewport.offsetWidth;
+      const viewportWidth = vp.offsetWidth;
       if (!isDesktop()) return { side: viewportWidth, center: viewportWidth, viewportWidth };
       const totalGap = gap * 2;
       const available = viewportWidth - totalGap;
@@ -212,16 +271,90 @@ const projects = sortedProjects.map(p => ({
       });
     }
 
+    // Measure tallest card across BOTH collapsed + expanded states — never jumps, never clips CTA.
+    function lockViewportHeight() {
+      const { side, center, viewportWidth } = getWidths();
+      const desktop = isDesktop();
+      const samples = allCards.slice(0, cardCount);
+      const currentCi = index + (desktop ? 1 : 0);
+      const expandedWidth = desktop ? center : viewportWidth;
+      const collapsedWidth = desktop ? side : viewportWidth;
+
+      // Freeze transitions on cards AND children (image height / title size / padding
+      // would otherwise still animate and we'd measure a mid-transition height).
+      const prevSliderTransition = sl.style.transition;
+      sl.style.transition = 'none';
+      const transitionEls: HTMLElement[] = [];
+      samples.forEach((card) => {
+        transitionEls.push(card);
+        card.querySelectorAll('*').forEach((el) => {
+          if (el instanceof HTMLElement) transitionEls.push(el);
+        });
+      });
+      const prevTransitions = transitionEls.map((el) => el.style.transition);
+      transitionEls.forEach((el) => { el.style.transition = 'none'; });
+
+      // Unlock so we measure natural heights.
+      allCards.forEach((card) => { card.style.height = ''; card.style.minHeight = ''; });
+
+      let max = 0;
+      const measureCard = (card: HTMLElement) => {
+        // Force sync layout after width/class change so we read the final state.
+        void card.offsetHeight;
+        const h = Math.max(card.offsetHeight, card.scrollHeight);
+        const content = card.querySelector('.project-content') as HTMLElement | null;
+        if (content) {
+          void content.offsetHeight;
+          const ch = Math.max(content.offsetHeight, content.scrollHeight);
+          // content + image heights give a second signal if card scrollHeight is clamped.
+          const img = card.querySelector('.project-image') as HTMLElement | null;
+          const total = ch + (img ? img.offsetHeight : 0);
+          if (total > h) {
+            if (total > max) max = total;
+            return;
+          }
+        }
+        if (h > max) max = h;
+      };
+
+      samples.forEach((card) => {
+        // Collapsed / side state (narrow — wraps more, CTA may take 2 lines).
+        card.classList.remove('is-active');
+        card.style.width = `${collapsedWidth}px`;
+        measureCard(card);
+        // Expanded / center state (taller image + larger title/padding).
+        card.classList.add('is-active');
+        card.style.width = `${expandedWidth}px`;
+        measureCard(card);
+      });
+
+      max = Math.ceil(max) + 24; // rounding / border / font-swap / CTA buffer
+
+      allCards.forEach((card) => {
+        card.style.height = `${max}px`;
+        card.style.minHeight = `${max}px`;
+      });
+      transitionEls.forEach((el, i) => { el.style.transition = prevTransitions[i] ?? ''; });
+      sl.style.transition = prevSliderTransition;
+
+      setCardWidths();
+      allCards.forEach((card, i) => {
+        card.classList.toggle('is-active', i === currentCi);
+      });
+    }
+
     function updateSlider(smooth = true) {
       const { side, center, viewportWidth } = getWidths();
       const ci = index + (isDesktop() ? 1 : 0);
 
       setCardWidths();
 
-      let pos = 0;
-      for (let i = 0; i < index; i++) {
-        pos += (i === ci ? center : side) + gap;
-      }
+      allCards.forEach((card, i) => {
+        card.classList.toggle('is-active', i === ci);
+      });
+
+      // O(1): all cards before `index` are side-width (ci = index+1 on desktop).
+      const pos = index * (side + gap);
 
       const w0 = index === ci ? center : side;
       const w1 = (index + 1) === ci ? center : side;
@@ -230,25 +363,66 @@ const projects = sortedProjects.map(p => ({
       const offsetX = (viewportWidth - groupWidth) / 2;
       const translateX = offsetX - pos;
 
-      slider.style.transition = smooth ? 'transform 350ms cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
-      slider.style.transform = `translate3d(${translateX}px, 0, 0)`;
-
-      allCards.forEach((card, i) => {
-        card.classList.toggle('is-active', i === ci);
-      });
+      sl.style.transition = smooth ? 'transform 350ms cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
+      sl.style.transform = `translate3d(${translateX}px, 0, 0)`;
     }
 
-    nextBtn.onclick = () => {
-      index++;
+    function jumpToMiddleIfNeeded() {
+      // Invisible wrap-reset: copies are identical, so user never hits an end.
+      if (index < SAFE_LO) {
+        index += cardCount * 10;
+        updateSlider(false);
+      } else if (index > SAFE_HI) {
+        index -= cardCount * 10;
+        updateSlider(false);
+      }
+    }
+
+    function step(dir: 1 | -1) {
+      // Spammable: every click advances one card, retargets mid-animation (interrupt to latest).
+      jumpToMiddleIfNeeded();
+      index += dir;
       updateSlider(true);
+    }
+
+    sl.addEventListener('transitionend', (e) => {
+      if ((e as TransitionEvent).propertyName !== 'transform') return;
+      jumpToMiddleIfNeeded();
+    });
+
+    nextBtn.onclick = () => step(1);
+
+    prevBtn.onclick = () => step(-1);
+
+    const relock = () => {
+      // Double rAF so widths/fonts settle before measuring.
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          lockViewportHeight();
+          updateSlider(false);
+        });
+      });
     };
 
-    prevBtn.onclick = () => {
-      index--;
-      updateSlider(true);
-    };
-
-    window.addEventListener('resize', () => updateSlider(false));
+    let resizeTimer: number | undefined;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(relock, 150);
+    });
+    if (typeof ResizeObserver !== 'undefined') {
+      let roTimer: number | undefined;
+      const ro = new ResizeObserver(() => {
+        window.clearTimeout(roTimer);
+        roTimer = window.setTimeout(relock, 150);
+      });
+      ro.observe(vp);
+    }
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(relock).catch(() => {});
+    }
+    window.addEventListener('load', relock);
+    setCardWidths();
+    lockViewportHeight();
     updateSlider(false);
   }
 
