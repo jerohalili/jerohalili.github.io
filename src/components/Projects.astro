@@ -106,9 +106,18 @@ const projects = sortedProjects.map(p => ({
     align-items: stretch;
   }
 
+  /* Fixed heights reserve layout from first paint so Services/Testimonials
+     below never shift on refresh. Heights must cover the tallest state
+     (narrow side card with 2-line CTA + wide active card with 300px image).
+     Descriptions are line-clamped (2/3 lines) so content can't outgrow this. */
+  #carouselViewport {
+    min-height: 624px; /* 560px card + py-8 */
+  }
+
   .project-card {
     min-width: 0;
-    min-height: 460px;
+    height: 560px;
+    min-height: 560px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -152,8 +161,14 @@ const projects = sortedProjects.map(p => ({
   }
 
   @media (min-width: 1024px) {
-    .project-card {
-      min-height: 520px;
+    #carouselViewport {
+      min-height: 664px; /* 600px card + py-8 */
+    }
+
+    .project-card,
+    .project-card.is-active {
+      height: 600px;
+      min-height: 600px;
     }
 
     .project-image {
@@ -170,11 +185,8 @@ const projects = sortedProjects.map(p => ({
       font-size: 0.8rem;
     }
 
-    /* Center card: wider landscape look */
-    .project-card.is-active {
-      min-height: 480px;
-    }
-
+    /* Center card: wider landscape look (card height stays fixed; only
+       image/title/padding grow so the page below never shifts) */
     .project-card.is-active .project-image {
       height: 300px;
     }
@@ -210,7 +222,7 @@ const projects = sortedProjects.map(p => ({
     }
   }
 
-  /* Keep CTA pinned to bottom so buttons are never clipped when heights lock */
+  /* Keep CTA pinned to bottom so buttons are never clipped at fixed heights */
   .project-content {
     display: flex;
     flex-direction: column;
@@ -287,78 +299,6 @@ const projects = sortedProjects.map(p => ({
       });
     }
 
-    // Measure tallest card across BOTH collapsed + expanded states — never jumps, never clips CTA.
-    function lockViewportHeight() {
-      const { side, center, viewportWidth } = getWidths();
-      const desktop = isDesktop();
-      const samples = allCards.slice(0, cardCount);
-      const currentCi = index + (desktop ? 1 : 0);
-      const expandedWidth = desktop ? center : viewportWidth;
-      const collapsedWidth = desktop ? side : viewportWidth;
-
-      // Freeze transitions on cards AND children (image height / title size / padding
-      // would otherwise still animate and we'd measure a mid-transition height).
-      const prevSliderTransition = sl.style.transition;
-      sl.style.transition = 'none';
-      const transitionEls: HTMLElement[] = [];
-      samples.forEach((card) => {
-        transitionEls.push(card);
-        card.querySelectorAll('*').forEach((el) => {
-          if (el instanceof HTMLElement) transitionEls.push(el);
-        });
-      });
-      const prevTransitions = transitionEls.map((el) => el.style.transition);
-      transitionEls.forEach((el) => { el.style.transition = 'none'; });
-
-      // Unlock so we measure natural heights.
-      allCards.forEach((card) => { card.style.height = ''; card.style.minHeight = ''; });
-
-      let max = 0;
-      const measureCard = (card: HTMLElement) => {
-        // Force sync layout after width/class change so we read the final state.
-        void card.offsetHeight;
-        const h = Math.max(card.offsetHeight, card.scrollHeight);
-        const content = card.querySelector('.project-content') as HTMLElement | null;
-        if (content) {
-          void content.offsetHeight;
-          const ch = Math.max(content.offsetHeight, content.scrollHeight);
-          // content + image heights give a second signal if card scrollHeight is clamped.
-          const img = card.querySelector('.project-image') as HTMLElement | null;
-          const total = ch + (img ? img.offsetHeight : 0);
-          if (total > h) {
-            if (total > max) max = total;
-            return;
-          }
-        }
-        if (h > max) max = h;
-      };
-
-      samples.forEach((card) => {
-        // Collapsed / side state (narrow — wraps more, CTA may take 2 lines).
-        card.classList.remove('is-active');
-        card.style.width = `${collapsedWidth}px`;
-        measureCard(card);
-        // Expanded / center state (taller image + larger title/padding).
-        card.classList.add('is-active');
-        card.style.width = `${expandedWidth}px`;
-        measureCard(card);
-      });
-
-      max = Math.ceil(max) + 24; // rounding / border / font-swap / CTA buffer
-
-      allCards.forEach((card) => {
-        card.style.height = `${max}px`;
-        card.style.minHeight = `${max}px`;
-      });
-      transitionEls.forEach((el, i) => { el.style.transition = prevTransitions[i] ?? ''; });
-      sl.style.transition = prevSliderTransition;
-
-      setCardWidths();
-      allCards.forEach((card, i) => {
-        card.classList.toggle('is-active', i === currentCi);
-      });
-    }
-
     function updateSlider(smooth = true) {
       const { side, center, viewportWidth } = getWidths();
       const ci = index + (isDesktop() ? 1 : 0);
@@ -410,35 +350,22 @@ const projects = sortedProjects.map(p => ({
 
     prevBtn.onclick = () => step(-1);
 
-    const relock = () => {
-      // Double rAF so widths/fonts settle before measuring.
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          lockViewportHeight();
-          updateSlider(false);
-        });
-      });
-    };
-
+    // Card heights are fixed in CSS so repositioning never changes page
+    // height. Only re-run on actual viewport WIDTH changes (breakpoint /
+    // side-vs-center widths) — never on fonts/load/height observations,
+    // which was what pushed Services/Testimonials down after refresh.
+    let lastViewportWidth = vp.offsetWidth;
     let resizeTimer: number | undefined;
     window.addEventListener('resize', () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(relock, 150);
+      resizeTimer = window.setTimeout(() => {
+        const w = vp.offsetWidth;
+        if (Math.abs(w - lastViewportWidth) < 2) return;
+        lastViewportWidth = w;
+        updateSlider(false);
+      }, 150);
     });
-    if (typeof ResizeObserver !== 'undefined') {
-      let roTimer: number | undefined;
-      const ro = new ResizeObserver(() => {
-        window.clearTimeout(roTimer);
-        roTimer = window.setTimeout(relock, 150);
-      });
-      ro.observe(vp);
-    }
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(relock).catch(() => {});
-    }
-    window.addEventListener('load', relock);
     setCardWidths();
-    lockViewportHeight();
     updateSlider(false);
   }
 
