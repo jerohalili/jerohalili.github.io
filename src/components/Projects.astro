@@ -192,6 +192,22 @@ const projects = sortedProjects.map(p => ({
     .project-card.is-active .project-content {
       padding: 1.75rem 2rem;
     }
+
+    /* Drive CTA rows by card type, not by animated width: is-active toggles
+       synchronously at t=0 in updateSlider(), so both directions switch rows
+       on the first frame while motion velocity masks it. Without this, the
+       wrap follows the width threshold (~322px) and shrink wraps at ~95%+,
+       popping after motion has almost stopped.
+       Scoped to multi-link spans (Live + GitHub) via :has(): single-link
+       spans (GitHub-only, e.g. Local-AI Social Media Factory) fit beside
+       View Project, so they keep natural wrap and stay on row 1. */
+    .project-card.is-active .project-cta {
+      flex-wrap: nowrap;
+    }
+
+    .project-card:not(.is-active) .project-cta > span:has(> a + a) {
+      flex-basis: 100%;
+    }
   }
 
   /* Keep CTA pinned to bottom so buttons are never clipped when heights lock */
