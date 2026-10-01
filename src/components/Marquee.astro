@@ -2,8 +2,23 @@
 const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Database Architecture", "n8n Automation", "UI/UX Design" ];
 ---
 
-<section id="marquee-section" class="w-full relative overflow-hidden py-12 border-y border-zinc-100 dark:border-zinc-800 bg-white dark:bg-black transition-colors duration-500 cursor-grab active:cursor-grabbing touch-none">
-    <div id="marquee-track" class="flex whitespace-nowrap select-none will-change-transform">
+<style>
+  @keyframes marquee-drift {
+    to { transform: translateX(-50%); }
+  }
+  #marquee-track {
+    animation: marquee-drift 32s linear infinite;
+  }
+  #marquee-section:hover #marquee-track {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #marquee-track { animation: none; }
+  }
+</style>
+
+<section id="marquee-section" class="w-full relative overflow-hidden py-12 border-y border-zinc-100 dark:border-zinc-800 bg-white dark:bg-black transition-colors duration-500 select-none" aria-hidden="true">
+    <div id="marquee-track" class="flex w-max whitespace-nowrap will-change-transform">
         {[...items, ...items].map((item) => (
         <div class="flex items-center flex-none">
             <span class="text-3xl md:text-5xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic px-12 md:px-16">
@@ -14,133 +29,3 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
         ))}
     </div>
 </section>
-
-<script>
-  function initDraggableMarquee() {
-    const section = document.getElementById('marquee-section');
-    const track = document.getElementById('marquee-track');
-    if (!section || !track) return;
-
-    const itemCount = 6;
-
-    function measureSetWidth(): number {
-      let total = 0;
-      for (let i = 0; i < itemCount; i++) {
-        const el = track.children[i] as HTMLElement;
-        if (el) total += el.offsetWidth;
-      }
-      return total;
-    }
-
-    const setWidth = measureSetWidth();
-
-    const naturalSpeed = -0.6;
-    const friction = 0.02;
-
-    let offset = 0;
-    let velocity = naturalSpeed;
-    let isDragging = false;
-    let lastX = 0;
-    let lastTime = 0;
-    let dragVelocity = 0;
-    let raf: number;
-    let isVisible = true;
-
-    function animate() {
-      if (!isDragging && isVisible) {
-        velocity += (naturalSpeed - velocity) * friction;
-        offset += velocity;
-
-        if (offset < -setWidth) offset += setWidth;
-        if (offset > 0) offset -= setWidth;
-      }
-
-      track.style.transform = `translate3d(${offset}px, 0, 0)`;
-      raf = requestAnimationFrame(animate);
-    }
-
-    function onPointerDown(e: PointerEvent) {
-      if (e.button !== 0) return;
-      isDragging = true;
-      lastX = e.clientX;
-      lastTime = performance.now();
-      dragVelocity = 0;
-
-      document.addEventListener('pointermove', onPointerMove);
-      document.addEventListener('pointerup', onPointerUp);
-      document.addEventListener('pointercancel', onPointerCancel);
-
-      e.preventDefault();
-    }
-
-    function onPointerMove(e: PointerEvent) {
-      if (!isDragging) return;
-
-      const now = performance.now();
-      const dt = now - lastTime;
-      const dx = e.clientX - lastX;
-
-      if (dt > 0) {
-        dragVelocity = (dx / dt) * 16;
-      }
-
-      offset += dx;
-      lastX = e.clientX;
-      lastTime = now;
-    }
-
-    function onPointerUp(_e: PointerEvent) {
-      if (!isDragging) return;
-      isDragging = false;
-      velocity = dragVelocity;
-
-      document.removeEventListener('pointermove', onPointerMove);
-      document.removeEventListener('pointerup', onPointerUp);
-      document.removeEventListener('pointercancel', onPointerCancel);
-    }
-
-    function onPointerCancel(_e: PointerEvent) {
-      if (!isDragging) return;
-      isDragging = false;
-      velocity = dragVelocity;
-
-      document.removeEventListener('pointermove', onPointerMove);
-      document.removeEventListener('pointerup', onPointerUp);
-      document.removeEventListener('pointercancel', onPointerCancel);
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          isVisible = entry.isIntersecting;
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(section);
-
-    section.addEventListener('pointerdown', onPointerDown);
-
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(raf);
-      section.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('pointermove', onPointerMove);
-      document.removeEventListener('pointerup', onPointerUp);
-      document.removeEventListener('pointercancel', onPointerCancel);
-    };
-  }
-
-  let cleanup: (() => void) | undefined;
-
-  function init() {
-    if (cleanup) cleanup();
-    cleanup = initDraggableMarquee();
-  }
-
-  init();
-  document.addEventListener('astro:page-load', init);
-</script>

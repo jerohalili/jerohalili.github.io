@@ -3,7 +3,7 @@ title: "JKISINAMAL: Fine Art Gallery & Portfolio"
 subtitle: "Artist CMS + Gallery"
 description: "The professional portfolio for visual artist JKISINAMAL — an Astro 6 + Sanity CMS gallery with a custom masonry engine that ships full-resolution art without social compression."
 tags: ["Astro 6", "Sanity CMS", "React 19", "Tailwind v4"]
-image: "/images/projects/jkisinamal-portfolio.png"
+image: "/images/projects/jkisinamal-portfolio.webp"
 impact: "Creative Autonomy"
 order: 3
 liveUrl: "https://jkisinamal.github.io"
@@ -72,3 +72,4 @@ npm run dev
 # Studio (dev only): http://localhost:4321/admin
 # Requires PUBLIC_SANITY_PROJECT_ID in .env
 ```
+

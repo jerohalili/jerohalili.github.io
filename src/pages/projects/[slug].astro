@@ -126,7 +126,7 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
 
       {entry.data.image && (
         <div class="w-full aspect-video bg-zinc-100 dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 mb-16 overflow-hidden flex items-center justify-center shadow-xl not-prose" data-reveal>
-          <img src={imageSrc} alt={entry.data.title} class="w-full h-full object-cover" />
+          <img src={imageSrc} alt={entry.data.title} class="w-full h-full object-cover" fetchpriority="high" decoding="async" width="1200" height="675" />
         </div>
       )}
 

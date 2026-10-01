@@ -3,7 +3,7 @@ title: "MonAmi: Interactive Networking Constellation"
 subtitle: "Graph-Based Relationship OS"
 description: "A force-directed network graph that turns contacts into contextual nodes and edges — with GitHub sync and scored people/repo recommendations."
 tags: ["Next.js 15", "TypeScript", "Prisma", "d3-force"]
-image: "/images/projects/monami-network.jpeg"
+image: "/images/projects/monami-network.webp"
 impact: "Intentional Networking"
 order: 7
 liveUrl: "https://monami-one.vercel.app/"
@@ -96,3 +96,4 @@ npm run setup
 npm run dev
 # open http://localhost:3000 — sign in via GitHub, email, or guest
 ```
+

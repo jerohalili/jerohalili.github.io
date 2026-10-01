@@ -3,7 +3,7 @@ title: "CS + Engineering Resume Dataset Generator"
 subtitle: "Automated Dataset Engineering"
 description: "An n8n workflow that generates demographically diverse, photorealistic synthetic resume datasets — LLM-written content, ComfyUI headshots, Reactive Resume PDFs, Drive delivery."
 tags: ["n8n", "AnythingLLM", "ComfyUI", "Reactive Resume"]
-image: "/images/projects/resume-generator.png"
+image: "/images/projects/resume-generator.webp"
 impact: "100% Automated Dataset Creation"
 order: 4
 repoUrl: "https://github.com/jerohalili/resume-ai-generator-automation"
@@ -79,3 +79,4 @@ chmod +x scripts/import_workflow.sh
 ```
 
 Prerequisites: Docker + Compose v2, NVIDIA GPU recommended, Reactive Resume account + API key, Google Cloud project with Drive API enabled, GGUF model in AnythingLLM, SD checkpoint in ComfyUI.
+

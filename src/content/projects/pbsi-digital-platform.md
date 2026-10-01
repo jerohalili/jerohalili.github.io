@@ -3,7 +3,7 @@ title: "PBSI: Digital Transformation Platform"
 subtitle: "Institutional Infrastructure"
 description: "The official digital platform for Presbyterian Bible Seminary Inc. — replacing paper-based intake with a fast, static-first admissions and program hub."
 tags: ["Astro 6", "React 19", "Tailwind v4", "Content Collections"]
-image: "/images/projects/pbsi-platform.png"
+image: "/images/projects/pbsi-platform.webp"
 impact: "Institutional Efficiency"
 order: 2
 liveUrl: "https://pbsi1992.github.io"
@@ -72,3 +72,4 @@ npm install
 npm run dev
 npm run build
 ```
+

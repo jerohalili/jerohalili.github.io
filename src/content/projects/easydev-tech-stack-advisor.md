@@ -3,7 +3,7 @@ title: "EasyDev: Tech Stack Decision Engine"
 subtitle: "Full-Stack Recommendation System"
 description: "A branching questionnaire that returns scored tech-stack picks across Language, Frontend, Backend, Database, and Infrastructure — with plain-language reasoning and trade-offs."
 tags: ["React 19", "Express 5", "PostgreSQL", "Vercel"]
-image: "/images/projects/easydev-decision-engine.jpeg"
+image: "/images/projects/easydev-decision-engine.webp"
 impact: "Decision Clarity"
 order: 5
 liveUrl: "https://easydev-nine.vercel.app/"
@@ -101,3 +101,4 @@ vercel dev
 npm run dev
 # API on http://localhost:3001, client on http://localhost:5173
 ```
+

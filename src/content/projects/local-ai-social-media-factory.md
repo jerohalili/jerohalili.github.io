@@ -3,7 +3,7 @@ title: "Local-AI Social Media Factory"
 subtitle: "Local LLM Automation"
 description: "A zero-API-cost marketing pipeline running Llama 3.1 and Stable Diffusion locally — from caption to branded visual to Telegram-approved Facebook/Instagram publish."
 tags: ["n8n", "AnythingLLM", "ComfyUI", "Telegram API"]
-image: "/images/projects/ai-marketing.png"
+image: "/images/projects/ai-marketing.webp"
 impact: "90% Efficiency Increase"
 order: 1
 repoUrl: "https://github.com/jerohalili/content-creation-ai-automation"
@@ -80,3 +80,4 @@ docker-compose up -d
 2. Start AnythingLLM, link your local LLM API to n8n.
 3. Open n8n at `http://localhost:5678`, import the v6 workflow JSON, connect the Telegram bot (use Ngrok/Cloudflare Tunnel for webhooks).
 4. Customize prompts in `prompts/` and publish — approve posts from Telegram.
+

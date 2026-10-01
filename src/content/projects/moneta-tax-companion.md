@@ -3,7 +3,7 @@ title: "Moneta: Philippine Tax-Smart Companion"
 subtitle: "Tax Decision Engine"
 description: "One Income Profile live-computes 9 Filipino taxpayer types, ranks peso-valued legal savings with citations, and pairs it with 21 standalone calculators."
 tags: ["Next.js 16", "Drizzle ORM", "Better Auth", "Neon Postgres"]
-image: "/images/projects/moneta-tax.jpeg"
+image: "/images/projects/moneta-tax.webp"
 impact: "Tax Savings Made Visible"
 order: 6
 liveUrl: "https://moneta-lovat.vercel.app/"
@@ -95,3 +95,4 @@ npx drizzle-kit push
 npm run dev
 # open http://localhost:3000 — fastest entry: one-tap guest account
 ```
+

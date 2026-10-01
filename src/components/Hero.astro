@@ -74,25 +74,50 @@ const stats = [
 
     <a href={`${base}/about`} data-reveal data-tilt class="lg:col-span-4 mt-10 lg:mt-0 w-full max-w-full xs:max-w-[400px] xs:mx-auto glass-card glow-border overflow-visible relative group h-[500px] rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem]">
         <div class="absolute inset-0 z-0 overflow-hidden rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem]">
-          <img 
-            src={`${base}/images/light-marble.jpg`} 
-            alt="" 
-            class="parallax-layer absolute inset-0 w-full h-full object-cover transition-transform duration-500 dark:hidden" 
-            data-speed="8"
-          />
-          <img 
-            src={`${base}/images/dark-marble.jpg`} 
-            alt="" 
-            class="parallax-layer absolute inset-0 w-full h-full object-cover transition-transform duration-500 hidden dark:block" 
-            data-speed="8"
-          />
+          <picture>
+            <source srcset={`${base}/images/light-marble.webp`} type="image/webp" />
+            <img
+              src={`${base}/images/light-marble.jpg`}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+              width="800"
+              height="1000"
+              class="parallax-layer absolute inset-0 w-full h-full object-cover transition-transform duration-500 dark:hidden"
+              data-speed="8"
+            />
+          </picture>
+          <picture>
+            <source srcset={`${base}/images/dark-marble.webp`} type="image/webp" />
+            <img
+              src={`${base}/images/dark-marble.jpg`}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+              width="800"
+              height="1000"
+              class="parallax-layer absolute inset-0 w-full h-full object-cover transition-transform duration-500 hidden dark:block"
+              data-speed="8"
+            />
+          </picture>
         </div>
-        <img 
-          src={`${base}/images/jero.png`} 
-          alt="Jero Halili" 
-          data-magnetic
-          class="absolute top-[-20px] lg:top-[-40px] left-0 right-0 bottom-0 h-[calc(100%+40px)] object-cover object-top z-0 transition-transform duration-500 [mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)]"
-        />
+        <picture>
+          <source srcset={`${base}/images/jero.webp`} type="image/webp" />
+          <img
+            src={`${base}/images/jero.png`}
+            alt="Jero Halili"
+            data-magnetic
+            fetchpriority="high"
+            decoding="async"
+            width="800"
+            height="1015"
+            class="absolute top-[-20px] lg:top-[-40px] left-0 right-0 bottom-0 h-[calc(100%+40px)] object-cover object-top z-0 transition-transform duration-500 [mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_100%_90%_at_50%_0%,black_85%,transparent_100%)]"
+          />
+        </picture>
         <div class="absolute bottom-0 left-0 right-0 z-20 w-full p-6 pointer-events-none">
           <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-transform duration-300 group-hover:-translate-y-2">
               <div class="space-y-3">
