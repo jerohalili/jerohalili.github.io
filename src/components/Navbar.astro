@@ -29,6 +29,13 @@ const navLinks = [
     </div>
 
     <div class="flex items-center gap-2 md:gap-3 pr-2">
+      <button
+        id="perf-toggle"
+        type="button"
+        aria-label="Toggle Lite mode"
+        title="Toggle Lite mode (faster on weak devices)"
+        class="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300"
+      >Lite</button>
       <ThemeIcon />
       
       <a href={`${base}/contact`} data-magnetic="0.2" class="hidden sm:block bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform duration-300">
@@ -47,12 +54,31 @@ const navLinks = [
 <MobileMenu links={navLinks} />
 
 <script>
+  import { apply, isLite } from '../scripts/lite';
+  function paintPerfToggle() {
+    const btn = document.getElementById('perf-toggle');
+    if (!btn) return;
+    // Show the *other* mode: "Lite" when on Full, "Full" when on Lite.
+    btn.textContent = isLite() ? 'Full' : 'Lite';
+  }
   function setupNavbar() {
     const trigger = document.getElementById('mobile-trigger');
     if (trigger) {
       trigger.onclick = () => document.dispatchEvent(new CustomEvent('open-menu'));
     }
+    const btn = document.getElementById('perf-toggle');
+    if (btn) {
+      const fresh = btn.cloneNode(true) as HTMLButtonElement;
+      btn.replaceWith(fresh);
+      fresh.addEventListener('click', () => {
+        apply(isLite() ? 'full' : 'lite');
+        paintPerfToggle();
+      });
+    }
+    paintPerfToggle();
   }
   setupNavbar();
   document.addEventListener('astro:after-swap', setupNavbar);
+  document.addEventListener('astro:page-load', paintPerfToggle);
+  window.addEventListener('perf-change', paintPerfToggle);
 </script>

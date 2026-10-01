@@ -55,7 +55,38 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
             document.documentElement.classList[theme === 'dark' ? 'add' : 'remove']('dark');
         </script>
 
+        <script is:inline>
+            // Decide Lite vs Full before first paint. Stored choice wins, else auto-detect weak device.
+            try {
+                const stored = localStorage.getItem('perf-mode');
+                let mode = 'full';
+                if (stored === 'full' || stored === 'lite') {
+                    mode = stored;
+                } else {
+                    const conn = navigator.connection;
+                    const saveData = conn && conn.saveData;
+                    const eff = conn && conn.effectiveType;
+                    const slowNet = eff === 'slow-2g' || eff === '2g' || eff === '3g';
+                    const weakCPU = typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4;
+                    const weakRAM = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
+                    if (saveData || slowNet || weakCPU || weakRAM) mode = 'lite';
+                }
+                document.documentElement.dataset.perf = mode;
+            } catch { document.documentElement.dataset.perf = 'full'; }
+        </script>
+
         <style is:global>
+            /* Lite: hide heavy canvases/blob, keep layout identical */
+            html[data-perf='lite'] #hero-constellation,
+            html[data-perf='lite'] #skillsCanvas,
+            html[data-perf='lite'] #cursor-blob {
+                display: none;
+            }
+            /* Lite-only: profile card behaves like main card — no parallax transition lag */
+            html[data-perf='lite'] .parallax-layer {
+                transform: none !important;
+                transition: none !important;
+            }
             .animate-in {
                 animation: fadeIn 0.8s ease-out forwards;
             }
@@ -107,6 +138,8 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
             const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
             function initBlob() {
+                // Lite kill-switch: no blob loop at all (CSS hides it). Full path below untouched.
+                if (document.documentElement.dataset.perf === 'lite') return;
                 blob = document.getElementById('cursor-blob');
                 if (isTouchDevice) {
                     if (blob) {
@@ -124,6 +157,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
             }
 
             function render() {
+                if (document.documentElement.dataset.perf === 'lite') return;
                 if (!isVisible) {
                     animationFrameId = requestAnimationFrame(render);
                     return;
@@ -167,6 +201,14 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
             document.addEventListener('astro:after-swap', () => {
                 cancelAnimationFrame(animationFrameId);
                 initAll();
+            });
+            window.addEventListener('perf-change', (e) => {
+                if ((e as CustomEvent).detail === 'full') {
+                    cancelAnimationFrame(animationFrameId);
+                    initBlob();
+                } else {
+                    cancelAnimationFrame(animationFrameId);
+                }
             });
         </script>
     </body>

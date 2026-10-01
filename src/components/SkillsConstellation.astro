@@ -50,6 +50,8 @@ const legend = [
   let raf;
 
   function runCanvas() {
+    // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
+    if (document.documentElement.dataset.perf === 'lite') return;
     const canvas = document.getElementById('skillsCanvas');
     if (!canvas) return;
     
@@ -176,6 +178,8 @@ const legend = [
     }
 
     function animate() {
+      // If user flips to Lite mid-loop, stop scheduling further frames. No-op in Full.
+      if (document.documentElement.dataset.perf === 'lite') return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       nodes.forEach(n => {
         n.update();
@@ -201,6 +205,12 @@ const legend = [
   document.addEventListener('astro:page-load', () => {
     if (raf) cancelAnimationFrame(raf);
     runCanvas();
+  });
+  window.addEventListener('perf-change', (e) => {
+    if (e.detail === 'full') {
+      if (raf) cancelAnimationFrame(raf);
+      runCanvas();
+    }
   });
 </script>
 

@@ -60,8 +60,8 @@ const stats = [
 
   <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 relative z-10 w-full">
     
-    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center group/card hover:border-orange-500/30 hover:shadow-orange-500/10">
-        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4 transition-transform duration-300 group-hover/card:translate-x-1">
+    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center hover:border-orange-500/30 hover:shadow-orange-500/10">
+        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
           Computer Scientist · Full-Stack Developer · AI Engineer
         </p>
         <h1 class="text-6xl custom:text-7xl xl:text-[90px] font-black tracking-tighter leading-[0.9] text-zinc-900 dark:text-white mb-8">
@@ -134,6 +134,8 @@ const stats = [
 
 <script>
   function initHeroConstellation() {
+    // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
+    if (document.documentElement.dataset.perf === 'lite') return;
     const canvas = document.getElementById('hero-constellation') as HTMLCanvasElement;
     if (!canvas) return;
     const ctx = canvas.getContext('2d')!;
@@ -189,6 +191,8 @@ const stats = [
     }
 
     function animate() {
+      // If user flips to Lite mid-loop, stop scheduling further frames. No-op in Full.
+      if (document.documentElement.dataset.perf === 'lite') return;
       ctx.clearRect(0, 0, w, h);
 
       for (const dot of dots) {
@@ -271,6 +275,10 @@ const stats = [
   initHeroConstellation();
   document.addEventListener('astro:page-load', () => {
     initHeroConstellation();
+  });
+  // Lite toggle: Lite->Full (re)starts loop once; Full->Lite stops via guard above.
+  window.addEventListener('perf-change', (e) => {
+    if ((e as CustomEvent).detail === 'full') initHeroConstellation();
   });
 </script>
 
@@ -378,7 +386,13 @@ const stats = [
 </script>
 
 <script>
+  let profileCleanup: (() => void) | undefined;
+
   function initProfileCardEffects() {
+    // Lite kill-switch: no parallax / magnetic follow. Full path below untouched.
+    if (document.documentElement.dataset.perf === 'lite') return;
+    // Prevent double-init (View Transitions + Lite->Full re-init)
+    if (profileCleanup) return;
     const card = document.querySelector<HTMLElement>('a[href*="/about"]')!;
     if (!card) return;
 
@@ -397,6 +411,8 @@ const stats = [
     let raf: number;
 
     function onPointerMove(e: PointerEvent) {
+      // Lite-only: ignore moves after toggle to Lite (listeners removed too, this is belt-and-braces)
+      if (document.documentElement.dataset.perf === 'lite') return;
       const rect = card.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
@@ -418,6 +434,8 @@ const stats = [
     }
 
     function onPointerLeave() {
+      // Lite-only: ignore after toggle to Lite
+      if (document.documentElement.dataset.perf === 'lite') return;
       parallaxLayers.forEach((layer) => {
         layer.style.transform = 'translate(0px, 0px)';
       });
@@ -430,6 +448,7 @@ const stats = [
     }
 
     function animateMagnetic() {
+      if (document.documentElement.dataset.perf === 'lite') return;
       const lerp = isHovering ? lerpFactor : returnSpeed;
       magX += (magTargetX - magX) * lerp;
       magY += (magTargetY - magY) * lerp;
@@ -445,8 +464,30 @@ const stats = [
     card.addEventListener('pointerleave', onPointerLeave);
 
     raf = requestAnimationFrame(animateMagnetic);
+
+    // Lite-only cleanup: detach Full listeners + stop loop + reset transforms
+    // so Lite behaves like the main card (tilt + reveal only). Full untouched.
+    profileCleanup = () => {
+      cancelAnimationFrame(raf);
+      card.removeEventListener('pointermove', onPointerMove);
+      card.removeEventListener('pointerleave', onPointerLeave);
+      parallaxLayers.forEach((layer) => {
+        layer.style.transform = '';
+      });
+      if (magneticEl) magneticEl.style.transform = '';
+      profileCleanup = undefined;
+    };
+  }
+
+  function teardownProfileForLite() {
+    if (profileCleanup) profileCleanup();
   }
 
   initProfileCardEffects();
   document.addEventListener('astro:page-load', initProfileCardEffects);
+  document.addEventListener('astro:before-swap', teardownProfileForLite);
+  window.addEventListener('perf-change', (e) => {
+    if ((e as CustomEvent).detail === 'full') initProfileCardEffects();
+    else teardownProfileForLite();
+  });
 </script>
