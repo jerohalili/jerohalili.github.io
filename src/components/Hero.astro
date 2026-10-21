@@ -1,4 +1,4 @@
----
+﻿---
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const stats = [
   { label: 'Projects', val: '7+' },
@@ -169,10 +169,10 @@ const stats = [
     let mouse = { x: -9999, y: -9999 };
     const isTouch = window.matchMedia('(pointer: coarse)').matches;
 
-    const DOT_COUNT = 500;
-    const CONNECTION_DIST = 200;
-    const MOUSE_REPEL_DIST = 0;
-    const MOUSE_REPEL_FORCE = 0.08;
+    const DOT_COUNT = 200;
+    const CONNECTION_DIST = 250;
+
+
 
     interface Dot {
       x: number;
@@ -260,18 +260,7 @@ const stats = [
         if (dot.y < 0) dot.y = h;
         if (dot.y > h) dot.y = 0;
 
-        if (!isTouch) {
-          const dx = dot.x - mouse.x;
-          const dy = dot.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < MOUSE_REPEL_DIST && dist > 0) {
-            const force = (MOUSE_REPEL_DIST - dist) / MOUSE_REPEL_DIST;
-            dot.vx += (dx / dist) * force * MOUSE_REPEL_FORCE;
-            dot.vy += (dy / dist) * force * MOUSE_REPEL_FORCE;
-          }
-        }
-
-        // Gentle pull back to home position (rubber-band effect after mouse repel)
+        // Gentle pull back to home position
         const homeDx = dot.homeX - dot.x;
         const homeDy = dot.homeY - dot.y;
         dot.vx += homeDx * 0.003;
@@ -308,17 +297,6 @@ const stats = [
         t.y = from.y + (to.y - from.y) * t.progress;
         t.progress += 0.005 + Math.random() * 0.005;
 
-        // Travelers also repel from mouse
-        if (!isTouch) {
-          const tdx = t.x - mouse.x;
-          const tdy = t.y - mouse.y;
-          const tdist = Math.sqrt(tdx * tdx + tdy * tdy);
-          if (tdist < MOUSE_REPEL_DIST && tdist > 0) {
-            const tforce = (MOUSE_REPEL_DIST - tdist) / MOUSE_REPEL_DIST;
-            t.x += (tdx / tdist) * tforce * MOUSE_REPEL_FORCE * 20;
-            t.y += (tdy / tdist) * tforce * MOUSE_REPEL_FORCE * 20;
-          }
-        }
       }
 
       for (let i = 0; i < dots.length; i++) {
@@ -349,7 +327,7 @@ const stats = [
       for (const t of travelers) {
         ctx.beginPath();
         ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${t.opacity})`;
+        ctx.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(200, 200, 200, 1)' : 'rgba(51, 51, 51, 1)';
         ctx.fill();
         ctx.beginPath();
         ctx.arc(t.x, t.y, t.radius * 2.2, 0, Math.PI * 2);
@@ -388,9 +366,6 @@ const stats = [
   }
 
   initHeroConstellation();
-  document.addEventListener('astro:page-load', () => {
-    initHeroConstellation();
-  });
   // Lite toggle: Lite->Full (re)starts loop once; Full->Lite stops via guard above.
   window.addEventListener('perf-change', (e) => {
     if ((e as CustomEvent).detail === 'full') initHeroConstellation();
