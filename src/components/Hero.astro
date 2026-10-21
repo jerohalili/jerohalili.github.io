@@ -1,11 +1,10 @@
 ---
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const stats = [
-  { label: 'Projects', val: '12+' },
-  { label: 'Happy Clients', val: '100%' },
-  { label: 'Followers', val: '2.5k' },
+  { label: 'Projects', val: '7+' },
+  { label: 'AI Automations', val: '3+' },
   { label: 'Experience', val: '2yrs+' },
-  { label: 'Stack', val: 'MERN' }
+  { label: 'Stack', val: 'MERN · Next.js' }
 ];
 ---
 
@@ -19,8 +18,8 @@ const stats = [
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   }
 
   .hero-canvas-wrap canvas {
@@ -68,7 +67,7 @@ const stats = [
           I BUILD SYSTEMS <br /> THAT <span class="text-orange-500 italic">SCALE & GROW</span>
         </h1>
         <p class="text-zinc-500 dark:text-zinc-300 text-lg md:text-xl max-w-xl leading-relaxed">
-          Full-stack developer & AI automation engineer based in Angeles, Philippines.
+          I build databases, analytics, and AI automations for startups and local businesses.
         </p>
     </div>
 
@@ -139,7 +138,7 @@ const stats = [
         </div>
     </a>
 
-    <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
+    <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {stats.map((stat, i) => (
         <div data-reveal data-reveal-delay={i * 80} class="glass-card glow-border p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group">
             <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-orange-500/70 transition-colors duration-300">{stat.label}</p>
@@ -170,21 +169,34 @@ const stats = [
     let mouse = { x: -9999, y: -9999 };
     const isTouch = window.matchMedia('(pointer: coarse)').matches;
 
-    const DOT_COUNT = 210;
-    const CONNECTION_DIST = 180;
-    const MOUSE_REPEL_DIST = 150;
-    const MOUSE_REPEL_FORCE = 0.04;
+    const DOT_COUNT = 500;
+    const CONNECTION_DIST = 200;
+    const MOUSE_REPEL_DIST = 0;
+    const MOUSE_REPEL_FORCE = 0.08;
 
     interface Dot {
       x: number;
       y: number;
+      homeX: number;
+      homeY: number;
       vx: number;
       vy: number;
       radius: number;
       opacity: number;
     }
 
+    interface Traveler {
+      x: number;
+      y: number;
+      fromDot: number;
+      toDot: number;
+      progress: number;
+      radius: number;
+      opacity: number;
+    }
+
     let dots: Dot[] = [];
+    let travelers: Traveler[] = [];
     let w = 0;
     let h = 0;
 
@@ -204,13 +216,32 @@ const stats = [
     function createDots() {
       dots = [];
       for (let i = 0; i < DOT_COUNT; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
         dots.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
-          radius: Math.random() * 1.8 + 0.4,
-          opacity: Math.random() * 0.5 + 0.2,
+          x,
+          y,
+          homeX: x,
+          homeY: y,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15,
+          radius: Math.random() * 2.2 + 0.5,
+          opacity: Math.random() * 0.4 + 0.4,
+        });
+      }
+
+      const TRAVELER_COUNT = 20;
+      travelers = [];
+      for (let i = 0; i < TRAVELER_COUNT; i++) {
+        const fromDot = Math.floor(Math.random() * DOT_COUNT);
+        travelers.push({
+          x: dots[fromDot].x,
+          y: dots[fromDot].y,
+          fromDot,
+          toDot: fromDot,
+          progress: 0,
+          radius: 3 + Math.random() * 2,
+          opacity: 0.8 + Math.random() * 0.2,
         });
       }
     }
@@ -240,8 +271,54 @@ const stats = [
           }
         }
 
+        // Gentle pull back to home position (rubber-band effect after mouse repel)
+        const homeDx = dot.homeX - dot.x;
+        const homeDy = dot.homeY - dot.y;
+        dot.vx += homeDx * 0.003;
+        dot.vy += homeDy * 0.003;
+
         dot.vx *= 0.995;
         dot.vy *= 0.995;
+      }
+
+      // Travelers move along connection edges between dots
+      for (const t of travelers) {
+        if (t.progress >= 1) {
+          // Arrived at toDot; pick a new neighbor within CONNECTION_DIST
+          t.fromDot = t.toDot;
+          const neighbors = [];
+          for (let j = 0; j < dots.length; j++) {
+            if (j === t.fromDot) continue;
+            const dx = dots[j].x - dots[t.fromDot].x;
+            const dy = dots[j].y - dots[t.fromDot].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < CONNECTION_DIST) neighbors.push(j);
+          }
+          if (neighbors.length > 0) {
+            t.toDot = neighbors[Math.floor(Math.random() * neighbors.length)];
+          } else {
+            t.toDot = t.fromDot;
+          }
+          t.progress = 0;
+        }
+
+        const from = dots[t.fromDot];
+        const to = dots[t.toDot];
+        t.x = from.x + (to.x - from.x) * t.progress;
+        t.y = from.y + (to.y - from.y) * t.progress;
+        t.progress += 0.005 + Math.random() * 0.005;
+
+        // Travelers also repel from mouse
+        if (!isTouch) {
+          const tdx = t.x - mouse.x;
+          const tdy = t.y - mouse.y;
+          const tdist = Math.sqrt(tdx * tdx + tdy * tdy);
+          if (tdist < MOUSE_REPEL_DIST && tdist > 0) {
+            const tforce = (MOUSE_REPEL_DIST - tdist) / MOUSE_REPEL_DIST;
+            t.x += (tdx / tdist) * tforce * MOUSE_REPEL_FORCE * 20;
+            t.y += (tdy / tdist) * tforce * MOUSE_REPEL_FORCE * 20;
+          }
+        }
       }
 
       for (let i = 0; i < dots.length; i++) {
@@ -250,12 +327,12 @@ const stats = [
           const dy = dots[j].y - dots[i].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECTION_DIST) {
-            const alpha = (1 - dist / CONNECTION_DIST) * 0.18;
+            const alpha = (1 - dist / CONNECTION_DIST) * 0.35;
             ctx.beginPath();
             ctx.moveTo(dots[i].x, dots[i].y);
             ctx.lineTo(dots[j].x, dots[j].y);
             ctx.strokeStyle = `rgba(249, 115, 22, ${alpha})`;
-            ctx.lineWidth = 0.7;
+            ctx.lineWidth = 1;
             ctx.stroke();
           }
         }
@@ -266,6 +343,19 @@ const stats = [
         ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(249, 115, 22, ${dot.opacity})`;
         ctx.fill();
+      }
+
+      // Draw the traveling circles on top
+      for (const t of travelers) {
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${t.opacity})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, t.radius * 2.2, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(249, 115, 22, 0.4)`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
 
       raf = requestAnimationFrame(animate);
@@ -283,7 +373,7 @@ const stats = [
       });
     }
 
-    let resizeTimeout: number | null = null;
+    let resizeTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
@@ -319,8 +409,8 @@ const stats = [
     if (!typingEl || !prefixEl || !cursorEl) return;
 
     const sentences = [
-      { prefix: "Turning workflows ", suffix: "into code." },
-      { prefix: "Building systems ", suffix: "that scale." },
+      { prefix: "Replacing paper with ", suffix: "digital systems." },
+      { prefix: "Building revenue ", suffix: "engines for startups." },
       { prefix: "Automating ", suffix: "the repetitive." },
       { prefix: "Shipping ", suffix: "products that matter." },
       { prefix: "Going ", suffix: "from schema to funnel." },
