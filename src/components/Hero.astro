@@ -157,15 +157,21 @@ const stats = [
 </section>
 
 <script>
+  let heroRaf: number;
+
   function initHeroConstellation() {
     // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
     if (document.documentElement.dataset.perf === 'lite') return;
     const canvas = document.getElementById('hero-constellation') as HTMLCanvasElement;
     if (!canvas) return;
+    // Do not attach to a stale/detached canvas left over from a view transition.
+    if (!canvas.isConnected) return;
     const ctx = canvas.getContext('2d')!;
     if (!ctx) return;
 
-    let raf: number;
+    // Stop any previous animation loop so we never run two at once.
+    cancelAnimationFrame(heroRaf);
+
     let mouse = { x: -9999, y: -9999 };
     const isTouch = window.matchMedia('(pointer: coarse)').matches;
 
@@ -336,7 +342,7 @@ const stats = [
         ctx.stroke();
       }
 
-      raf = requestAnimationFrame(animate);
+      heroRaf = requestAnimationFrame(animate);
     }
 
     if (!isTouch) {
@@ -366,6 +372,10 @@ const stats = [
   }
 
   initHeroConstellation();
+  // Stop the loop when navigating away so it does not run on a removed canvas.
+  document.addEventListener('astro:before-swap', () => cancelAnimationFrame(heroRaf));
+  // Re-start the loop when returning to home via client-side navigation.
+  document.addEventListener('astro:page-load', initHeroConstellation);
   // Lite toggle: Lite->Full (re)starts loop once; Full->Lite stops via guard above.
   window.addEventListener('perf-change', (e) => {
     if ((e as CustomEvent).detail === 'full') initHeroConstellation();
