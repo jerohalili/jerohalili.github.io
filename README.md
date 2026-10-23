@@ -257,3 +257,11 @@ npm run build
 - LinkedIn: www.linkedin.com/in/jero-halili-bb385b295
 - Email: jerobusiness20@gmail.com
 - GitHub: https://github.com/jerohalili
+
+---
+
+## License
+
+Copyright © 2026 Jero Halili. All Rights Reserved.
+
+No license is granted to use, copy, modify, or distribute this software.
