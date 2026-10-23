@@ -263,5 +263,3 @@ npm run build
 ## License
 
 Copyright © 2026 Jero Halili. All Rights Reserved.
-
-No license is granted to use, copy, modify, or distribute this software.
