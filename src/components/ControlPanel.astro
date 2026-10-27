@@ -106,11 +106,13 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
           <button type="button" role="radio" aria-checked="false" data-cp-mode="light">Light</button>
           <button type="button" role="radio" aria-checked="false" data-cp-mode="dark">Dark</button>
         </div>
-        <p data-cp-mode-note hidden class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">This theme is dark-only. Switch to Clean to use light mode.</p>
       </section>
 
       <section aria-labelledby="cp-h-fx">
         <h3 id="cp-h-fx" class={`${label} mb-2`}>Effects</h3>
+        <p data-cp-lite-hint hidden class="mb-2 text-xs text-accent-600 dark:text-accent-400 font-semibold">
+          Lite mode is on, so Particle network and Cursor glow are paused. Switch to Full below to bring them back.
+        </p>
         <ul class="-mx-3">
           {effects.map((e) => (
             <li>
@@ -352,19 +354,22 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
       else el.setAttribute('aria-checked', String(el.dataset.cpAccent === s.accent));
     });
 
-    const modeLocked = s.theme !== 'clean';
     $$<HTMLButtonElement>('[data-cp-mode]').forEach((el) => {
       el.setAttribute('aria-checked', String(el.dataset.cpMode === s.mode));
-      el.disabled = modeLocked;
     });
-    $$('[data-cp-mode-note]').forEach((el) => { el.hidden = !modeLocked; });
 
     $$('[data-cp-fx]').forEach((el) =>
       el.setAttribute('aria-checked', String(!!s.fx[el.dataset.cpFx as string])));
 
-    const perf = isLite() ? 'lite' : 'full';
+    const lite = isLite();
+    const perf = lite ? 'lite' : 'full';
     $$('[data-cp-perf]').forEach((el) =>
       el.setAttribute('aria-checked', String(el.dataset.cpPerf === perf)));
+    // Lite pauses the canvases and glow, so say so instead of showing them as plain "on".
+    $$('[data-cp-fx="particles"],[data-cp-fx="glow"]').forEach((el) => {
+      el.style.opacity = lite ? '0.5' : '';
+    });
+    $$('[data-cp-lite-hint]').forEach((el) => { el.hidden = !lite; });
 
     // Roving tabindex so each radio group is a single tab stop (arrow keys move within).
     $$('[role="radiogroup"]').forEach((group) => {
@@ -373,8 +378,15 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
       radios.forEach((r) => { r.tabIndex = r === active ? 0 : -1; });
     });
 
-    const hide = seen();
-    $$('[data-cp-ping]').forEach((el) => { el.hidden = hide; });
+    // The blinking dot is a "you can customize" hint; it goes away once it's been found.
+    const found = seen();
+    $$('[data-cp-ping]').forEach((el) => { el.style.display = found ? 'none' : ''; });
+  }
+
+  function markSeen() {
+    if (seen()) return;
+    try { localStorage.setItem('ui-seen', '1'); } catch { /* ignore */ }
+    paint();
   }
 
   function originOf(e: MouseEvent, el: HTMLElement): Origin {
@@ -407,7 +419,7 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
     const origin = originOf(e, el);
 
     if (d.cpOpen !== undefined) {
-      try { localStorage.setItem('ui-seen', '1'); } catch { /* ignore */ }
+      markSeen();
       if (dlg && !dlg.open) dlg.showModal();
       paint();
     } else if (d.cpClose !== undefined) {
@@ -453,6 +465,12 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
     // Delegated, so it survives client-side navigation re-rendering the panel.
     document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
+    // Hovering or focusing a customize button counts as finding it.
+    const found = (e: Event) => {
+      if ((e.target as HTMLElement | null)?.closest?.('[data-cp-open]')) markSeen();
+    };
+    document.addEventListener('pointerover', found);
+    document.addEventListener('focusin', found);
     window.addEventListener('appearance-change', paint);
     window.addEventListener('perf-change', paint);
     document.addEventListener('astro:page-load', paint);

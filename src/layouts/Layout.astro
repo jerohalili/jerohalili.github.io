@@ -81,12 +81,10 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                     if (ACCENTS.indexOf(userAccent) < 0) userAccent = null;
                     var stored = read('theme'); // existing light/dark key
                     var wantsDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                     var saved = readFx();
                     var fx = {};
                     FX.forEach(function (k) {
                         var d = FX_DEFAULT[k];
-                        if (reduce && k !== 'scanlines') d = false; // respect the OS setting until the user opts in
                         if (has(THEME_FX, theme) && has(THEME_FX[theme], k)) d = THEME_FX[theme][k];
                         fx[k] = typeof saved[k] === 'boolean' ? saved[k] : d;
                     });
@@ -95,7 +93,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                         accent: userAccent || THEMES[theme],
                         userAccent: userAccent,
                         mode: wantsDark ? 'dark' : 'light',
-                        dark: theme !== 'clean' || wantsDark, // the HUD themes are dark-only
+                        dark: wantsDark,
                         fx: fx
                     };
                 }
@@ -120,26 +118,30 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                 }
 
                 // Changes go through a circular reveal where the browser supports it.
+                // While the look changes, CSS transitions are frozen (data-vt) so colors
+                // switch cleanly instead of fading in from the old values.
                 function commit(origin) {
                     var run = function () {
                         var s = apply();
                         window.dispatchEvent(new CustomEvent('appearance-change', { detail: s }));
                     };
+                    var settle = function () { root.removeAttribute('data-vt'); };
                     var s = state();
                     if (document.startViewTransition && s.fx.motion && origin) {
                         root.style.setProperty('--vt-x', origin.x + 'px');
                         root.style.setProperty('--vt-y', origin.y + 'px');
                         root.setAttribute('data-vt', 'reveal');
                         var t = document.startViewTransition(run);
-                        var done = function () { root.removeAttribute('data-vt'); };
                         var quiet = function () {}; // a skipped transition is normal, not an error
                         t.ready.catch(quiet);
                         t.updateCallbackDone.catch(quiet);
-                        t.finished.then(done, done);
+                        t.finished.then(settle, settle);
                         // Safety net: never leave the page covered by a stuck transition.
-                        setTimeout(function () { try { t.skipTransition(); } catch (e) {} done(); }, 1500);
+                        setTimeout(function () { try { t.skipTransition(); } catch (e) {} settle(); }, 1500);
                     } else {
+                        root.setAttribute('data-vt', 'instant');
                         run();
+                        requestAnimationFrame(function () { requestAnimationFrame(settle); });
                     }
                 }
 

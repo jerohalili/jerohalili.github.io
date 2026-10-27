@@ -97,7 +97,14 @@ html[data-fx-scanlines='on'] #fx-scan {
 
 /* ==========================================================================
    Circular reveal when the look changes (View Transitions API)
+   Transitions are frozen while it runs so colors switch cleanly instead of
+   fading in from the old values (which read as a flicker).
    ========================================================================== */
+html[data-vt] *,
+html[data-vt] *::before,
+html[data-vt] *::after {
+  transition: none !important;
+}
 html[data-vt='reveal']::view-transition-old(root),
 html[data-vt='reveal']::view-transition-new(root) {
   animation: none;
@@ -141,11 +148,6 @@ html[data-fx-scanlines='on'] #fx-scan::before {
 @keyframes fx-scan-band {
   from { transform: translateY(-140px); }
   to { transform: translateY(100vh); }
-}
-
-/* The light/dark toggle only applies to the Clean theme */
-html:not([data-theme='clean']) #theme-toggle {
-  display: none;
 }
 
 /* ==========================================================================
@@ -220,6 +222,13 @@ html:is([data-theme='command'], [data-theme='terminal'])
    the cursor, angular panels with corner brackets, precise type.
    ========================================================================== */
 html[data-theme='command'] {
+  --font-display: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
+  --font-data: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --r-panel: 6px;
+}
+
+/* Dark: steel-blue control room */
+html.dark[data-theme='command'] {
   --zinc-50: 236 242 248;
   --zinc-100: 220 230 241;
   --zinc-200: 189 203 222;
@@ -231,15 +240,32 @@ html[data-theme='command'] {
   --zinc-800: 28 39 55;
   --zinc-900: 16 24 36;
   --zinc-950: 9 14 22;
-  --font-display: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
-  --font-data: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --r-panel: 6px;
   scrollbar-color: rgb(var(--accent-500) / 0.6) #0a0f14;
 }
+/* Light: blueprint / lab look, cool-tinted paper and navy ink */
+html[data-theme='command']:not(.dark) {
+  --zinc-50: 244 247 251;
+  --zinc-100: 233 239 246;
+  --zinc-200: 211 222 235;
+  --zinc-300: 174 190 210;
+  --zinc-400: 125 144 169;
+  --zinc-500: 92 110 134;
+  --zinc-600: 68 84 106;
+  --zinc-700: 49 63 83;
+  --zinc-800: 31 43 61;
+  --zinc-900: 19 29 45;
+  --zinc-950: 10 16 26;
+  scrollbar-color: rgb(var(--accent-500) / 0.6) #e6edf5;
+}
 
+html[data-theme='command'] body {
+  font-family: var(--font-display);
+}
 html.dark[data-theme='command'] body {
   background-color: #070b11;
-  font-family: var(--font-display);
+}
+html[data-theme='command']:not(.dark) body {
+  background-color: #edf2f8;
 }
 
 /* Type: display font for headings, data font for small technical labels */
@@ -254,7 +280,7 @@ html[data-theme='command'] header nav > a:first-child {
   font-family: var(--font-data);
   letter-spacing: -0.04em;
 }
-html[data-theme='command'] :is(h1, h2) .text-accent-500 {
+html.dark[data-theme='command'] :is(h1, h2) .text-accent-500 {
   text-shadow: 0 0 28px rgb(var(--accent-500) / 0.45);
 }
 
@@ -276,7 +302,12 @@ html[data-theme='command'] [class*='rounded-full']:is(a, button, nav, span[class
 /* Surfaces */
 html[data-theme='command'] header nav {
   border-color: rgb(var(--accent-500) / 0.3);
+}
+html.dark[data-theme='command'] header nav {
   box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), 0 14px 44px -14px rgb(var(--accent-500) / 0.3);
+}
+html[data-theme='command']:not(.dark) header nav {
+  box-shadow: 0 14px 40px -16px rgb(var(--accent-600) / 0.3);
 }
 html[data-theme='command']
   :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])):hover {
@@ -305,6 +336,12 @@ html[data-theme='command'] #fx-grid::after {
   -webkit-mask-image: radial-gradient(circle 230px at var(--mx, -999px) var(--my, -999px), #000, transparent);
   mask-image: radial-gradient(circle 230px at var(--mx, -999px) var(--my, -999px), #000, transparent);
 }
+html[data-theme='command']:not(.dark) #fx-grid {
+  --g: rgb(var(--accent-600) / 0.1);
+}
+html[data-theme='command']:not(.dark) #fx-grid::after {
+  --g2: rgb(var(--accent-600) / 0.55);
+}
 html[data-theme='command'][data-fx-glow='off'] #fx-grid::after,
 html[data-theme='command'][data-perf='lite'] #fx-grid::after {
   display: none;
@@ -316,6 +353,11 @@ html[data-theme='command'][data-perf='lite'] #fx-grid::after {
    cursor after the main heading, scanlines and a soft vignette.
    ========================================================================== */
 html[data-theme='terminal'] {
+  --font-term: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Dark: phosphor on black */
+html.dark[data-theme='terminal'] {
   --zinc-50: 236 244 239;
   --zinc-100: 216 229 220;
   --zinc-200: 190 208 196;
@@ -327,14 +369,33 @@ html[data-theme='terminal'] {
   --zinc-800: 26 36 30;
   --zinc-900: 13 19 15;
   --zinc-950: 5 8 6;
-  --font-term: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   scrollbar-color: rgb(var(--accent-500) / 0.6) #040704;
 }
+/* Light: ink on warm paper, like a printout */
+html[data-theme='terminal']:not(.dark) {
+  --zinc-50: 248 246 239;
+  --zinc-100: 239 236 225;
+  --zinc-200: 221 217 203;
+  --zinc-300: 186 183 168;
+  --zinc-400: 140 138 124;
+  --zinc-500: 104 103 90;
+  --zinc-600: 78 78 68;
+  --zinc-700: 56 57 49;
+  --zinc-800: 38 40 35;
+  --zinc-900: 24 27 24;
+  --zinc-950: 12 14 12;
+  scrollbar-color: rgb(var(--accent-600) / 0.6) #ece8da;
+}
 
-html.dark[data-theme='terminal'] body {
-  background-color: #040704;
+html[data-theme='terminal'] body {
   font-family: var(--font-term);
   font-size: 0.95em;
+}
+html.dark[data-theme='terminal'] body {
+  background-color: #040704;
+}
+html[data-theme='terminal']:not(.dark) body {
+  background-color: #f4f1e7;
 }
 html[data-theme='terminal'] :is(button, input, textarea, select) {
   font-family: var(--font-term);
@@ -351,26 +412,31 @@ html[data-theme='terminal'] [class*='rounded-full']:is(a, button, nav, span[clas
   border-radius: 0;
 }
 
-/* Phosphor text: headings take the accent, body copy is tinted toward it */
-html.dark[data-theme='terminal'] :is(h1, h2, h3, h4) {
+/* Headings take the accent; on dark they glow like phosphor */
+html[data-theme='terminal'] :is(h1, h2, h3, h4) {
   font-family: var(--font-term);
   font-weight: 700;
-  color: rgb(var(--accent-400));
-  text-shadow: 0 0 14px rgb(var(--accent-500) / 0.5);
 }
-html.dark[data-theme='terminal'] h1 {
+html[data-theme='terminal'] h1 {
   font-size: clamp(2.4rem, 5.4vw, 4.8rem);
   letter-spacing: -0.05em;
   line-height: 1;
 }
-html.dark[data-theme='terminal'] :is(h2, h3) {
+html[data-theme='terminal'] :is(h2, h3) {
   letter-spacing: -0.03em;
+}
+html.dark[data-theme='terminal'] :is(h1, h2, h3, h4) {
+  color: rgb(var(--accent-400));
+  text-shadow: 0 0 14px rgb(var(--accent-500) / 0.5);
+}
+html[data-theme='terminal']:not(.dark) :is(h1, h2, h3, h4) {
+  color: rgb(var(--accent-600));
 }
 html.dark[data-theme='terminal'] p:not([class*='text-accent']):not([class*='text-white']) {
   color: color-mix(in srgb, rgb(var(--accent-400)) 38%, rgb(var(--zinc-200)));
 }
-html[data-theme='terminal'] .text-accent-500,
-html[data-theme='terminal'] .text-accent-600 {
+html.dark[data-theme='terminal'] .text-accent-500,
+html.dark[data-theme='terminal'] .text-accent-600 {
   text-shadow: 0 0 12px rgb(var(--accent-500) / 0.55);
 }
 
@@ -393,15 +459,29 @@ html[data-theme='terminal'] h2::before {
 /* Surfaces */
 html[data-theme='terminal'] header nav {
   border-color: rgb(var(--accent-500) / 0.4);
+}
+html.dark[data-theme='terminal'] header nav {
   box-shadow: 0 0 0 1px #000, 0 0 28px -8px rgb(var(--accent-500) / 0.35);
 }
-html[data-theme='terminal']
+html[data-theme='terminal']:not(.dark) header nav {
+  box-shadow: 4px 4px 0 rgb(var(--accent-500) / 0.25);
+}
+html.dark[data-theme='terminal']
   :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])) {
   box-shadow: inset 0 0 36px -18px rgb(var(--accent-500) / 0.35);
 }
-html[data-theme='terminal']
+html.dark[data-theme='terminal']
   :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])):hover {
   box-shadow: inset 0 0 36px -14px rgb(var(--accent-500) / 0.5), 0 0 30px -8px rgb(var(--accent-500) / 0.45);
+}
+/* Paper version: hard offset shadows instead of glow */
+html[data-theme='terminal']:not(.dark)
+  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])) {
+  box-shadow: 5px 5px 0 rgb(var(--accent-500) / 0.18);
+}
+html[data-theme='terminal']:not(.dark)
+  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])):hover {
+  box-shadow: 7px 7px 0 rgb(var(--accent-500) / 0.3);
 }
 html[data-theme='terminal']
   :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky']))::after {
@@ -414,4 +494,13 @@ html[data-theme='terminal'][data-fx-scanlines='on'] #fx-scan {
     radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.45) 100%),
     repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.2) 0, rgb(0 0 0 / 0.2) 1px, transparent 1px, transparent 3px);
   mix-blend-mode: normal;
+}
+html[data-theme='terminal']:not(.dark)[data-fx-scanlines='on'] #fx-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.045) 0,
+    rgb(0 0 0 / 0.045) 1px,
+    transparent 1px,
+    transparent 3px
+  );
 }

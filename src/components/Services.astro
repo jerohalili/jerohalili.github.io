@@ -12,6 +12,30 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
         <h2 class="text-4xl md:text-6xl font-black tracking-tighter dark:text-white uppercase">Services</h2>
         <p class="text-zinc-700 dark:text-zinc-300 max-w-md">Bridging the gap between complex engineering and conversion-led design.</p>
       </div>
+
+      <button
+        type="button"
+        data-cp-open
+        data-magnetic="0.2"
+        aria-haspopup="dialog"
+        class="group shrink-0 flex items-center gap-4 bg-accent-500 text-white pl-3 pr-6 py-3 rounded-full ring-4 ring-accent-500/20 shadow-xl shadow-accent-500/25 hover:scale-[1.04] active:scale-95 transition-transform duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-500"
+      >
+        <span class="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+            <circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" />
+          </svg>
+        </span>
+        <span class="text-left">
+          <span class="block text-sm font-black uppercase tracking-widest">Customize this site</span>
+          <span class="block text-xs text-white/85">Themes · colors · effects</span>
+        </span>
+        <span class="hidden sm:flex -space-x-1.5" aria-hidden="true">
+          {['#f97316', '#f43f5e', '#8b5cf6', '#3b82f6', '#0891b2', '#059669'].map((c) => (
+            <span class="w-4 h-4 rounded-full border-2 border-white/80" style={`background:${c}`}></span>
+          ))}
+        </span>
+      </button>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
