@@ -18,14 +18,14 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
       {services.map((service, i) => (
         <div data-reveal data-reveal-delay={i * 100} data-tilt class={`group p-8 md:p-10 rounded-[2.5rem] transition-colors duration-300 ${
           service.data.isFeatured 
-          ? 'bg-orange-500 border border-orange-600 dark:border-orange-400 shadow-2xl shadow-orange-500/20' 
+          ? 'bg-accent-500 border border-accent-600 dark:border-accent-400 shadow-2xl shadow-accent-500/20' 
           : 'bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800'
         }`}>
           
           <div class={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-125 ${
             service.data.isFeatured 
             ? 'bg-white dark:bg-zinc-900 group-hover:-rotate-12' 
-            : 'bg-orange-500 shadow-lg shadow-orange-500/20 group-hover:rotate-12'
+            : 'bg-accent-500 shadow-lg shadow-accent-500/20 group-hover:rotate-12'
           }`}>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -35,7 +35,7 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
               fill="none" 
               stroke="currentColor" 
               stroke-width="2.5"
-              class={service.data.isFeatured ? 'stroke-orange-500 dark:stroke-white' : 'stroke-white'}
+              class={service.data.isFeatured ? 'stroke-accent-500 dark:stroke-white' : 'stroke-white'}
             >
               {service.data.titleTop === "Product" && <circle cx="12" cy="12" r="10"/>}
               <path d={service.data.iconPath} />
@@ -49,7 +49,7 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
           </h3>
 
           <p class={`mb-8 leading-relaxed ${
-            service.data.isFeatured ? 'text-orange-50 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'
+            service.data.isFeatured ? 'text-accent-50 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'
           }`}>
             {service.data.description}
           </p>
@@ -60,7 +60,7 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
                 service.data.isFeatured ? 'text-white' : 'dark:text-zinc-300'
               }`}>
                 <span class={`w-1.5 h-1.5 rounded-full ${
-                  service.data.isFeatured ? 'bg-white' : 'bg-orange-500'
+                  service.data.isFeatured ? 'bg-white' : 'bg-accent-500'
                 }`}></span> 
                 {item}
               </li>

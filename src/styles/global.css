@@ -15,8 +15,8 @@
 
 @layer components {
   .prose-content {
-    @apply prose-a:text-orange-500 prose-a:underline prose-a:decoration-orange-500/30 hover:prose-a:decoration-orange-500;
-    @apply prose-blockquote:border-l-orange-500 prose-blockquote:bg-orange-500/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:not-italic;
+    @apply prose-a:text-accent-500 prose-a:underline prose-a:decoration-accent-500/30 hover:prose-a:decoration-accent-500;
+    @apply prose-blockquote:border-l-accent-500 prose-blockquote:bg-accent-500/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:not-italic;
     @apply prose-hr:border-zinc-200 dark:prose-hr:border-zinc-800 prose-hr:my-12;
     @apply prose-img:rounded-[1.5rem] prose-img:shadow-xl;
   }

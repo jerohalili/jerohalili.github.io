@@ -1,0 +1,2644 @@
+From d424ca0252fd394ad970141d98c1185ea4680cf5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 05:28:04 +0000
+Subject: [PATCH 1/3] refactor: drive accent and zinc colors from CSS variables
+
+Replaces ~180 hardcoded orange-* classes with accent-* tokens backed by
+CSS variables, and routes the canvas colors (hero + skills constellation)
+through the same variable. No visual change by default; this is the
+groundwork for the theme and accent controls in the next commits.
+---
+ src/components/BlogCard.astro            | 10 ++--
+ src/components/Contact.astro             |  6 +-
+ src/components/Hero.astro                | 70 +++++++++++++++++-------
+ src/components/Marquee.astro             |  2 +-
+ src/components/MobileMenu.astro          |  8 +--
+ src/components/Navbar.astro              | 10 ++--
+ src/components/Projects.astro            | 20 +++----
+ src/components/Services.astro            | 10 ++--
+ src/components/SkillsConstellation.astro | 57 ++++++++++++++++---
+ src/components/Testimonials.astro        | 12 ++--
+ src/components/ThemeIcon.astro           |  8 +--
+ src/layouts/Layout.astro                 |  5 +-
+ src/pages/about.astro                    | 20 +++----
+ src/pages/blog/[slug].astro              | 26 ++++-----
+ src/pages/blogs.astro                    |  8 +--
+ src/pages/contact.astro                  | 10 ++--
+ src/pages/projects.astro                 | 16 +++---
+ src/pages/projects/[slug].astro          | 30 +++++-----
+ src/scripts/accent.ts                    | 19 +++++++
+ src/scripts/blog-filters.ts              |  4 +-
+ src/styles/global.css                    |  4 +-
+ src/styles/themes.css                    | 44 +++++++++++++++
+ tailwind.config.mjs                      | 16 +++++-
+ 23 files changed, 282 insertions(+), 133 deletions(-)
+ create mode 100644 src/scripts/accent.ts
+ create mode 100644 src/styles/themes.css
+
+diff --git a/src/components/BlogCard.astro b/src/components/BlogCard.astro
+index 1a32a41..f405f28 100644
+--- a/src/components/BlogCard.astro
++++ b/src/components/BlogCard.astro
+@@ -26,13 +26,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+ >
+   <article
+     data-tilt
+-    class="relative p-6 md:p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-orange-500/40 hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-1"
++    class="relative p-6 md:p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-accent-500/40 hover:shadow-2xl hover:shadow-accent-500/10 hover:-translate-y-1"
+   >
+-    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/0 group-hover:from-orange-500/5 group-hover:to-transparent transition-all duration-700 pointer-events-none"></div>
++    <div class="absolute inset-0 bg-gradient-to-br from-accent-500/0 to-accent-500/0 group-hover:from-accent-500/5 group-hover:to-transparent transition-all duration-700 pointer-events-none"></div>
+ 
+     <div class="relative z-10">
+       <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+-        <span class="inline-flex items-center px-3 py-1 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest w-fit">
++        <span class="inline-flex items-center px-3 py-1 bg-accent-500/10 text-accent-500 border border-accent-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest w-fit">
+           {category}
+         </span>
+         <span class="text-zinc-400 dark:text-zinc-500 font-mono text-[10px] uppercase tracking-wider">
+@@ -40,7 +40,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+         </span>
+       </div>
+ 
+-      <h2 class="text-2xl md:text-3xl font-black tracking-tight dark:text-white mb-3 group-hover:text-orange-500 transition-colors duration-300 leading-tight">
++      <h2 class="text-2xl md:text-3xl font-black tracking-tight dark:text-white mb-3 group-hover:text-accent-500 transition-colors duration-300 leading-tight">
+         {title}
+       </h2>
+ 
+@@ -56,7 +56,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+         ))}
+       </div>
+ 
+-      <div class="flex items-center text-orange-500 font-bold text-xs uppercase tracking-widest group-hover:gap-3 gap-2 transition-all duration-300">
++      <div class="flex items-center text-accent-500 font-bold text-xs uppercase tracking-widest group-hover:gap-3 gap-2 transition-all duration-300">
+         Read More
+         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="transition-transform duration-300 group-hover:translate-x-1">
+           <path d="M5 12h14m-7-7 7 7-7 7"/>
+diff --git a/src/components/Contact.astro b/src/components/Contact.astro
+index 77b07ad..840fb41 100644
+--- a/src/components/Contact.astro
++++ b/src/components/Contact.astro
+@@ -11,7 +11,7 @@ const socialLinks = [
+ <section id="contact" class="relative z-[2] w-full px-4 md:px-10 py-24 bg-zinc-900 dark:bg-black text-white rounded-t-[3rem] md:rounded-t-[5rem]">
+   <div class="max-w-[1400px] mx-auto text-center space-y-12">
+     <div data-reveal class="space-y-4">
+-      <h2 class="text-5xl md:text-8xl font-black tracking-tighter uppercase">Let's build <br/> <span class="text-orange-500">Something Big</span></h2>
++      <h2 class="text-5xl md:text-8xl font-black tracking-tighter uppercase">Let's build <br/> <span class="text-accent-500">Something Big</span></h2>
+       <p class="text-zinc-400 text-lg max-w-xl mx-auto italic">Currently available for specialized PERN systems or AI automation consulting.</p>
+     </div>
+     
+@@ -19,7 +19,7 @@ const socialLinks = [
+       <a 
+         href="mailto:hello@jerohalili.com" 
+         data-magnetic="0.3"
+-        class="group w-full md:w-auto bg-orange-500 text-white px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ease-out hover:bg-white hover:text-black hover:scale-[1.05] active:scale-95 shadow-xl shadow-orange-500/10 flex items-center justify-center gap-3"
++        class="group w-full md:w-auto bg-accent-500 text-white px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ease-out hover:bg-white hover:text-black hover:scale-[1.05] active:scale-95 shadow-xl shadow-accent-500/10 flex items-center justify-center gap-3"
+       >
+         Send an Email
+         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="group-hover:rotate-12 transition-transform duration-300">
+@@ -47,7 +47,7 @@ const socialLinks = [
+             href={link.url} 
+             target="_blank" 
+             rel="noopener noreferrer" 
+-            class="text-[10px] font-black uppercase tracking-widest hover:text-orange-500 transition-colors duration-300"
++            class="text-[10px] font-black uppercase tracking-widest hover:text-accent-500 transition-colors duration-300"
+           >
+             {link.name}
+           </a>
+diff --git a/src/components/Hero.astro b/src/components/Hero.astro
+index 12e1029..cfd87da 100644
+--- a/src/components/Hero.astro
++++ b/src/components/Hero.astro
+@@ -40,8 +40,8 @@ const stats = [
+   }
+ 
+   .glow-border:hover {
+-    @apply lg:border-orange-500 lg:shadow-orange-500/20;
+-    box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.4);
++    @apply lg:border-accent-500 lg:shadow-accent-500/20;
++    box-shadow: 0 0 20px -5px rgb(var(--accent-500) / 0.4);
+   }
+ 
+   .animate-stable {
+@@ -59,12 +59,12 @@ const stats = [
+ 
+   <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 relative z-10 w-full">
+     
+-    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center hover:border-orange-500/30 hover:shadow-orange-500/10">
+-        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
++    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center hover:border-accent-500/30 hover:shadow-accent-500/10">
++        <p class="text-accent-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
+           Computer Scientist · Full-Stack Developer · AI Engineer
+         </p>
+         <h1 class="text-6xl custom:text-7xl xl:text-[90px] font-black tracking-tighter leading-[0.9] text-zinc-900 dark:text-white mb-8">
+-          I BUILD SYSTEMS <br /> THAT <span class="text-orange-500 italic">SCALE & GROW</span>
++          I BUILD SYSTEMS <br /> THAT <span class="text-accent-500 italic">SCALE & GROW</span>
+         </h1>
+         <p class="text-zinc-500 dark:text-zinc-300 text-lg md:text-xl max-w-xl leading-relaxed">
+           I build databases, analytics, and AI automations for startups and local businesses.
+@@ -121,16 +121,16 @@ const stats = [
+           <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-transform duration-300 group-hover:-translate-y-2">
+               <div class="space-y-3">
+                 <div class="flex justify-between items-center">
+-                    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-orange-500">View Bio</p>
+-                    <div class="bg-orange-500 p-1.5 rounded-full shadow-lg">
++                    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-accent-500">View Bio</p>
++                    <div class="bg-accent-500 p-1.5 rounded-full shadow-lg">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M7 7l10 10M17 7H7v10"/></svg>
+                     </div>
+                 </div>
+                 <h3 class="text-lg md:text-xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight">
+-                  <span id="typing-prefix">Turning workflows </span><span id="typing-text" class="italic font-medium text-orange-600"></span><span id="typing-cursor" class="italic font-medium text-orange-600 border-r-2 border-orange-600 animate-pulse">&nbsp;</span>
++                  <span id="typing-prefix">Turning workflows </span><span id="typing-text" class="italic font-medium text-accent-600"></span><span id="typing-cursor" class="italic font-medium text-accent-600 border-r-2 border-accent-600 animate-pulse">&nbsp;</span>
+                 </h3>
+                 <div class="flex items-center gap-2 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-3">
+-                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
++                    <span class="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
+                     <p class="text-xs font-medium text-zinc-700 dark:text-zinc-300">PERN Stack · AI Orchestration</p>
+                 </div>
+               </div>
+@@ -141,14 +141,14 @@ const stats = [
+     <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+         {stats.map((stat, i) => (
+         <div data-reveal data-reveal-delay={i * 80} class="glass-card glow-border p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group">
+-            <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-orange-500/70 transition-colors duration-300">{stat.label}</p>
+-            <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300">{stat.val}</p>
++            <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-accent-500/70 transition-colors duration-300">{stat.label}</p>
++            <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300">{stat.val}</p>
+         </div>
+         ))}
+         
+-        <a href={`${base}/blogs`} data-magnetic="0.2" class="animate-stable bg-orange-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20">
++        <a href={`${base}/blogs`} data-magnetic="0.2" class="animate-stable bg-accent-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-accent-500/20">
+           <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors duration-300">My Blog</p>
+-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-orange-500 mt-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
++          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-accent-500 mt-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+               <path d="M7 17l10-10M17 17V7H7"/>
+           </svg>
+         </a>
+@@ -157,11 +157,20 @@ const stats = [
+ </section>
+ 
+ <script>
++  import { accentRGB } from '../scripts/accent';
++
+   let heroRaf: number;
++  // Lets the Control Panel pause/resume the loop without rebuilding the canvas.
++  let heroActive = false;
++  let heroResume: (() => void) | null = null;
+ 
+   function initHeroConstellation() {
++    heroResume = null;
++    heroActive = false;
+     // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
+     if (document.documentElement.dataset.perf === 'lite') return;
++    // Particle effect switched off in the Control Panel.
++    if (document.documentElement.dataset.fxParticles === 'off') return;
+     const canvas = document.getElementById('hero-constellation') as HTMLCanvasElement;
+     if (!canvas) return;
+     // Do not attach to a stale/detached canvas left over from a view transition.
+@@ -254,7 +263,13 @@ const stats = [
+ 
+     function animate() {
+       // If user flips to Lite mid-loop, stop scheduling further frames. No-op in Full.
+-      if (document.documentElement.dataset.perf === 'lite') return;
++      const rootEl = document.documentElement;
++      if (rootEl.dataset.perf === 'lite' || rootEl.dataset.fxParticles === 'off') {
++        heroActive = false;
++        return;
++      }
++      const rgb = accentRGB();
++      const isDarkTheme = rootEl.classList.contains('dark');
+       ctx.clearRect(0, 0, w, h);
+ 
+       for (const dot of dots) {
+@@ -315,7 +330,7 @@ const stats = [
+             ctx.beginPath();
+             ctx.moveTo(dots[i].x, dots[i].y);
+             ctx.lineTo(dots[j].x, dots[j].y);
+-            ctx.strokeStyle = `rgba(249, 115, 22, ${alpha})`;
++            ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
+             ctx.lineWidth = 1;
+             ctx.stroke();
+           }
+@@ -325,7 +340,7 @@ const stats = [
+       for (const dot of dots) {
+         ctx.beginPath();
+         ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
+-        ctx.fillStyle = `rgba(249, 115, 22, ${dot.opacity})`;
++        ctx.fillStyle = `rgba(${rgb}, ${dot.opacity})`;
+         ctx.fill();
+       }
+ 
+@@ -333,11 +348,11 @@ const stats = [
+       for (const t of travelers) {
+         ctx.beginPath();
+         ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2);
+-        ctx.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(200, 200, 200, 1)' : 'rgba(51, 51, 51, 1)';
++        ctx.fillStyle = isDarkTheme ? 'rgba(200, 200, 200, 1)' : 'rgba(51, 51, 51, 1)';
+         ctx.fill();
+         ctx.beginPath();
+         ctx.arc(t.x, t.y, t.radius * 2.2, 0, Math.PI * 2);
+-        ctx.strokeStyle = `rgba(249, 115, 22, 0.4)`;
++        ctx.strokeStyle = `rgba(${rgb}, 0.4)`;
+         ctx.lineWidth = 1;
+         ctx.stroke();
+       }
+@@ -368,12 +383,29 @@ const stats = [
+ 
+     resize();
+     createDots();
++    heroResume = () => {
++      if (heroActive) return;
++      heroActive = true;
++      animate();
++    };
++    heroActive = true;
+     animate();
+   }
+ 
+   initHeroConstellation();
+   // Stop the loop when navigating away so it does not run on a removed canvas.
+-  document.addEventListener('astro:before-swap', () => cancelAnimationFrame(heroRaf));
++  document.addEventListener('astro:before-swap', () => {
++    cancelAnimationFrame(heroRaf);
++    heroActive = false;
++    heroResume = null;
++  });
++  // Control Panel: particles switched back on (or Lite -> Full) resumes the loop.
++  window.addEventListener('appearance-change', () => {
++    const root = document.documentElement;
++    if (root.dataset.fxParticles === 'off' || root.dataset.perf === 'lite') return;
++    if (heroResume) heroResume();
++    else if (document.getElementById('hero-constellation')) initHeroConstellation();
++  });
+   // Re-start the loop when returning to home via client-side navigation.
+   document.addEventListener('astro:page-load', initHeroConstellation);
+   // Lite toggle: Lite->Full (re)starts loop once; Full->Lite stops via guard above.
+diff --git a/src/components/Marquee.astro b/src/components/Marquee.astro
+index 86cad90..1f8eb9f 100644
+--- a/src/components/Marquee.astro
++++ b/src/components/Marquee.astro
+@@ -9,7 +9,7 @@ const items = [ "Full-Stack Systems", "AI Orchestration", "MERN Stack", "Databas
+             <span class="text-3xl md:text-5xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic px-12 md:px-16">
+             {item}
+             </span>
+-            <span class="w-3 h-3 md:w-4 md:h-4 rounded-full bg-orange-500 shrink-0 shadow-[0_0_15px_rgba(249,115,22,0.4)]"></span>
++            <span class="w-3 h-3 md:w-4 md:h-4 rounded-full bg-accent-500 shrink-0 shadow-[0_0_15px_rgb(var(--accent-500)/0.4)]"></span>
+         </div>
+         ))}
+     </div>
+diff --git a/src/components/MobileMenu.astro b/src/components/MobileMenu.astro
+index 50abb56..e44a956 100644
+--- a/src/components/MobileMenu.astro
++++ b/src/components/MobileMenu.astro
+@@ -20,14 +20,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+   <div class="flex flex-col items-center gap-6 p-8 pt-12 text-center overflow-y-auto">
+     <a 
+       href={`${base}/`} 
+-      class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-orange-500 transition-colors"
++      class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-accent-500 transition-colors"
+     >
+       Home
+     </a>
+     {links.map((link: Link) => (
+       <a 
+         href={link.href} 
+-        class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-orange-500 transition-colors"
++        class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-accent-500 transition-colors"
+       >
+         {link.name}
+       </a>
+@@ -36,9 +36,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+     <div class="mt-4 flex justify-center w-full">
+       <a 
+         href={`${base}/contact`} 
+-        class="mobile-link group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-orange-500/10 px-10 py-5 transition-all hover:bg-orange-500 active:scale-95"
++        class="mobile-link group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-accent-500/10 px-10 py-5 transition-all hover:bg-accent-500 active:scale-95"
+       >
+-        <span class="relative z-10 text-5xl font-black tracking-tighter uppercase italic text-orange-500 transition-colors group-hover:text-white">
++        <span class="relative z-10 text-5xl font-black tracking-tighter uppercase italic text-accent-500 transition-colors group-hover:text-white">
+           Let's Talk
+         </span>
+       </a>
+diff --git a/src/components/Navbar.astro b/src/components/Navbar.astro
+index 177a007..7a90c41 100644
+--- a/src/components/Navbar.astro
++++ b/src/components/Navbar.astro
+@@ -14,15 +14,15 @@ const navLinks = [
+   <nav class="max-w-[1400px] w-full flex justify-between items-center bg-white/70 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 p-2 md:p-3 rounded-2xl md:rounded-full pointer-events-auto shadow-2xl relative">
+     
+     <a href={`${base}/`} class="pl-4 font-black text-xl tracking-tighter dark:text-white">
+-      JERO<span class="text-orange-500">HALILI</span>
++      JERO<span class="text-accent-500">HALILI</span>
+     </a>
+ 
+     <div class="hidden lg:flex items-center gap-1">
+-      <a href={`${base}/`} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-orange-500 transition-colors duration-300">
++      <a href={`${base}/`} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-accent-500 transition-colors duration-300">
+         Home
+       </a>
+       {navLinks.map((link) => (
+-        <a href={link.href} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-orange-500 transition-colors duration-300">
++        <a href={link.href} class="px-5 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-accent-500 transition-colors duration-300">
+           {link.name}
+         </a>
+       ))}
+@@ -34,11 +34,11 @@ const navLinks = [
+         type="button"
+         aria-label="Toggle Lite mode"
+         title="Toggle Lite mode (faster on weak devices)"
+-        class="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300"
++        class="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300"
+       >Lite</button>
+       <ThemeIcon />
+       
+-      <a href={`${base}/contact`} data-magnetic="0.2" class="hidden sm:block bg-orange-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform duration-300">
++      <a href={`${base}/contact`} data-magnetic="0.2" class="hidden sm:block bg-accent-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform duration-300">
+         Let's Talk
+       </a>
+ 
+diff --git a/src/components/Projects.astro b/src/components/Projects.astro
+index 3d71cd7..90ca8f3 100644
+--- a/src/components/Projects.astro
++++ b/src/components/Projects.astro
+@@ -26,22 +26,22 @@ const projects = sortedProjects.map(p => ({
+       </div>
+       
+       <div class="flex flex-wrap items-center gap-3 max-w-full">
+-        <button id="carouselPrev" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous project">
++        <button id="carouselPrev" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-accent-500 hover:border-accent-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous project">
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+         </button>
+-        <button id="carouselNext" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next project">
++        <button id="carouselNext" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-accent-500 hover:border-accent-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next project">
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+         </button>
+         
+         <a 
+           href={`${base}/projects`} 
+-          class="bg-orange-500 px-8 py-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20 ml-2"
++          class="bg-accent-500 px-8 py-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 hover:scale-[1.05] active:scale-95 shadow-lg shadow-accent-500/20 ml-2"
+           data-magnetic="0.2"
+         >
+-          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-white dark:group-hover:text-orange-500 transition-colors duration-300">
++          <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-white dark:group-hover:text-accent-500 transition-colors duration-300">
+             All Projects
+           </p>
+-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-white dark:group-hover:text-orange-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
++          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-white dark:group-hover:text-accent-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+             <path d="M7 17l10-10M17 17V7H7"/>
+           </svg>
+         </a>
+@@ -51,7 +51,7 @@ const projects = sortedProjects.map(p => ({
+     <div class="relative w-full overflow-hidden py-8" id="carouselViewport">
+       <div id="project-slider" class="flex gap-6 will-change-transform">
+         {projects.map((project) => (
+-          <article class="project-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] overflow-hidden hover:border-orange-500/50 transition-colors duration-300 group flex flex-col shrink-0">
++          <article class="project-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] overflow-hidden hover:border-accent-500/50 transition-colors duration-300 group flex flex-col shrink-0">
+             
+             <div class="project-image relative w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+               {project.image && (
+@@ -61,7 +61,7 @@ const projects = sortedProjects.map(p => ({
+ 
+             <div class="project-content p-5 lg:p-6 flex flex-col justify-between flex-1">
+               <div class="space-y-2">
+-                <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest border border-orange-500/20">
++                <span class="px-3 py-1 bg-accent-500/10 text-accent-500 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest border border-accent-500/20">
+                   {project.subtitle}
+                 </span>
+                 <h3 class="project-title font-black tracking-tighter dark:text-white leading-tight uppercase italic break-words">
+@@ -71,20 +71,20 @@ const projects = sortedProjects.map(p => ({
+               </div>
+               
+               <div class="project-cta pt-3 flex flex-wrap items-center gap-2">
+-                <a href={`${base}/projects/${project.id}`} class="inline-flex shrink-0 whitespace-nowrap items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black group-hover:bg-orange-500 group-hover:text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-300">
++                <a href={`${base}/projects/${project.id}`} class="inline-flex shrink-0 whitespace-nowrap items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black group-hover:bg-accent-500 group-hover:text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-300">
+                   View Project
+                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                 </a>
+                 {(project.liveUrl || project.repoUrl) && (
+                   <span class="inline-flex flex-nowrap items-center gap-2 min-w-0">
+                     {project.liveUrl && (
+-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300">
++                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300">
+                         Live
+                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l10-10M17 17V7H7"/></svg>
+                       </a>
+                     )}
+                     {project.repoUrl && (
+-                      <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository`} class="inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300">
++                      <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository`} class="inline-flex shrink-0 items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                       </a>
+                     )}
+diff --git a/src/components/Services.astro b/src/components/Services.astro
+index 8906ffb..09463ef 100644
+--- a/src/components/Services.astro
++++ b/src/components/Services.astro
+@@ -18,14 +18,14 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
+       {services.map((service, i) => (
+         <div data-reveal data-reveal-delay={i * 100} data-tilt class={`group p-8 md:p-10 rounded-[2.5rem] transition-colors duration-300 ${
+           service.data.isFeatured 
+-          ? 'bg-orange-500 border border-orange-600 dark:border-orange-400 shadow-2xl shadow-orange-500/20' 
++          ? 'bg-accent-500 border border-accent-600 dark:border-accent-400 shadow-2xl shadow-accent-500/20' 
+           : 'bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800'
+         }`}>
+           
+           <div class={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-125 ${
+             service.data.isFeatured 
+             ? 'bg-white dark:bg-zinc-900 group-hover:-rotate-12' 
+-            : 'bg-orange-500 shadow-lg shadow-orange-500/20 group-hover:rotate-12'
++            : 'bg-accent-500 shadow-lg shadow-accent-500/20 group-hover:rotate-12'
+           }`}>
+             <svg 
+               xmlns="http://www.w3.org/2000/svg" 
+@@ -35,7 +35,7 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
+               fill="none" 
+               stroke="currentColor" 
+               stroke-width="2.5"
+-              class={service.data.isFeatured ? 'stroke-orange-500 dark:stroke-white' : 'stroke-white'}
++              class={service.data.isFeatured ? 'stroke-accent-500 dark:stroke-white' : 'stroke-white'}
+             >
+               {service.data.titleTop === "Product" && <circle cx="12" cy="12" r="10"/>}
+               <path d={service.data.iconPath} />
+@@ -49,7 +49,7 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
+           </h3>
+ 
+           <p class={`mb-8 leading-relaxed ${
+-            service.data.isFeatured ? 'text-orange-50 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'
++            service.data.isFeatured ? 'text-accent-50 dark:text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'
+           }`}>
+             {service.data.description}
+           </p>
+@@ -60,7 +60,7 @@ const services = allServices.sort((a, b) => a.data.order - b.data.order);
+                 service.data.isFeatured ? 'text-white' : 'dark:text-zinc-300'
+               }`}>
+                 <span class={`w-1.5 h-1.5 rounded-full ${
+-                  service.data.isFeatured ? 'bg-white' : 'bg-orange-500'
++                  service.data.isFeatured ? 'bg-white' : 'bg-accent-500'
+                 }`}></span> 
+                 {item}
+               </li>
+diff --git a/src/components/SkillsConstellation.astro b/src/components/SkillsConstellation.astro
+index b10f974..5b1b840 100644
+--- a/src/components/SkillsConstellation.astro
++++ b/src/components/SkillsConstellation.astro
+@@ -48,10 +48,23 @@ const legend = [
+ 
+ <script define:vars={{ skills }}>
+   let raf;
++  // Lets the Control Panel pause/resume the loop without rebuilding the canvas.
++  let skillsActive = false;
++  let skillsResume = null;
++
++  // Canvas can't read CSS variables, so pull the live accent color out of them.
++  function readAccent(level) {
++    const v = getComputedStyle(document.documentElement).getPropertyValue('--accent-' + level).trim();
++    return v ? v.split(/\s+/).join(', ') : (level === 600 ? '234, 88, 12' : '249, 115, 22');
++  }
+ 
+   function runCanvas() {
++    skillsResume = null;
++    skillsActive = false;
+     // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
+     if (document.documentElement.dataset.perf === 'lite') return;
++    // Particle effect switched off in the Control Panel.
++    if (document.documentElement.dataset.fxParticles === 'off') return;
+     const canvas = document.getElementById('skillsCanvas');
+     if (!canvas) return;
+     
+@@ -60,12 +73,25 @@ const legend = [
+     let mouse = { x: null, y: null };
+ 
+     const COLORS = {
+-      eng: { node: '#f97316', text: '#ea580c' },
++      eng: { node: 'rgb(' + readAccent(500) + ')', text: 'rgb(' + readAccent(600) + ')' },
+       ai: { node: '#3b82f6', text: '#2563eb' },
+       des: { node: '#a855f7', text: '#9333ea' },
+       tool: { node: '#71717a', text: '#52525b' }
+     };
+ 
++    // Keep the accent-colored group in sync when the accent changes.
++    let accentLine = readAccent(500);
++    function refreshColors() {
++      accentLine = readAccent(500);
++      COLORS.eng.node = 'rgb(' + accentLine + ')';
++      COLORS.eng.text = 'rgb(' + readAccent(600) + ')';
++    }
++    if (!window.__skillsColorsBound) {
++      window.__skillsColorsBound = true;
++      window.addEventListener('appearance-change', () => { if (window.__skillsRefresh) window.__skillsRefresh(); });
++    }
++    window.__skillsRefresh = refreshColors;
++
+     class Node {
+       constructor(config) {
+         this.name = config.name;
+@@ -77,8 +103,6 @@ const legend = [
+         this.y = 0;
+         this.offsetX = 0;
+         this.offsetY = 0;
+-        this.colorNode = COLORS[this.group].node;
+-        this.colorText = COLORS[this.group].text;
+       }
+ 
+       update() {
+@@ -139,7 +163,7 @@ const legend = [
+         // Increased stroke width and opacity
+         ctx.lineWidth = 1.5;
+         // Light mode: stronger gray | Dark mode: orange tint or brighter white
+-        ctx.strokeStyle = isDark ? 'rgba(249, 115, 22, 0.15)' : 'rgba(0, 0, 0, 0.08)';
++        ctx.strokeStyle = isDark ? 'rgba(' + accentLine + ', 0.15)' : 'rgba(0, 0, 0, 0.08)';
+         
+         // Adding a subtle dash for an "interconnected" look
+         ctx.setLineDash([5, 10]); 
+@@ -159,11 +183,11 @@ const legend = [
+         // Node Dot
+         ctx.beginPath();
+         ctx.arc(bubbleX + (paddingX * 0.8), this.y, 3.5, 0, Math.PI * 2);
+-        ctx.fillStyle = this.colorNode;
++        ctx.fillStyle = COLORS[this.group].node;
+         ctx.fill();
+ 
+         // Text
+-        ctx.fillStyle = isDark ? '#e4e4e7' : this.colorText;
++        ctx.fillStyle = isDark ? '#e4e4e7' : COLORS[this.group].text;
+         ctx.textAlign = 'left';
+         ctx.fillText(this.name, bubbleX + (paddingX * 1.4), this.y + (fontSize * 0.35));
+       }
+@@ -179,7 +203,10 @@ const legend = [
+ 
+     function animate() {
+       // If user flips to Lite mid-loop, stop scheduling further frames. No-op in Full.
+-      if (document.documentElement.dataset.perf === 'lite') return;
++      if (document.documentElement.dataset.perf === 'lite' || document.documentElement.dataset.fxParticles === 'off') {
++        skillsActive = false;
++        return;
++      }
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+       nodes.forEach(n => {
+         n.update();
+@@ -197,11 +224,25 @@ const legend = [
+     canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+ 
+     init();
++    skillsResume = () => {
++      if (skillsActive) return;
++      skillsActive = true;
++      animate();
++    };
++    skillsActive = true;
+     animate();
+   }
+ 
+   runCanvas();
+ 
++  // Control Panel: particles switched back on (or Lite -> Full) resumes the loop.
++  window.addEventListener('appearance-change', () => {
++    const root = document.documentElement;
++    if (root.dataset.fxParticles === 'off' || root.dataset.perf === 'lite') return;
++    if (skillsResume) skillsResume();
++    else if (document.getElementById('skillsCanvas')) runCanvas();
++  });
++
+   document.addEventListener('astro:page-load', () => {
+     if (raf) cancelAnimationFrame(raf);
+     runCanvas();
+@@ -216,7 +257,7 @@ const legend = [
+ 
+ <style>
+   canvas { touch-action: none; }
+-  .legend-dot[data-group="eng"] { background-color: #f97316; }
++  .legend-dot[data-group="eng"] { background-color: rgb(var(--accent-500)); }
+   .legend-dot[data-group="ai"] { background-color: #3b82f6; }
+   .legend-dot[data-group="des"] { background-color: #a855f7; }
+   .legend-dot[data-group="tool"] { background-color: #71717a; }
+diff --git a/src/components/Testimonials.astro b/src/components/Testimonials.astro
+index 70b60fe..016826d 100644
+--- a/src/components/Testimonials.astro
++++ b/src/components/Testimonials.astro
+@@ -14,10 +14,10 @@ const testimonials = allTestimonials.sort((a, b) => a.data.order - b.data.order)
+       </div>
+       
+       <div class="flex gap-2">
+-        <button id="prev-test" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous">
++        <button id="prev-test" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-accent-500 hover:border-accent-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Previous">
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+         </button>
+-        <button id="next-test" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next">
++        <button id="next-test" data-magnetic="0.2" class="p-4 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-accent-500 hover:border-accent-500 hover:text-white transition-colors duration-300 dark:text-white group bg-white dark:bg-zinc-900" aria-label="Next">
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+         </button>
+       </div>
+@@ -26,21 +26,21 @@ const testimonials = allTestimonials.sort((a, b) => a.data.order - b.data.order)
+     <div class="relative w-full overflow-hidden">
+       <div id="testimonial-slider" class="flex gap-6 will-change-transform">
+         {testimonials.map((t) => (
+-          <div class="testimonial-card min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-orange-500/50 transition-colors duration-300 shadow-sm">
++          <div class="testimonial-card min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-accent-500/50 transition-colors duration-300 shadow-sm">
+             <div>
+-              <div class="text-orange-500 mb-6">
++              <div class="text-accent-500 mb-6">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="opacity-20 group-hover:opacity-40 transition-opacity duration-300"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H16.017C15.4647 8 15.017 8.44772 15.017 9V12C15.017 12.5523 14.5693 13 14.017 13H13.017V21H14.017ZM6.017 21L6.017 18C6.017 16.8954 6.91243 16 8.017 16H11.017C11.5693 16 12.017 15.5523 12.017 15V9C12.017 8.44772 11.5693 8 11.017 8H8.017C7.46472 8 7.017 8.44772 7.017 9V12C7.017 12.5523 6.5693 13 6.017 13H5.017V21H6.017Z"/></svg>
+               </div>
+               <p class="text-zinc-600 dark:text-zinc-300 text-lg italic leading-relaxed mb-8">"{t.data.quote}"</p>
+             </div>
+             
+             <div class="flex items-center gap-4 border-t border-zinc-100 dark:border-zinc-800 pt-6">
+-              <div class="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-orange-500/10">
++              <div class="w-12 h-12 rounded-full bg-accent-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-accent-500/10">
+                 {t.data.author[0]}
+               </div>
+               <div>
+                 <h4 class="font-bold text-zinc-900 dark:text-white leading-none">{t.data.author}</h4>
+-                <p class="text-xs text-orange-500 font-mono mt-1 uppercase tracking-tighter font-bold">{t.data.role}</p>
++                <p class="text-xs text-accent-500 font-mono mt-1 uppercase tracking-tighter font-bold">{t.data.role}</p>
+               </div>
+             </div>
+           </div>
+diff --git a/src/components/ThemeIcon.astro b/src/components/ThemeIcon.astro
+index 89ead1c..fb9ed8b 100644
+--- a/src/components/ThemeIcon.astro
++++ b/src/components/ThemeIcon.astro
+@@ -2,12 +2,12 @@
+   id="theme-toggle" 
+   type="button"
+   aria-label="Toggle Dark Mode"
+-  class="group relative w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 hover:border-orange-500 dark:hover:border-orange-500 hover:scale-110 active:scale-95 transition-all duration-300 overflow-hidden pointer-events-auto"
++  class="group relative w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 hover:border-accent-500 dark:hover:border-accent-500 hover:scale-110 active:scale-95 transition-all duration-300 overflow-hidden pointer-events-auto"
+ >
+   <!-- MOON: Visible in Light Mode -->
+   <svg 
+     xmlns="http://www.w3.org/2000/svg" 
+-    class="w-5 h-5 block dark:hidden text-zinc-600 group-hover:text-orange-500 -rotate-12 group-hover:rotate-0 transition-all duration-500 pointer-events-none" 
++    class="w-5 h-5 block dark:hidden text-zinc-600 group-hover:text-accent-500 -rotate-12 group-hover:rotate-0 transition-all duration-500 pointer-events-none" 
+     fill="none" 
+     viewBox="0 0 24 24" 
+     stroke="currentColor"
+@@ -21,7 +21,7 @@
+   <!-- SUN: Visible in Dark Mode -->
+   <svg 
+     xmlns="http://www.w3.org/2000/svg" 
+-    class="w-5 h-5 hidden dark:block text-zinc-400 group-hover:text-orange-500 rotate-0 group-hover:rotate-90 transition-all duration-500 pointer-events-none" 
++    class="w-5 h-5 hidden dark:block text-zinc-400 group-hover:text-accent-500 rotate-0 group-hover:rotate-90 transition-all duration-500 pointer-events-none" 
+     fill="none" 
+     viewBox="0 0 24 24" 
+     stroke="currentColor"
+@@ -33,7 +33,7 @@
+     <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41" />
+   </svg>
+ 
+-  <div class="absolute inset-0 bg-orange-500/0 dark:group-hover:bg-white/5 group-hover:bg-black/5 transition-colors duration-300"></div>
++  <div class="absolute inset-0 bg-accent-500/0 dark:group-hover:bg-white/5 group-hover:bg-black/5 transition-colors duration-300"></div>
+ </button>
+ 
+ <script is:inline>
+diff --git a/src/layouts/Layout.astro b/src/layouts/Layout.astro
+index ee58309..dc306c2 100644
+--- a/src/layouts/Layout.astro
++++ b/src/layouts/Layout.astro
+@@ -2,6 +2,7 @@
+ import { ClientRouter } from 'astro:transitions';
+ import Navbar from '../components/Navbar.astro';
+ import Contact from '../components/Contact.astro';
++import '../styles/themes.css';
+ interface Props {
+   title: string;
+   description?: string;
+@@ -111,11 +112,11 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+ 
+         </style>
+     </head>
+-    <body class="bg-[#FDFDFD] dark:bg-[#121212] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 antialiased selection:bg-orange-500/30 overflow-x-hidden">
++    <body class="bg-[#FDFDFD] dark:bg-[#121212] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 antialiased selection:bg-accent-500/30 overflow-x-hidden">
+         
+         <div 
+             id="cursor-blob" 
+-            class="fixed top-0 left-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-orange-500/20 dark:bg-orange-600/25 rounded-full blur-[80px] sm:blur-[140px] pointer-events-none transition-opacity duration-1000 opacity-0 z-[1]"
++            class="fixed top-0 left-0 w-[300px] h-[300px] sm:w-[600px] sm:h-[600px] bg-accent-500/20 dark:bg-accent-600/25 rounded-full blur-[80px] sm:blur-[140px] pointer-events-none transition-opacity duration-1000 opacity-0 z-[1]"
+             style="will-change: transform;"
+         ></div>
+         
+diff --git a/src/pages/about.astro b/src/pages/about.astro
+index 1e44dc0..41e58c1 100644
+--- a/src/pages/about.astro
++++ b/src/pages/about.astro
+@@ -27,7 +27,7 @@ const journey = [
+       <!-- Left Content Column -->
+       <div data-reveal class="min-[1201px]:col-span-7 space-y-6 lg:space-y-8 w-full">
+         <h1 class="text-5xl sm:text-6xl md:text-7xl min-[1201px]:text-8xl font-black tracking-tighter uppercase leading-[0.9] min-[1201px]:leading-[0.85] dark:text-white">
+-          Engineering <br class="hidden sm:inline"/> <span class="text-orange-500 italic">& Creativity.</span>
++          Engineering <br class="hidden sm:inline"/> <span class="text-accent-500 italic">& Creativity.</span>
+         </h1>
+         
+         <div class="space-y-4 lg:space-y-6 text-lg lg:text-xl text-zinc-800 dark:text-zinc-200 w-full min-[1201px]:max-w-2xl leading-relaxed">
+@@ -37,19 +37,19 @@ const journey = [
+         </div>
+         
+         <div class="flex flex-wrap gap-4 pt-2 lg:pt-4">
+-          <a href={`${base}/contact`} data-magnetic="0.3" class="bg-orange-500 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform w-full sm:w-auto text-center">Work with me</a>
++          <a href={`${base}/contact`} data-magnetic="0.3" class="bg-accent-500 text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform w-full sm:w-auto text-center">Work with me</a>
+           <a href={`${base}/Resume_JeroHalili.pdf`} data-magnetic="0.3" class="bg-white/80 dark:bg-zinc-900/80 text-zinc-800 border border-zinc-200 dark:border-zinc-800 dark:text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-all w-full sm:w-auto text-center">Resume (PDF)</a>
+         </div>
+       </div>
+ 
+       <!-- Right Card Column -->
+       <div data-reveal class="min-[1201px]:col-span-5 w-full">
+-        <div data-tilt class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-6 md:p-10 min-[1201px]:sticky min-[1201px]:top-32 shadow-2xl shadow-orange-500/5">
++        <div data-tilt class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-6 md:p-10 min-[1201px]:sticky min-[1201px]:top-32 shadow-2xl shadow-accent-500/5">
+           <div class="space-y-6 lg:space-y-8">
+             <div class="flex justify-between items-start">
+               <div>
+                 <h2 class="text-3xl font-black tracking-tighter dark:text-white uppercase italic">Jero Halili</h2>
+-                <p class="text-orange-500 font-mono text-xs font-bold uppercase tracking-widest mt-1">Angeles, Philippines · Remote</p>
++                <p class="text-accent-500 font-mono text-xs font-bold uppercase tracking-widest mt-1">Angeles, Philippines · Remote</p>
+               </div>
+             </div>
+             
+@@ -61,7 +61,7 @@ const journey = [
+ 
+             <div class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+               <div class="flex gap-4 items-center text-sm font-medium">
+-                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
++                <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+                 <span class="dark:text-zinc-300 font-bold uppercase tracking-tighter">Dean's List — Academic Honors</span>
+               </div>
+               <div class="flex gap-4 items-center text-sm font-medium">
+@@ -80,7 +80,7 @@ const journey = [
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     data-magnetic="0.2"
+-                    class="flex justify-between items-center px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 hover:bg-orange-500 dark:hover:bg-orange-500 hover:border-orange-500 transition-colors duration-300 group"
++                    class="flex justify-between items-center px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 hover:bg-accent-500 dark:hover:bg-accent-500 hover:border-accent-500 transition-colors duration-300 group"
+                   >
+                     <span class="text-xs font-bold uppercase tracking-widest dark:text-white group-hover:text-white transition-colors duration-300">{link.name}</span>
+                     <div class="p-1 rounded-md transition-colors duration-300">
+@@ -100,17 +100,17 @@ const journey = [
+ 
+     <!-- Skill Constellation Section -->
+     <section class="mb-20 lg:mb-32">
+-      <h2 class="text-3xl lg:text-4xl font-black uppercase tracking-tighter mb-8 lg:mb-12 dark:text-white italic underline decoration-orange-500 underline-offset-8">Skill Constellation</h2>
++      <h2 class="text-3xl lg:text-4xl font-black uppercase tracking-tighter mb-8 lg:mb-12 dark:text-white italic underline decoration-accent-500 underline-offset-8">Skill Constellation</h2>
+       <SkillsConstellation />
+     </section>
+ 
+     <!-- Journey Section -->
+     <section>
+-      <h2 class="text-3xl lg:text-4xl font-black uppercase tracking-tighter mb-8 lg:mb-12 dark:text-white italic underline decoration-orange-500 underline-offset-8">The Journey</h2>
++      <h2 class="text-3xl lg:text-4xl font-black uppercase tracking-tighter mb-8 lg:mb-12 dark:text-white italic underline decoration-accent-500 underline-offset-8">The Journey</h2>
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+         {journey.map((item, i) => (
+-          <div data-tilt data-reveal data-reveal-delay={i * 80} class="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/50 transition-colors duration-300 group">
+-            <span class="text-4xl font-black text-zinc-600 dark:text-zinc-400 group-hover:text-orange-500 transition-colors duration-300">{item.year}</span>
++          <div data-tilt data-reveal data-reveal-delay={i * 80} class="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/50 transition-colors duration-300 group">
++            <span class="text-4xl font-black text-zinc-600 dark:text-zinc-400 group-hover:text-accent-500 transition-colors duration-300">{item.year}</span>
+             <h3 class="text-xl font-bold dark:text-white mt-4 mb-2 uppercase tracking-tight leading-tight">{item.title}</h3>
+             <p class="text-zinc-800 dark:text-zinc-200 text-sm leading-relaxed">{item.desc}</p>
+           </div>
+diff --git a/src/pages/blog/[slug].astro b/src/pages/blog/[slug].astro
+index 832fa24..1cc698c 100644
+--- a/src/pages/blog/[slug].astro
++++ b/src/pages/blog/[slug].astro
+@@ -39,20 +39,20 @@ const readMinutes = parseInt(entry.data.readTime, 10) || 5;
+   publishedTime={entry.data.pubDate.toISOString()}
+ >
+ 
+-  <div id="reading-progress" class="fixed top-0 left-0 w-full h-[3px] bg-orange-500 origin-left z-[100]" style="transform: scaleX(0);"></div>
++  <div id="reading-progress" class="fixed top-0 left-0 w-full h-[3px] bg-accent-500 origin-left z-[100]" style="transform: scaleX(0);"></div>
+ 
+   <div
+     id="read-time-pill"
+-    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-full shadow-2xl shadow-orange-500/10 flex items-center gap-2 transition-opacity duration-500 opacity-0"
++    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-full shadow-2xl shadow-accent-500/10 flex items-center gap-2 transition-opacity duration-500 opacity-0"
+   >
+-    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
++    <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+     <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono uppercase tracking-wider">
+       <span id="read-time-value" data-read-mins>{readMinutes} min left</span>
+     </span>
+   </div>
+ 
+   <main class="pt-32 pb-32 px-4 md:px-10 max-w-[1200px] mx-auto">
+-    <a href={`${base}/blogs`} class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-flex items-center gap-2 hover:-translate-x-1 transition-transform duration-300 group">
++    <a href={`${base}/blogs`} class="text-accent-500 font-bold text-xs uppercase tracking-widest mb-12 inline-flex items-center gap-2 hover:-translate-x-1 transition-transform duration-300 group">
+       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="transition-transform duration-300 group-hover:-translate-x-1">
+         <path d="M19 12H5m7-7-7 7 7 7"/>
+       </svg>
+@@ -64,13 +64,13 @@ const readMinutes = parseInt(entry.data.readTime, 10) || 5;
+       prose-h2:text-3xl prose-h2:font-black prose-h2:tracking-tighter prose-h2:uppercase
+       prose-h3:text-2xl prose-h3:font-black prose-h3:tracking-tighter prose-h3:uppercase
+       prose-p:text-lg prose-p:leading-relaxed prose-p:text-zinc-700 dark:prose-p:text-zinc-300
+-      prose-strong:text-orange-500
+-      prose-code:text-orange-500 prose-code:bg-orange-500/5 prose-code:px-1 prose-code:rounded
++      prose-strong:text-accent-500
++      prose-code:text-accent-500 prose-code:bg-accent-500/5 prose-code:px-1 prose-code:rounded
+       prose-pre:border prose-pre:border-zinc-200 dark:prose-pre:border-zinc-800 prose-pre:rounded-2xl">
+ 
+       <header class="mb-16 not-prose" data-reveal>
+         <div class="flex items-center gap-3 mb-6">
+-          <span class="px-3 py-1 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
++          <span class="px-3 py-1 bg-accent-500/10 text-accent-500 border border-accent-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
+             {entry.data.category}
+           </span>
+           <span class="text-zinc-500 dark:text-zinc-400 font-mono text-[10px] uppercase">
+@@ -96,27 +96,27 @@ const readMinutes = parseInt(entry.data.readTime, 10) || 5;
+ 
+     <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4" data-reveal>
+       {prev && (
+-        <a href={`${base}/blog/${prev.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300">
++        <a href={`${base}/blog/${prev.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300">
+           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 mb-3">
+             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+               <path d="M19 12H5m7-7-7 7 7 7"/>
+             </svg>
+             Previous
+           </span>
+-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300 leading-snug line-clamp-2">
++          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300 leading-snug line-clamp-2">
+             {prev.data.title}
+           </h3>
+         </a>
+       )}
+       {next && (
+-        <a href={`${base}/blog/${next.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300 text-right sm:col-start-2">
++        <a href={`${base}/blog/${next.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300 text-right sm:col-start-2">
+           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 mb-3 justify-end">
+             Next
+             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+               <path d="M5 12h14m-7-7 7 7-7 7"/>
+             </svg>
+           </span>
+-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300 leading-snug line-clamp-2">
++          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300 leading-snug line-clamp-2">
+             {next.data.title}
+           </h3>
+         </a>
+@@ -125,12 +125,12 @@ const readMinutes = parseInt(entry.data.readTime, 10) || 5;
+     </div>
+ 
+     <footer class="mt-20 pt-10 border-t border-zinc-100 dark:border-zinc-900">
+-        <div data-tilt class="bg-zinc-50 dark:bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300">
++        <div data-tilt class="bg-zinc-50 dark:bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300">
+             <h4 class="text-xl font-black uppercase italic dark:text-white mb-2">Systems Thinking</h4>
+             <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-6">
+                 Thanks for reading. I write about building local-first AI systems, database architectures, and bridging the gap between academia and production.
+             </p>
+-            <a href={`${base}/blogs`} class="text-orange-500 font-bold text-xs uppercase tracking-widest hover:underline">
++            <a href={`${base}/blogs`} class="text-accent-500 font-bold text-xs uppercase tracking-widest hover:underline">
+                 Explore more posts &rarr;
+             </a>
+         </div>
+diff --git a/src/pages/blogs.astro b/src/pages/blogs.astro
+index dbdd922..b3d7c96 100644
+--- a/src/pages/blogs.astro
++++ b/src/pages/blogs.astro
+@@ -21,7 +21,7 @@ const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
+ 
+     <header class="mb-16 space-y-6" data-reveal>
+       <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none dark:text-white italic">
+-        Systems <br/> <span class="text-orange-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">Thinking.</span>
++        Systems <br/> <span class="text-accent-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">Thinking.</span>
+       </h1>
+       <p class="text-xl text-zinc-800 dark:text-zinc-200 font-medium max-w-xl leading-relaxed">
+         Writing about building local-first AI, scalable engineering, and the intersection of code and creativity.
+@@ -37,7 +37,7 @@ const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
+           id="blog-search"
+           type="text"
+           placeholder="Search posts..."
+-          class="w-full pl-11 pr-4 py-3.5 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/50 transition-all duration-300"
++          class="w-full pl-11 pr-4 py-3.5 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 focus:border-accent-500/50 transition-all duration-300"
+         />
+       </div>
+ 
+@@ -48,8 +48,8 @@ const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
+             class:list={[
+               'px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all duration-300 hover:scale-105 active:scale-95',
+               i === 0
+-                ? 'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20'
+-                : 'bg-transparent text-zinc-500 border-zinc-200 dark:border-zinc-800 dark:text-zinc-400 hover:border-orange-500/40 hover:text-orange-500 dark:hover:text-orange-500'
++                ? 'bg-accent-500 text-white border-accent-500 shadow-lg shadow-accent-500/20'
++                : 'bg-transparent text-zinc-500 border-zinc-200 dark:border-zinc-800 dark:text-zinc-400 hover:border-accent-500/40 hover:text-accent-500 dark:hover:text-accent-500'
+             ]}
+           >
+             {opt}
+diff --git a/src/pages/contact.astro b/src/pages/contact.astro
+index bd64cf3..08d2fd0 100644
+--- a/src/pages/contact.astro
++++ b/src/pages/contact.astro
+@@ -5,7 +5,7 @@ import Layout from '../layouts/Layout.astro';
+ <Layout title="Contact | Jero Halili">
+   <main class="max-w-4xl mx-auto px-6 py-32">
+     <div class="text-center mb-16">
+-      <h1 class="text-6xl font-black dark:text-white mb-4">Let's <span class="text-orange-500 italic">connect.</span></h1>
++      <h1 class="text-6xl font-black dark:text-white mb-4">Let's <span class="text-accent-500 italic">connect.</span></h1>
+       <p class="text-xl text-zinc-800 dark:text-zinc-200">Have a project in mind or a position to fill?</p>
+     </div>
+ 
+@@ -16,20 +16,20 @@ import Layout from '../layouts/Layout.astro';
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div>
+           <label class="block text-sm font-bold dark:text-white mb-2">Name</label>
+-          <input type="text" name="name" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-orange-500 dark:text-white outline-none">
++          <input type="text" name="name" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-accent-500 dark:text-white outline-none">
+         </div>
+         <div>
+           <label class="block text-sm font-bold dark:text-white mb-2">Email Address</label>
+-          <input type="email" name="email" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-orange-500 dark:text-white outline-none">
++          <input type="email" name="email" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-accent-500 dark:text-white outline-none">
+         </div>
+       </div>
+ 
+       <div>
+         <label class="block text-sm font-bold dark:text-white mb-2">Message</label>
+-        <textarea name="message" rows="5" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-orange-500 dark:text-white outline-none"></textarea>
++        <textarea name="message" rows="5" required class="w-full bg-gray-100 dark:bg-zinc-900 border-none rounded-2xl p-4 focus:ring-2 ring-accent-500 dark:text-white outline-none"></textarea>
+       </div>
+ 
+-      <button type="submit" class="w-full bg-orange-500 text-white font-black py-5 rounded-2xl text-xl hover:bg-orange-600 transition-all transform hover:scale-[1.02]">
++      <button type="submit" class="w-full bg-accent-500 text-white font-black py-5 rounded-2xl text-xl hover:bg-accent-600 transition-all transform hover:scale-[1.02]">
+         Send Message
+       </button>
+     </form>
+diff --git a/src/pages/projects.astro b/src/pages/projects.astro
+index 1abd520..ceb3ed6 100644
+--- a/src/pages/projects.astro
++++ b/src/pages/projects.astro
+@@ -19,7 +19,7 @@ const labs = [
+     <header data-reveal class="mb-16 space-y-4">
+       <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] dark:text-white italic">
+         The Projects<br/> 
+-        <span class="text-orange-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">
++        <span class="text-accent-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">
+           Archive.
+         </span>
+       </h1>
+@@ -30,13 +30,13 @@ const labs = [
+ 
+     <div class="space-y-6 mb-32">
+       {sortedProjects.map((project, i) => (
+-        <div data-tilt data-reveal data-reveal-delay={i * 100} class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 md:p-10 overflow-hidden transition-colors duration-300 hover:border-orange-500/40 shadow-sm">
++        <div data-tilt data-reveal data-reveal-delay={i * 100} class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 md:p-10 overflow-hidden transition-colors duration-300 hover:border-accent-500/40 shadow-sm">
+           
+           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10 items-stretch">
+             <div class="lg:col-span-7 flex flex-col justify-center items-start space-y-6">
+               <div class="space-y-4">
+                 <div class="flex items-center gap-3">
+-                  <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full font-mono text-[9px] font-bold uppercase tracking-widest border border-orange-500/20">
++                  <span class="px-3 py-1 bg-accent-500/10 text-accent-500 rounded-full font-mono text-[9px] font-bold uppercase tracking-widest border border-accent-500/20">
+                     {project.data.subtitle}
+                   </span>
+                 </div>
+@@ -54,7 +54,7 @@ const labs = [
+                 <a
+                   href={`${base}/projects/${project.id}`}
+                   data-magnetic="0.2"
+-                  class="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-orange-500 hover:text-white transition-colors duration-300 transform active:scale-95 flex items-center gap-3"
++                  class="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-accent-500 hover:text-white transition-colors duration-300 transform active:scale-95 flex items-center gap-3"
+                 >
+                   Full Case Study
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+@@ -64,7 +64,7 @@ const labs = [
+                     href={project.data.liveUrl}
+                     target="_blank"
+                     rel="noopener noreferrer"
+-                    class="px-6 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300 flex items-center gap-2"
++                    class="px-6 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300 flex items-center gap-2"
+                   >
+                     Live Demo
+                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l10-10M17 17V7H7"/></svg>
+@@ -76,7 +76,7 @@ const labs = [
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     aria-label={`${project.data.title} GitHub repository`}
+-                    class="px-6 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300 flex items-center gap-2"
++                    class="px-6 py-3.5 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300 flex items-center gap-2"
+                   >
+                     GitHub
+                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+@@ -118,8 +118,8 @@ const labs = [
+ 
+       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+         {labs.map((lab, i) => (
+-          <div data-tilt data-reveal data-reveal-delay={i * 80} class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/30 transition-colors duration-300 group">
+-            <span class="text-[9px] font-mono text-orange-500 font-bold uppercase">{lab.tech}</span>
++          <div data-tilt data-reveal data-reveal-delay={i * 80} class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/30 transition-colors duration-300 group">
++            <span class="text-[9px] font-mono text-accent-500 font-bold uppercase">{lab.tech}</span>
+             <h3 class="text-lg font-bold dark:text-white mt-1 mb-2 uppercase tracking-tight">{lab.title}</h3>
+             <p class="text-zinc-600 dark:text-zinc-400 text-[13px] leading-relaxed">{lab.desc}</p>
+           </div>
+diff --git a/src/pages/projects/[slug].astro b/src/pages/projects/[slug].astro
+index 29c5957..dbca4b3 100644
+--- a/src/pages/projects/[slug].astro
++++ b/src/pages/projects/[slug].astro
+@@ -35,20 +35,20 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
+   type="article"
+ >
+ 
+-  <div id="reading-progress" class="fixed top-0 left-0 w-full h-[3px] bg-orange-500 origin-left z-[100]" style="transform: scaleX(0);"></div>
++  <div id="reading-progress" class="fixed top-0 left-0 w-full h-[3px] bg-accent-500 origin-left z-[100]" style="transform: scaleX(0);"></div>
+ 
+   <div
+     id="read-time-pill"
+-    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-full shadow-2xl shadow-orange-500/10 flex items-center gap-2 transition-opacity duration-500 opacity-0"
++    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-full shadow-2xl shadow-accent-500/10 flex items-center gap-2 transition-opacity duration-500 opacity-0"
+   >
+-    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
++    <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+     <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono uppercase tracking-wider">
+       <span id="read-time-value" data-read-mins>{readMinutes} min left</span>
+     </span>
+   </div>
+ 
+   <main class="pt-32 pb-32 px-4 md:px-10 max-w-[1200px] mx-auto">
+-    <a href={`${base}/projects`} class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-flex items-center gap-2 hover:-translate-x-1 transition-transform duration-300 group">
++    <a href={`${base}/projects`} class="text-accent-500 font-bold text-xs uppercase tracking-widest mb-12 inline-flex items-center gap-2 hover:-translate-x-1 transition-transform duration-300 group">
+       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="transition-transform duration-300 group-hover:-translate-x-1">
+         <path d="M19 12H5m7-7-7 7 7 7"/>
+       </svg>
+@@ -60,15 +60,15 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
+       prose-h3:text-2xl prose-h3:font-black prose-h3:tracking-tighter prose-h3:uppercase prose-h3:mt-10
+       prose-p:text-lg prose-p:leading-relaxed prose-p:text-zinc-700 dark:prose-p:text-zinc-300
+       prose-li:text-zinc-700 dark:prose-li:text-zinc-300
+-      prose-strong:text-orange-500
+-      prose-code:text-orange-500 prose-code:bg-orange-500/5 prose-code:px-1 prose-code:rounded
++      prose-strong:text-accent-500
++      prose-code:text-accent-500 prose-code:bg-accent-500/5 prose-code:px-1 prose-code:rounded
+       prose-pre:border prose-pre:border-zinc-200 dark:prose-pre:border-zinc-800 prose-pre:rounded-2xl
+       prose-table:text-sm prose-th:text-left prose-th:uppercase prose-th:tracking-wider prose-th:text-zinc-500 dark:prose-th:text-zinc-400
+       prose-td:text-zinc-700 dark:prose-td:text-zinc-300">
+ 
+       <header class="mb-16 not-prose" data-reveal>
+         <div class="flex items-center gap-3 mb-6">
+-          <span class="px-3 py-1 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
++          <span class="px-3 py-1 bg-accent-500/10 text-accent-500 border border-accent-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
+             {entry.data.subtitle}
+           </span>
+           {entry.data.impact && (
+@@ -103,7 +103,7 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
+                 href={entry.data.liveUrl}
+                 target="_blank"
+                 rel="noopener noreferrer"
+-                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] bg-orange-500 text-white hover:bg-zinc-900 dark:hover:bg-white dark:hover:text-black transition-colors duration-300 flex items-center gap-2"
++                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] bg-accent-500 text-white hover:bg-zinc-900 dark:hover:bg-white dark:hover:text-black transition-colors duration-300 flex items-center gap-2"
+               >
+                 Live Demo
+                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l10-10M17 17V7H7"/></svg>
+@@ -114,7 +114,7 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
+                 href={entry.data.repoUrl}
+                 target="_blank"
+                 rel="noopener noreferrer"
+-                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300 flex items-center gap-2"
++                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300 flex items-center gap-2"
+               >
+                 GitHub Repo
+                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+@@ -135,27 +135,27 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
+ 
+     <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4" data-reveal>
+       {prev && (
+-        <a href={`${base}/projects/${prev.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300">
++        <a href={`${base}/projects/${prev.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300">
+           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 mb-3">
+             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+               <path d="M19 12H5m7-7-7 7 7 7"/>
+             </svg>
+             Previous
+           </span>
+-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300 leading-snug line-clamp-2">
++          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300 leading-snug line-clamp-2">
+             {prev.data.title}
+           </h3>
+         </a>
+       )}
+       {next && (
+-        <a href={`${base}/projects/${next.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300 text-right sm:col-start-2">
++        <a href={`${base}/projects/${next.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300 text-right sm:col-start-2">
+           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 mb-3 justify-end">
+             Next
+             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+               <path d="M5 12h14m-7-7 7 7-7 7"/>
+             </svg>
+           </span>
+-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300 leading-snug line-clamp-2">
++          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300 leading-snug line-clamp-2">
+             {next.data.title}
+           </h3>
+         </a>
+@@ -164,12 +164,12 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
+     </div>
+ 
+     <footer class="mt-20 pt-10 border-t border-zinc-100 dark:border-zinc-900">
+-        <div data-tilt class="bg-zinc-50 dark:bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300">
++        <div data-tilt class="bg-zinc-50 dark:bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300">
+             <h4 class="text-xl font-black uppercase italic dark:text-white mb-2">Case Studies</h4>
+             <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-6">
+                 Thanks for reading. I build end-to-end systems from local AI pipelines to full-stack web applications.
+             </p>
+-            <a href={`${base}/projects`} class="text-orange-500 font-bold text-xs uppercase tracking-widest hover:underline">
++            <a href={`${base}/projects`} class="text-accent-500 font-bold text-xs uppercase tracking-widest hover:underline">
+                 Explore more projects &rarr;
+             </a>
+         </div>
+diff --git a/src/scripts/accent.ts b/src/scripts/accent.ts
+new file mode 100644
+index 0000000..8f18499
+--- /dev/null
++++ b/src/scripts/accent.ts
+@@ -0,0 +1,19 @@
++/**
++ * Canvas can't read CSS variables directly, so this returns the current
++ * accent color as an "r, g, b" string, e.g. "249, 115, 22".
++ * Cached, and refreshed whenever the appearance changes.
++ */
++let cache: string | null = null;
++
++export function accentRGB(): string {
++  if (cache) return cache;
++  const raw = getComputedStyle(document.documentElement).getPropertyValue('--accent-500').trim();
++  cache = raw ? raw.split(/\s+/).join(', ') : '249, 115, 22';
++  return cache;
++}
++
++if (typeof window !== 'undefined') {
++  const reset = () => { cache = null; };
++  window.addEventListener('appearance-change', reset);
++  document.addEventListener('astro:after-swap', reset);
++}
+diff --git a/src/scripts/blog-filters.ts b/src/scripts/blog-filters.ts
+index 2dd11dd..dab79e7 100644
+--- a/src/scripts/blog-filters.ts
++++ b/src/scripts/blog-filters.ts
+@@ -75,11 +75,11 @@ export function initBlogFilters() {
+       activeFilter = btn.dataset.filter || 'All';
+ 
+       filterButtons.forEach(b => {
+-        b.classList.remove('bg-orange-500', 'text-white', 'border-orange-500');
++        b.classList.remove('bg-accent-500', 'text-white', 'border-accent-500');
+         b.classList.add('bg-transparent', 'text-zinc-500', 'border-zinc-200', 'dark:border-zinc-800', 'dark:text-zinc-400');
+       });
+ 
+-      btn.classList.add('bg-orange-500', 'text-white', 'dark:text-white', 'hover:text-white', 'dark:hover:text-white', 'border-orange-500');
++      btn.classList.add('bg-accent-500', 'text-white', 'dark:text-white', 'hover:text-white', 'dark:hover:text-white', 'border-accent-500');
+       btn.classList.remove('bg-transparent', 'text-zinc-500', 'border-zinc-200', 'dark:border-zinc-800', 'dark:text-zinc-400');
+ 
+       visibleCount = POSTS_PER_PAGE;
+diff --git a/src/styles/global.css b/src/styles/global.css
+index 57affa6..ba4a09f 100644
+--- a/src/styles/global.css
++++ b/src/styles/global.css
+@@ -15,8 +15,8 @@
+ 
+ @layer components {
+   .prose-content {
+-    @apply prose-a:text-orange-500 prose-a:underline prose-a:decoration-orange-500/30 hover:prose-a:decoration-orange-500;
+-    @apply prose-blockquote:border-l-orange-500 prose-blockquote:bg-orange-500/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:not-italic;
++    @apply prose-a:text-accent-500 prose-a:underline prose-a:decoration-accent-500/30 hover:prose-a:decoration-accent-500;
++    @apply prose-blockquote:border-l-accent-500 prose-blockquote:bg-accent-500/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:not-italic;
+     @apply prose-hr:border-zinc-200 dark:prose-hr:border-zinc-800 prose-hr:my-12;
+     @apply prose-img:rounded-[1.5rem] prose-img:shadow-xl;
+   }
+diff --git a/src/styles/themes.css b/src/styles/themes.css
+new file mode 100644
+index 0000000..0846535
+--- /dev/null
++++ b/src/styles/themes.css
+@@ -0,0 +1,44 @@
++/* ==========================================================================
++   Design tokens + themes
++   --------------------------------------------------------------------------
++   Everything here is driven by attributes on <html>, set by the appearance
++   script in Layout.astro (window.__appearance):
++
++     data-theme="clean | command | terminal"
++     data-accent="orange | rose | violet | blue | cyan | emerald"
++     data-fx-*="on | off"      (motion, particles, tilt, magnetic, glow, scanlines)
++
++   The default state (clean + orange + everything on) is visually identical
++   to the site before the Control Panel existed.
++   ========================================================================== */
++
++/* ---- Base palette (Tailwind's zinc scale, as channels) ---- */
++:root {
++  --zinc-50: 250 250 250;
++  --zinc-100: 244 244 245;
++  --zinc-200: 228 228 231;
++  --zinc-300: 212 212 216;
++  --zinc-400: 161 161 170;
++  --zinc-500: 113 113 122;
++  --zinc-600: 82 82 91;
++  --zinc-700: 63 63 70;
++  --zinc-800: 39 39 42;
++  --zinc-900: 24 24 27;
++  --zinc-950: 9 9 11;
++
++  /* Accent defaults to orange so first paint is correct even before JS. */
++  --accent-50: 255 247 237;
++  --accent-400: 251 146 60;
++  --accent-500: 249 115 22;
++  --accent-600: 234 88 12;
++}
++
++/* ---- Accent palettes ----
++   cyan and emerald use a deeper 500 so white text on accent buttons stays
++   readable; 400 stays bright for text on dark backgrounds. */
++html[data-accent='orange'] { --accent-50: 255 247 237; --accent-400: 251 146 60;  --accent-500: 249 115 22;  --accent-600: 234 88 12; }
++html[data-accent='rose']   { --accent-50: 255 241 242; --accent-400: 251 113 133; --accent-500: 244 63 94;   --accent-600: 225 29 72; }
++html[data-accent='violet'] { --accent-50: 245 243 255; --accent-400: 167 139 250; --accent-500: 139 92 246;  --accent-600: 124 58 237; }
++html[data-accent='blue']   { --accent-50: 239 246 255; --accent-400: 96 165 250;  --accent-500: 59 130 246;  --accent-600: 37 99 235; }
++html[data-accent='cyan']   { --accent-50: 236 254 255; --accent-400: 34 211 238;  --accent-500: 8 145 178;   --accent-600: 14 116 144; }
++html[data-accent='emerald']{ --accent-50: 236 253 245; --accent-400: 52 211 153;  --accent-500: 5 150 105;   --accent-600: 4 120 87; }
+diff --git a/tailwind.config.mjs b/tailwind.config.mjs
+index 423adc0..8f126b4 100644
+--- a/tailwind.config.mjs
++++ b/tailwind.config.mjs
+@@ -22,10 +22,22 @@ export default {
+         'pill': '9999px',
+       },
+       colors: {
++        // Accent and zinc are driven by CSS variables (see src/styles/themes.css)
++        // so the Control Panel can swap colors and themes at runtime.
+         accent: {
+-          DEFAULT: '#f97316',
+-          dark: '#ea580c',
++          DEFAULT: 'rgb(var(--accent-500) / <alpha-value>)',
++          dark: 'rgb(var(--accent-600) / <alpha-value>)',
++          50: 'rgb(var(--accent-50) / <alpha-value>)',
++          400: 'rgb(var(--accent-400) / <alpha-value>)',
++          500: 'rgb(var(--accent-500) / <alpha-value>)',
++          600: 'rgb(var(--accent-600) / <alpha-value>)',
+         },
++        zinc: Object.fromEntries(
++          [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((n) => [
++            n,
++            `rgb(var(--zinc-${n}) / <alpha-value>)`,
++          ])
++        ),
+       },
+ 
+     },
+-- 
+2.43.0
+
+From bd28dce1711ab8e4542709ea9c61461fd3327abd Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 05:40:10 +0000
+Subject: [PATCH 2/3] feat: Control Panel with accent colors, light/dark,
+ effect toggles and Lite mode
+
+- New customize drawer (gear button in the navbar) built on a native <dialog>:
+  focus trap, Esc to close, arrow-key navigation inside radio groups.
+- Accent color: 6 curated swatches, applied site-wide including the canvases.
+- Effects: animations, particle network, 3D tilt, magnetic buttons, cursor glow,
+  scanlines. Defaults respect prefers-reduced-motion until the user opts in.
+- Lite/Full moved from the navbar into the panel.
+- Changes reveal with a circular View Transition where supported.
+- Appearance is applied before first paint and re-applied on client-side
+  navigation, so nothing flashes and choices persist in localStorage.
+---
+ src/components/ControlPanel.astro | 460 ++++++++++++++++++++++++++++++
+ src/components/Navbar.astro       |  40 ++-
+ src/components/ThemeIcon.astro    |  37 +--
+ src/layouts/Layout.astro          | 131 ++++++++-
+ src/scripts/magnetic.ts           |  17 +-
+ src/scripts/tilt.ts               |  16 ++
+ src/styles/themes.css             |  74 +++++
+ 7 files changed, 717 insertions(+), 58 deletions(-)
+ create mode 100644 src/components/ControlPanel.astro
+
+diff --git a/src/components/ControlPanel.astro b/src/components/ControlPanel.astro
+new file mode 100644
+index 0000000..895a2dc
+--- /dev/null
++++ b/src/components/ControlPanel.astro
+@@ -0,0 +1,460 @@
++---
++// Customize panel: theme, accent color, light/dark, effects and performance.
++// All state lives in window.__appearance (see Layout.astro) and localStorage.
++const themes = [
++  { id: 'clean', name: 'Clean', desc: 'The original look: soft, bright and airy.' },
++];
++
++const accents = [
++  { id: 'orange', name: 'Orange', hex: '#f97316' },
++  { id: 'rose', name: 'Rose', hex: '#f43f5e' },
++  { id: 'violet', name: 'Violet', hex: '#8b5cf6' },
++  { id: 'blue', name: 'Blue', hex: '#3b82f6' },
++  { id: 'cyan', name: 'Cyan', hex: '#0891b2' },
++  { id: 'emerald', name: 'Emerald', hex: '#059669' },
++];
++
++const effects = [
++  { id: 'motion', name: 'Animations', desc: 'Fade-ins, reveals and smooth transitions.' },
++  { id: 'particles', name: 'Particle network', desc: 'Animated constellations in the hero and skills.' },
++  { id: 'tilt', name: '3D card tilt', desc: 'Cards lean toward your cursor.' },
++  { id: 'magnetic', name: 'Magnetic buttons', desc: 'Buttons drift toward your cursor.' },
++  { id: 'glow', name: 'Cursor glow', desc: 'A soft light that trails the pointer.' },
++  { id: 'scanlines', name: 'Scanlines', desc: 'Subtle retro screen lines over the page.' },
++];
++
++const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-400';
++---
++
++<dialog id="control-panel" class="cp" aria-labelledby="cp-title">
++  <div class="cp-shell flex h-full flex-col bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border-l border-zinc-200 dark:border-zinc-800">
++    <header class="flex items-start justify-between gap-4 p-6 pb-5 border-b border-zinc-200 dark:border-zinc-800">
++      <div>
++        <p class="font-mono text-[10px] uppercase tracking-[0.25em] font-bold text-accent-500">Customize</p>
++        <h2 id="cp-title" class="text-2xl font-black tracking-tight">Make it yours</h2>
++        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Pick a look, a color and the effects. Saved on this device only.</p>
++      </div>
++      <button
++        type="button"
++        data-cp-close
++        aria-label="Close customize panel"
++        class="shrink-0 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:border-accent-500 hover:text-accent-500 transition-colors"
++      >
++        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="pointer-events-none"><path d="M18 6L6 18M6 6l12 12" /></svg>
++      </button>
++    </header>
++
++    <div class="cp-scroll flex-1 overflow-y-auto p-6 space-y-8">
++      {themes.length > 1 && (
++        <section aria-labelledby="cp-h-theme">
++          <h3 id="cp-h-theme" class={`${label} mb-3`}>Theme</h3>
++          <div role="radiogroup" aria-labelledby="cp-h-theme" class="grid gap-3">
++            {themes.map((t) => (
++              <button
++                type="button"
++                role="radio"
++                aria-checked="false"
++                data-cp-theme={t.id}
++                class="cp-choice flex items-center gap-4 text-left p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/60 aria-checked:border-accent-500 aria-checked:bg-accent-500/5 transition-colors"
++              >
++                <span class={`cp-thumb cp-thumb--${t.id}`} aria-hidden="true"><i></i><i></i><i></i></span>
++                <span class="flex-1">
++                  <span class="block font-bold">{t.name}</span>
++                  <span class="block text-xs text-zinc-500 dark:text-zinc-400 leading-snug">{t.desc}</span>
++                </span>
++                <span class="cp-tick" aria-hidden="true">
++                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7" /></svg>
++                </span>
++              </button>
++            ))}
++          </div>
++        </section>
++      )}
++
++      <section aria-labelledby="cp-h-accent">
++        <h3 id="cp-h-accent" class={`${label} mb-3`}>Accent color</h3>
++        <div role="radiogroup" aria-labelledby="cp-h-accent" class="flex flex-wrap items-center gap-3">
++          {accents.map((a) => (
++            <button
++              type="button"
++              role="radio"
++              aria-checked="false"
++              aria-label={a.name}
++              title={a.name}
++              data-cp-accent={a.id}
++              style={`--sw:${a.hex}`}
++              class="cp-swatch"
++            ></button>
++          ))}
++        </div>
++        <button
++          type="button"
++          data-cp-accent="auto"
++          aria-pressed="false"
++          class="mt-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-accent-500 aria-pressed:text-accent-500 transition-colors"
++        >
++          Match the theme's color
++        </button>
++      </section>
++
++      <section aria-labelledby="cp-h-mode">
++        <h3 id="cp-h-mode" class={`${label} mb-3`}>Light or dark</h3>
++        <div role="radiogroup" aria-labelledby="cp-h-mode" class="cp-seg">
++          <button type="button" role="radio" aria-checked="false" data-cp-mode="light">Light</button>
++          <button type="button" role="radio" aria-checked="false" data-cp-mode="dark">Dark</button>
++        </div>
++        <p data-cp-mode-note hidden class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">This theme is dark-only. Switch to Clean to use light mode.</p>
++      </section>
++
++      <section aria-labelledby="cp-h-fx">
++        <h3 id="cp-h-fx" class={`${label} mb-2`}>Effects</h3>
++        <ul class="-mx-3">
++          {effects.map((e) => (
++            <li>
++              <button
++                type="button"
++                role="switch"
++                aria-checked="true"
++                data-cp-fx={e.id}
++                class="cp-row w-full flex items-center justify-between gap-4 p-3 rounded-xl text-left hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
++              >
++                <span>
++                  <span class="block text-sm font-semibold">{e.name}</span>
++                  <span class="block text-xs text-zinc-500 dark:text-zinc-400 leading-snug">{e.desc}</span>
++                </span>
++                <span class="cp-switch" aria-hidden="true"><span class="cp-knob"></span></span>
++              </button>
++            </li>
++          ))}
++        </ul>
++      </section>
++
++      <section aria-labelledby="cp-h-perf">
++        <h3 id="cp-h-perf" class={`${label} mb-3`}>Performance</h3>
++        <div role="radiogroup" aria-labelledby="cp-h-perf" class="cp-seg">
++          <button type="button" role="radio" aria-checked="false" data-cp-perf="full">Full</button>
++          <button type="button" role="radio" aria-checked="false" data-cp-perf="lite">Lite</button>
++        </div>
++        <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Lite pauses the canvases and cursor glow. Best for older phones and slow connections.</p>
++      </section>
++    </div>
++
++    <footer class="flex items-center justify-between gap-4 p-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
++      <button
++        type="button"
++        data-cp-reset
++        class="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 hover:text-accent-500 transition-colors"
++      >
++        Reset to defaults
++      </button>
++      <button
++        type="button"
++        data-cp-close
++        class="bg-accent-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-transform"
++      >
++        Done
++      </button>
++    </footer>
++  </div>
++</dialog>
++
++<style>
++  /* Right-hand drawer on desktop, full-width sheet on phones. */
++  .cp {
++    margin: 0;
++    padding: 0;
++    border: 0;
++    background: transparent;
++    color: inherit;
++    inset: 0 0 0 auto;
++    width: min(26rem, 100vw);
++    max-width: 100vw;
++    height: 100dvh;
++    max-height: 100dvh;
++    overflow: hidden;
++  }
++  .cp[open] {
++    animation: cp-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
++  }
++  .cp::backdrop {
++    background: rgb(0 0 0 / 0.45);
++    backdrop-filter: blur(3px);
++    animation: cp-fade 200ms ease-out;
++  }
++  @keyframes cp-in {
++    from { transform: translateX(2rem); opacity: 0; }
++    to { transform: none; opacity: 1; }
++  }
++  @keyframes cp-fade {
++    from { opacity: 0; }
++    to { opacity: 1; }
++  }
++  .cp-scroll { overscroll-behavior: contain; }
++
++  /* Keyboard focus, in the accent color */
++  .cp button:focus-visible {
++    outline: 2px solid rgb(var(--accent-500));
++    outline-offset: 2px;
++  }
++
++  /* Theme preview thumbnails (always show a theme's own default look) */
++  .cp-thumb {
++    position: relative;
++    flex: none;
++    width: 5.25rem;
++    height: 3.5rem;
++    border-radius: 0.6rem;
++    overflow: hidden;
++    border: 1px solid rgb(128 128 128 / 0.3);
++    padding: 0.55rem;
++    display: flex;
++    flex-direction: column;
++    gap: 0.3rem;
++  }
++  .cp-thumb i { display: block; height: 0.3rem; border-radius: 99px; }
++  .cp-thumb i:nth-child(1) { width: 62%; }
++  .cp-thumb i:nth-child(2) { width: 42%; opacity: 0.55; }
++  .cp-thumb i:nth-child(3) { width: 1.5rem; height: 0.5rem; margin-top: auto; }
++
++  .cp-thumb--clean { background: linear-gradient(#fdfdfd, #f1f1f2); }
++  .cp-thumb--clean i:nth-child(1), .cp-thumb--clean i:nth-child(2) { background: #3f3f46; }
++  .cp-thumb--clean i:nth-child(3) { background: #f97316; }
++
++  .cp-thumb--command {
++    background:
++      linear-gradient(rgb(8 145 178 / 0.18) 1px, transparent 1px) 0 0 / 0.6rem 0.6rem,
++      linear-gradient(90deg, rgb(8 145 178 / 0.18) 1px, transparent 1px) 0 0 / 0.6rem 0.6rem,
++      #0a0f14;
++    border-color: rgb(34 211 238 / 0.45);
++  }
++  .cp-thumb--command i { border-radius: 1px; }
++  .cp-thumb--command i:nth-child(1), .cp-thumb--command i:nth-child(2) { background: #67e8f9; }
++  .cp-thumb--command i:nth-child(3) { background: transparent; border: 1px solid #22d3ee; }
++
++  .cp-thumb--terminal { background: #030803; border-color: rgb(52 211 153 / 0.45); }
++  .cp-thumb--terminal i { border-radius: 0; box-shadow: 0 0 6px rgb(52 211 153 / 0.6); }
++  .cp-thumb--terminal i:nth-child(1), .cp-thumb--terminal i:nth-child(2) { background: #34d399; }
++  .cp-thumb--terminal i:nth-child(3) { background: #34d399; width: 0.45rem; }
++
++  .cp-tick {
++    flex: none;
++    width: 1.5rem;
++    height: 1.5rem;
++    border-radius: 99px;
++    background: rgb(var(--accent-500));
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    opacity: 0;
++    transform: scale(0.6);
++    transition: opacity 200ms, transform 200ms;
++  }
++  .cp-choice[aria-checked='true'] .cp-tick { opacity: 1; transform: none; }
++
++  /* Accent swatches */
++  .cp-swatch {
++    width: 2.25rem;
++    height: 2.25rem;
++    border-radius: 99px;
++    background: var(--sw);
++    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
++    transition: transform 200ms, box-shadow 200ms;
++  }
++  .cp-swatch:hover { transform: scale(1.12); }
++  .cp-swatch[aria-checked='true'] {
++    box-shadow: 0 0 0 2px rgb(var(--zinc-50)), 0 0 0 4px var(--sw);
++  }
++  :global(.dark) .cp-swatch[aria-checked='true'] {
++    box-shadow: 0 0 0 2px rgb(var(--zinc-950)), 0 0 0 4px var(--sw);
++  }
++
++  /* Segmented control */
++  .cp-seg {
++    display: inline-flex;
++    padding: 0.25rem;
++    border-radius: 99px;
++    background: rgb(var(--zinc-100));
++    border: 1px solid rgb(var(--zinc-200));
++  }
++  :global(.dark) .cp-seg {
++    background: rgb(var(--zinc-900));
++    border-color: rgb(var(--zinc-800));
++  }
++  .cp-seg button {
++    padding: 0.45rem 1.25rem;
++    border-radius: 99px;
++    font-size: 0.8rem;
++    font-weight: 700;
++    color: rgb(var(--zinc-500));
++    transition: background-color 200ms, color 200ms;
++  }
++  .cp-seg button[aria-checked='true'] {
++    background: rgb(var(--accent-500));
++    color: #fff;
++  }
++  .cp-seg button:disabled { opacity: 0.4; cursor: not-allowed; }
++
++  /* Switches */
++  .cp-switch {
++    flex: none;
++    position: relative;
++    width: 2.5rem;
++    height: 1.4rem;
++    border-radius: 99px;
++    background: rgb(var(--zinc-300));
++    transition: background-color 200ms;
++  }
++  :global(.dark) .cp-switch { background: rgb(var(--zinc-700)); }
++  .cp-knob {
++    position: absolute;
++    top: 0.2rem;
++    left: 0.2rem;
++    width: 1rem;
++    height: 1rem;
++    border-radius: 99px;
++    background: #fff;
++    box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
++    transition: transform 200ms cubic-bezier(0.3, 1.4, 0.5, 1);
++  }
++  .cp-row[aria-checked='true'] .cp-switch { background: rgb(var(--accent-500)); }
++  .cp-row[aria-checked='true'] .cp-knob { transform: translateX(1.1rem); }
++
++  @media (prefers-reduced-motion: reduce) {
++    .cp[open], .cp::backdrop { animation: none; }
++  }
++</style>
++
++<script>
++  import { apply as setPerf, isLite } from '../scripts/lite';
++
++  type Origin = { x: number; y: number };
++  const api = () => (window as any).__appearance;
++  const $$ = <T extends HTMLElement = HTMLElement>(sel: string) =>
++    Array.from(document.querySelectorAll<T>(sel));
++
++  function seen(): boolean {
++    try { return localStorage.getItem('ui-seen') === '1'; } catch { return true; }
++  }
++
++  function paint() {
++    const a = api();
++    if (!a) return;
++    const s = a.state();
++
++    $$('[data-cp-theme]').forEach((el) =>
++      el.setAttribute('aria-checked', String(el.dataset.cpTheme === s.theme)));
++
++    $$('[data-cp-accent]').forEach((el) => {
++      if (el.dataset.cpAccent === 'auto') el.setAttribute('aria-pressed', String(!s.userAccent));
++      else el.setAttribute('aria-checked', String(el.dataset.cpAccent === s.accent));
++    });
++
++    const modeLocked = s.theme !== 'clean';
++    $$<HTMLButtonElement>('[data-cp-mode]').forEach((el) => {
++      el.setAttribute('aria-checked', String(el.dataset.cpMode === s.mode));
++      el.disabled = modeLocked;
++    });
++    $$('[data-cp-mode-note]').forEach((el) => { el.hidden = !modeLocked; });
++
++    $$('[data-cp-fx]').forEach((el) =>
++      el.setAttribute('aria-checked', String(!!s.fx[el.dataset.cpFx as string])));
++
++    const perf = isLite() ? 'lite' : 'full';
++    $$('[data-cp-perf]').forEach((el) =>
++      el.setAttribute('aria-checked', String(el.dataset.cpPerf === perf)));
++
++    // Roving tabindex so each radio group is a single tab stop (arrow keys move within).
++    $$('[role="radiogroup"]').forEach((group) => {
++      const radios = Array.from(group.querySelectorAll<HTMLElement>('[role="radio"]'));
++      const active = radios.find((r) => r.getAttribute('aria-checked') === 'true') ?? radios[0];
++      radios.forEach((r) => { r.tabIndex = r === active ? 0 : -1; });
++    });
++
++    const hide = seen();
++    $$('[data-cp-ping]').forEach((el) => { el.hidden = hide; });
++  }
++
++  function originOf(e: MouseEvent, el: HTMLElement): Origin {
++    // Keyboard activation reports 0,0, so fall back to the control's own center.
++    if (e.detail === 0 && e.clientX === 0 && e.clientY === 0) {
++      const r = el.getBoundingClientRect();
++      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
++    }
++    return { x: e.clientX, y: e.clientY };
++  }
++
++  function dialog(): HTMLDialogElement | null {
++    return document.getElementById('control-panel') as HTMLDialogElement | null;
++  }
++
++  function onClick(e: MouseEvent) {
++    const dlg = dialog();
++    const target = e.target as HTMLElement | null;
++    if (!target) return;
++
++    // Click on the backdrop (the dialog element itself) closes the panel.
++    if (dlg && target === dlg) { dlg.close(); return; }
++
++    const el = target.closest<HTMLElement>(
++      '[data-cp-open],[data-cp-close],[data-cp-theme],[data-cp-accent],[data-cp-mode],[data-cp-fx],[data-cp-perf],[data-cp-reset]'
++    );
++    const a = api();
++    if (!el || !a) return;
++    const d = el.dataset;
++    const origin = originOf(e, el);
++
++    if (d.cpOpen !== undefined) {
++      try { localStorage.setItem('ui-seen', '1'); } catch { /* ignore */ }
++      if (dlg && !dlg.open) dlg.showModal();
++      paint();
++    } else if (d.cpClose !== undefined) {
++      dlg?.close();
++    } else if (d.cpTheme) {
++      a.setTheme(d.cpTheme, origin);
++    } else if (d.cpAccent) {
++      a.setAccent(d.cpAccent === 'auto' ? null : d.cpAccent, origin);
++    } else if (d.cpMode) {
++      if (!(el as HTMLButtonElement).disabled) a.setMode(d.cpMode, origin);
++    } else if (d.cpFx) {
++      a.setFx(d.cpFx, el.getAttribute('aria-checked') !== 'true');
++    } else if (d.cpPerf) {
++      setPerf(d.cpPerf as 'full' | 'lite');
++      paint();
++    } else if (d.cpReset !== undefined) {
++      a.reset(origin);
++      setPerf('full');
++      paint();
++    }
++  }
++
++  // Arrow keys move through a radio group, like native radio buttons.
++  function onKey(e: KeyboardEvent) {
++    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
++    const radio = (e.target as HTMLElement | null)?.closest<HTMLElement>('[role="radio"]');
++    const group = radio?.closest('[role="radiogroup"]');
++    if (!radio || !group) return;
++    const radios = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="radio"]:not(:disabled)'));
++    const i = radios.indexOf(radio as HTMLButtonElement);
++    if (i < 0) return;
++    const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
++    const next = radios[(i + step + radios.length) % radios.length];
++    e.preventDefault();
++    next.focus();
++    next.click();
++  }
++
++  let bound = false;
++  function bind() {
++    if (bound) return;
++    bound = true;
++    // Delegated, so it survives client-side navigation re-rendering the panel.
++    document.addEventListener('click', onClick);
++    document.addEventListener('keydown', onKey);
++    window.addEventListener('appearance-change', paint);
++    window.addEventListener('perf-change', paint);
++    document.addEventListener('astro:page-load', paint);
++  }
++
++  bind();
++  paint();
++</script>
+diff --git a/src/components/Navbar.astro b/src/components/Navbar.astro
+index 7a90c41..a498aa3 100644
+--- a/src/components/Navbar.astro
++++ b/src/components/Navbar.astro
+@@ -30,12 +30,23 @@ const navLinks = [
+ 
+     <div class="flex items-center gap-2 md:gap-3 pr-2">
+       <button
+-        id="perf-toggle"
++        id="cp-open"
+         type="button"
+-        aria-label="Toggle Lite mode"
+-        title="Toggle Lite mode (faster on weak devices)"
+-        class="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300"
+-      >Lite</button>
++        data-cp-open
++        aria-label="Open customize panel"
++        aria-haspopup="dialog"
++        title="Customize this site: themes, colors, effects"
++        class="group relative w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 hover:scale-110 active:scale-95 transition-all duration-300 pointer-events-auto"
++      >
++        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 pointer-events-none transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
++          <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
++          <circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" />
++        </svg>
++        <span data-cp-ping class="absolute -top-0.5 -right-0.5 flex h-3 w-3 pointer-events-none">
++          <span class="absolute inline-flex h-full w-full rounded-full bg-accent-500 opacity-75 animate-ping"></span>
++          <span class="relative inline-flex h-3 w-3 rounded-full bg-accent-500"></span>
++        </span>
++      </button>
+       <ThemeIcon />
+       
+       <a href={`${base}/contact`} data-magnetic="0.2" class="hidden sm:block bg-accent-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 transition-transform duration-300">
+@@ -54,31 +65,12 @@ const navLinks = [
+ <MobileMenu links={navLinks} />
+ 
+ <script>
+-  import { apply, isLite } from '../scripts/lite';
+-  function paintPerfToggle() {
+-    const btn = document.getElementById('perf-toggle');
+-    if (!btn) return;
+-    // Show the *other* mode: "Lite" when on Full, "Full" when on Lite.
+-    btn.textContent = isLite() ? 'Full' : 'Lite';
+-  }
+   function setupNavbar() {
+     const trigger = document.getElementById('mobile-trigger');
+     if (trigger) {
+       trigger.onclick = () => document.dispatchEvent(new CustomEvent('open-menu'));
+     }
+-    const btn = document.getElementById('perf-toggle');
+-    if (btn) {
+-      const fresh = btn.cloneNode(true) as HTMLButtonElement;
+-      btn.replaceWith(fresh);
+-      fresh.addEventListener('click', () => {
+-        apply(isLite() ? 'full' : 'lite');
+-        paintPerfToggle();
+-      });
+-    }
+-    paintPerfToggle();
+   }
+   setupNavbar();
+   document.addEventListener('astro:after-swap', setupNavbar);
+-  document.addEventListener('astro:page-load', paintPerfToggle);
+-  window.addEventListener('perf-change', paintPerfToggle);
+ </script>
+diff --git a/src/components/ThemeIcon.astro b/src/components/ThemeIcon.astro
+index fb9ed8b..f123d47 100644
+--- a/src/components/ThemeIcon.astro
++++ b/src/components/ThemeIcon.astro
+@@ -37,36 +37,19 @@
+ </button>
+ 
+ <script is:inline>
+-  function applyTheme() {
+-    const localStorageTheme = localStorage.getItem('theme');
+-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+-    
+-    if (localStorageTheme === 'dark' || (!localStorageTheme && systemPrefersDark)) {
+-      document.documentElement.classList.add('dark');
+-    } else {
+-      document.documentElement.classList.remove('dark');
+-    }
+-  }
+-
++  // Light/dark is owned by the appearance runtime (see Layout.astro) so it can
++  // coexist with the HUD themes; this button just flips the mode.
+   function setupThemeToggle() {
+     const toggleBtn = document.getElementById('theme-toggle');
+-
+-    if (toggleBtn) {
+-      const newBtn = toggleBtn.cloneNode(true);
+-      toggleBtn.replaceWith(newBtn);
+-      
+-      newBtn.addEventListener('click', () => {
+-        const isDark = document.documentElement.classList.toggle('dark');
+-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+-      });
+-    }
++    if (!toggleBtn || !window.__appearance) return;
++    const newBtn = toggleBtn.cloneNode(true);
++    toggleBtn.replaceWith(newBtn);
++    newBtn.addEventListener('click', (e) => {
++      const a = window.__appearance;
++      a.setMode(a.state().mode === 'dark' ? 'light' : 'dark', { x: e.clientX, y: e.clientY });
++    });
+   }
+ 
+-  applyTheme();
+   setupThemeToggle();
+-
+-  document.addEventListener('astro:after-swap', () => {
+-    applyTheme();
+-    setupThemeToggle();
+-  });
++  document.addEventListener('astro:after-swap', setupThemeToggle);
+ </script>
+\ No newline at end of file
+diff --git a/src/layouts/Layout.astro b/src/layouts/Layout.astro
+index dc306c2..26d6e1e 100644
+--- a/src/layouts/Layout.astro
++++ b/src/layouts/Layout.astro
+@@ -2,6 +2,7 @@
+ import { ClientRouter } from 'astro:transitions';
+ import Navbar from '../components/Navbar.astro';
+ import Contact from '../components/Contact.astro';
++import ControlPanel from '../components/ControlPanel.astro';
+ import '../styles/themes.css';
+ interface Props {
+   title: string;
+@@ -49,13 +50,123 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+         <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" /></noscript>
+ 
+         <script is:inline>
+-            const theme = (() => {
+-                if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+-                    return localStorage.getItem('theme');
++            // Appearance runtime: theme, accent, light/dark and effect toggles.
++            // Runs before first paint (no flash) and re-applies itself on every
++            // client-side navigation. The Control Panel talks to window.__appearance.
++            (function () {
++                if (window.__appearance) { window.__appearance.apply(); return; }
++
++                var root = document.documentElement;
++                var THEMES = { clean: 'orange', command: 'cyan', terminal: 'emerald' }; // theme -> default accent
++                var ACCENTS = ['orange', 'rose', 'violet', 'blue', 'cyan', 'emerald'];
++                var FX = ['motion', 'particles', 'tilt', 'magnetic', 'glow', 'scanlines'];
++                var FX_DEFAULT = { motion: true, particles: true, tilt: true, magnetic: true, glow: true, scanlines: false };
++                var THEME_FX = { terminal: { scanlines: true } };
++                var FONTS = 'https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap';
++
++                function has(obj, key) { return Object.prototype.hasOwnProperty.call(obj, key); }
++                function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
++                function write(k, v) {
++                    try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {}
++                }
++                function readFx() {
++                    try { var o = JSON.parse(read('ui-fx') || '{}'); return o && typeof o === 'object' ? o : {}; }
++                    catch (e) { return {}; }
++                }
++
++                function state() {
++                    var theme = read('ui-theme');
++                    if (!theme || !has(THEMES, theme)) theme = 'clean';
++                    var userAccent = read('ui-accent');
++                    if (ACCENTS.indexOf(userAccent) < 0) userAccent = null;
++                    var stored = read('theme'); // existing light/dark key
++                    var wantsDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
++                    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
++                    var saved = readFx();
++                    var fx = {};
++                    FX.forEach(function (k) {
++                        var d = FX_DEFAULT[k];
++                        if (reduce && k !== 'scanlines') d = false; // respect the OS setting until the user opts in
++                        if (has(THEME_FX, theme) && has(THEME_FX[theme], k)) d = THEME_FX[theme][k];
++                        fx[k] = typeof saved[k] === 'boolean' ? saved[k] : d;
++                    });
++                    return {
++                        theme: theme,
++                        accent: userAccent || THEMES[theme],
++                        userAccent: userAccent,
++                        mode: wantsDark ? 'dark' : 'light',
++                        dark: theme !== 'clean' || wantsDark, // the HUD themes are dark-only
++                        fx: fx
++                    };
++                }
++
++                function ensureFonts(doc) {
++                    if (state().theme === 'clean') return;
++                    if (doc.head.querySelector('link[data-ui-fonts]')) return;
++                    var l = doc.createElement('link');
++                    l.rel = 'stylesheet'; l.href = FONTS; l.setAttribute('data-ui-fonts', '');
++                    doc.head.appendChild(l);
++                }
++
++                function apply(target) {
++                    var el = target || root;
++                    var s = state();
++                    el.setAttribute('data-theme', s.theme);
++                    el.setAttribute('data-accent', s.accent);
++                    el.classList.toggle('dark', s.dark);
++                    FX.forEach(function (k) { el.setAttribute('data-fx-' + k, s.fx[k] ? 'on' : 'off'); });
++                    if (!target) ensureFonts(document); // HUD fonts load only when a HUD theme is picked
++                    return s;
+                 }
+-                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
++
++                // Changes go through a circular reveal where the browser supports it.
++                function commit(origin) {
++                    var run = function () {
++                        var s = apply();
++                        window.dispatchEvent(new CustomEvent('appearance-change', { detail: s }));
++                    };
++                    var s = state();
++                    if (document.startViewTransition && s.fx.motion && origin) {
++                        root.style.setProperty('--vt-x', origin.x + 'px');
++                        root.style.setProperty('--vt-y', origin.y + 'px');
++                        root.setAttribute('data-vt', 'reveal');
++                        var t = document.startViewTransition(run);
++                        var done = function () { root.removeAttribute('data-vt'); };
++                        t.finished.then(done, done);
++                        // Safety net: never leave the page covered by a stuck transition.
++                        setTimeout(function () { try { t.skipTransition(); } catch (e) {} done(); }, 1500);
++                    } else {
++                        run();
++                    }
++                }
++
++                window.__appearance = {
++                    themes: THEMES, accents: ACCENTS, effects: FX,
++                    state: state, apply: apply,
++                    setTheme: function (t, origin) { if (has(THEMES, t)) { write('ui-theme', t); commit(origin); } },
++                    setAccent: function (a, origin) { write('ui-accent', ACCENTS.indexOf(a) < 0 ? null : a); commit(origin); },
++                    setMode: function (m, origin) { write('theme', m === 'dark' ? 'dark' : 'light'); commit(origin); },
++                    setFx: function (k, on) {
++                        if (FX.indexOf(k) < 0) return;
++                        var f = readFx(); f[k] = !!on; write('ui-fx', JSON.stringify(f)); commit();
++                    },
++                    reset: function (origin) {
++                        write('ui-theme', null); write('ui-accent', null); write('ui-fx', null); commit(origin);
++                    }
++                };
++
++                apply();
++
++                // Client-side navigation swaps <html>'s attributes; re-apply to the incoming
++                // document so nothing flashes, and carry the Lite/Full choice across.
++                document.addEventListener('astro:before-swap', function (e) {
++                    var next = e.newDocument.documentElement;
++                    apply(next);
++                    ensureFonts(e.newDocument);
++                    var perf = root.getAttribute('data-perf');
++                    if (perf) next.setAttribute('data-perf', perf);
++                });
+             })();
+-            document.documentElement.classList[theme === 'dark' ? 'add' : 'remove']('dark');
+         </script>
+ 
+         <script is:inline>
+@@ -120,6 +231,9 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+             style="will-change: transform;"
+         ></div>
+         
++        <div id="fx-grid" aria-hidden="true"></div>
++        <div id="fx-scan" aria-hidden="true"></div>
++
+         <Navbar />
+         
+         <main id="main-content" class="relative z-[2] animate-in">
+@@ -127,6 +241,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+         </main>
+ 
+         <Contact />
++        <ControlPanel />
+ 
+         <script>
+             import { initMagneticElements } from '../scripts/magnetic';
+@@ -134,6 +249,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+             import { initScrollReveal } from '../scripts/scroll-reveal';
+ 
+             let blob: HTMLElement | null = null;
++            let grid: HTMLElement | null = null;
+             let curX = 0, curY = 0, tgX = 0, tgY = 0;
+             let animationFrameId: number;
+             let isVisible = true;
+@@ -144,6 +260,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+                 // Lite kill-switch: no blob loop at all (CSS hides it). Full path below untouched.
+                 if (document.documentElement.dataset.perf === 'lite') return;
+                 blob = document.getElementById('cursor-blob');
++                grid = document.getElementById('fx-grid');
+                 if (isTouchDevice) {
+                     if (blob) {
+                         blob.style.opacity = "0.6";
+@@ -171,6 +288,10 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+                     const offset = window.innerWidth < 640 ? 150 : 300;
+                     blob.style.transform = `translate3d(${curX - offset}px, ${curY - offset}px, 0)`;
+                 }
++                if (grid && document.documentElement.dataset.theme === 'command' && document.documentElement.dataset.fxGlow !== 'off') {
++                    grid.style.setProperty('--mx', `${curX}px`);
++                    grid.style.setProperty('--my', `${curY}px`);
++                }
+                 animationFrameId = requestAnimationFrame(render);
+             }
+ 
+diff --git a/src/scripts/magnetic.ts b/src/scripts/magnetic.ts
+index 9e4d677..2642f40 100644
+--- a/src/scripts/magnetic.ts
++++ b/src/scripts/magnetic.ts
+@@ -1,3 +1,5 @@
++let offWired = false;
++
+ export function initMagneticElements() {
+   document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+     // Avoid stacking duplicate listeners across View Transitions re-inits.
+@@ -12,7 +14,7 @@ export function initMagneticElements() {
+       document.documentElement.dataset.perf === 'lite' && isProfilePhoto();
+ 
+     const onMove = (e: MouseEvent) => {
+-      if (skipForLite()) return;
++      if (skipForLite() || document.documentElement.dataset.fxMagnetic === 'off') return;
+       const rect = el.getBoundingClientRect();
+       const x = e.clientX - rect.left - rect.width / 2;
+       const y = e.clientY - rect.top - rect.height / 2;
+@@ -21,7 +23,7 @@ export function initMagneticElements() {
+     };
+ 
+     const onLeave = () => {
+-      if (skipForLite()) return;
++      if (skipForLite() || document.documentElement.dataset.fxMagnetic === 'off') return;
+       el.style.transform = 'translate(0, 0)';
+       el.style.transition = 'transform 400ms ease-out';
+     };
+@@ -43,4 +45,15 @@ export function initMagneticElements() {
+         });
+     });
+   }
++
++  // Switching the effect off in the Control Panel settles every element back in place.
++  if (!offWired) {
++    offWired = true;
++    window.addEventListener('appearance-change', () => {
++      if (document.documentElement.dataset.fxMagnetic !== 'off') return;
++      document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
++        el.style.transform = '';
++      });
++    });
++  }
+ }
+diff --git a/src/scripts/tilt.ts b/src/scripts/tilt.ts
+index 7d62501..b78ab10 100644
+--- a/src/scripts/tilt.ts
++++ b/src/scripts/tilt.ts
+@@ -1,6 +1,21 @@
++const off = () => document.documentElement.dataset.fxTilt === 'off';
++let wired = false;
++
+ export function initTiltElements() {
++  // Switching the effect off in the Control Panel settles every card back to flat.
++  if (!wired) {
++    wired = true;
++    window.addEventListener('appearance-change', () => {
++      if (!off()) return;
++      document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
++        el.style.transform = '';
++      });
++    });
++  }
++
+   document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+     el.addEventListener('mousemove', (e) => {
++      if (off()) return;
+       const rect = el.getBoundingClientRect();
+       const x = (e.clientX - rect.left) / rect.width - 0.5;
+       const y = (e.clientY - rect.top) / rect.height - 0.5;
+@@ -9,6 +24,7 @@ export function initTiltElements() {
+     });
+ 
+     el.addEventListener('mouseleave', () => {
++      if (off()) return;
+       el.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
+       el.style.transition = 'transform 500ms ease-out';
+     });
+diff --git a/src/styles/themes.css b/src/styles/themes.css
+index 0846535..1c7d95a 100644
+--- a/src/styles/themes.css
++++ b/src/styles/themes.css
+@@ -42,3 +42,77 @@ html[data-accent='violet'] { --accent-50: 245 243 255; --accent-400: 167 139 250
+ html[data-accent='blue']   { --accent-50: 239 246 255; --accent-400: 96 165 250;  --accent-500: 59 130 246;  --accent-600: 37 99 235; }
+ html[data-accent='cyan']   { --accent-50: 236 254 255; --accent-400: 34 211 238;  --accent-500: 8 145 178;   --accent-600: 14 116 144; }
+ html[data-accent='emerald']{ --accent-50: 236 253 245; --accent-400: 52 211 153;  --accent-500: 5 150 105;   --accent-600: 4 120 87; }
++
++/* ==========================================================================
++   Effect toggles
++   ========================================================================== */
++
++/* Animations off: no keyframes, near-instant transitions, content just appears. */
++html[data-fx-motion='off'] *,
++html[data-fx-motion='off'] *::before,
++html[data-fx-motion='off'] *::after {
++  animation: none !important;
++  transition-duration: 0.01ms !important;
++  transition-delay: 0s !important;
++  scroll-behavior: auto !important;
++}
++html[data-fx-motion='off'] [data-reveal] {
++  opacity: 1;
++  transform: none;
++}
++
++/* Particle network off (canvases also stop their own loops) */
++html[data-fx-particles='off'] #hero-constellation,
++html[data-fx-particles='off'] #skillsCanvas {
++  display: none;
++}
++
++/* Cursor glow off */
++html[data-fx-glow='off'] #cursor-blob {
++  display: none;
++}
++
++/* Overlays used by the HUD themes. Hidden unless a theme turns them on. */
++#fx-grid,
++#fx-scan {
++  display: none;
++  position: fixed;
++  inset: 0;
++  pointer-events: none;
++}
++
++/* Scanlines: a fixed, non-interactive overlay above the page but below dialogs */
++html[data-fx-scanlines='on'] #fx-scan {
++  display: block;
++  z-index: 9990;
++  background: repeating-linear-gradient(
++    to bottom,
++    rgb(0 0 0 / 0.16) 0,
++    rgb(0 0 0 / 0.16) 1px,
++    transparent 1px,
++    transparent 3px
++  );
++  mix-blend-mode: multiply;
++}
++
++/* ==========================================================================
++   Circular reveal when the look changes (View Transitions API)
++   ========================================================================== */
++html[data-vt='reveal']::view-transition-old(root),
++html[data-vt='reveal']::view-transition-new(root) {
++  animation: none;
++  mix-blend-mode: normal;
++}
++html[data-vt='reveal']::view-transition-new(root) {
++  animation: vt-reveal 650ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
++}
++@keyframes vt-reveal {
++  from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%)); }
++  to { clip-path: circle(150vmax at var(--vt-x, 50%) var(--vt-y, 50%)); }
++}
++
++/* Scroll lock while the Control Panel is open, without a layout jump */
++html:has(#control-panel[open]) {
++  overflow: hidden;
++  scrollbar-gutter: stable;
++}
+-- 
+2.43.0
+
+From dd67e9d2ee1f5a53e92b474d3a74227a68f49dc1 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 23:27:27 +0000
+Subject: [PATCH 3/3] feat: Command Center and Terminal themes, card spotlight
+ effect
+
+- Command Center: steel-blue control-room palette, a grid that lights up
+  around the cursor, angular panels with corner brackets that expand on hover,
+  Chakra Petch + JetBrains Mono type, scroll-progress line.
+- Terminal: monospace throughout, glowing phosphor text, square edges,
+  blinking cursor after the page title, scanlines with a soft vignette.
+- Card spotlight: cards glow where the cursor is (on by default in both
+  themes, optional in Clean).
+- HUD fonts load only when one of these themes is selected, so the default
+  Clean theme costs nothing extra.
+- Both themes follow the chosen accent color and work with every effect toggle.
+---
+ src/components/ControlPanel.astro |   3 +
+ src/layouts/Layout.astro          |  26 ++-
+ src/styles/themes.css             | 299 ++++++++++++++++++++++++++++++
+ 3 files changed, 324 insertions(+), 4 deletions(-)
+
+diff --git a/src/components/ControlPanel.astro b/src/components/ControlPanel.astro
+index 895a2dc..f3b2d6e 100644
+--- a/src/components/ControlPanel.astro
++++ b/src/components/ControlPanel.astro
+@@ -3,6 +3,8 @@
+ // All state lives in window.__appearance (see Layout.astro) and localStorage.
+ const themes = [
+   { id: 'clean', name: 'Clean', desc: 'The original look: soft, bright and airy.' },
++  { id: 'command', name: 'Command Center', desc: 'Dark control-room look: live grid, angular panels, precise type.' },
++  { id: 'terminal', name: 'Terminal', desc: 'Monospace, glowing phosphor text, scanlines and a blinking cursor.' },
+ ];
+ 
+ const accents = [
+@@ -20,6 +22,7 @@ const effects = [
+   { id: 'tilt', name: '3D card tilt', desc: 'Cards lean toward your cursor.' },
+   { id: 'magnetic', name: 'Magnetic buttons', desc: 'Buttons drift toward your cursor.' },
+   { id: 'glow', name: 'Cursor glow', desc: 'A soft light that trails the pointer.' },
++  { id: 'spotlight', name: 'Card spotlight', desc: 'Cards light up where your cursor is.' },
+   { id: 'scanlines', name: 'Scanlines', desc: 'Subtle retro screen lines over the page.' },
+ ];
+ 
+diff --git a/src/layouts/Layout.astro b/src/layouts/Layout.astro
+index 26d6e1e..cdf9bb0 100644
+--- a/src/layouts/Layout.astro
++++ b/src/layouts/Layout.astro
+@@ -59,10 +59,10 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+                 var root = document.documentElement;
+                 var THEMES = { clean: 'orange', command: 'cyan', terminal: 'emerald' }; // theme -> default accent
+                 var ACCENTS = ['orange', 'rose', 'violet', 'blue', 'cyan', 'emerald'];
+-                var FX = ['motion', 'particles', 'tilt', 'magnetic', 'glow', 'scanlines'];
+-                var FX_DEFAULT = { motion: true, particles: true, tilt: true, magnetic: true, glow: true, scanlines: false };
+-                var THEME_FX = { terminal: { scanlines: true } };
+-                var FONTS = 'https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap';
++                var FX = ['motion', 'particles', 'tilt', 'magnetic', 'glow', 'spotlight', 'scanlines'];
++                var FX_DEFAULT = { motion: true, particles: true, tilt: true, magnetic: true, glow: true, spotlight: false, scanlines: false };
++                var THEME_FX = { command: { spotlight: true }, terminal: { spotlight: true, scanlines: true } };
++                var FONTS = 'https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap';
+ 
+                 function has(obj, key) { return Object.prototype.hasOwnProperty.call(obj, key); }
+                 function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+@@ -132,6 +132,9 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+                         root.setAttribute('data-vt', 'reveal');
+                         var t = document.startViewTransition(run);
+                         var done = function () { root.removeAttribute('data-vt'); };
++                        var quiet = function () {}; // a skipped transition is normal, not an error
++                        t.ready.catch(quiet);
++                        t.updateCallbackDone.catch(quiet);
+                         t.finished.then(done, done);
+                         // Safety net: never leave the page covered by a stuck transition.
+                         setTimeout(function () { try { t.skipTransition(); } catch (e) {} done(); }, 1500);
+@@ -295,6 +298,21 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
+                 animationFrameId = requestAnimationFrame(render);
+             }
+ 
++            // Card spotlight: tell the hovered card where the pointer is (CSS draws the glow).
++            const SPOT = '.glass-card, .project-card, .testimonial-card, [data-tilt]';
++            let spotFrame = 0;
++            document.addEventListener('pointermove', (e) => {
++                if (document.documentElement.dataset.fxSpotlight !== 'on' || e.pointerType === 'touch') return;
++                const card = (e.target as Element | null)?.closest?.(SPOT) as HTMLElement | null;
++                if (!card) return;
++                cancelAnimationFrame(spotFrame);
++                spotFrame = requestAnimationFrame(() => {
++                    const r = card.getBoundingClientRect();
++                    card.style.setProperty('--sx', `${e.clientX - r.left}px`);
++                    card.style.setProperty('--sy', `${e.clientY - r.top}px`);
++                });
++            }, { passive: true });
++
+             function handleAnchorAnimation() {
+                 const main = document.getElementById('main-content');
+                 const links = document.querySelectorAll('a[href*="#"]');
+diff --git a/src/styles/themes.css b/src/styles/themes.css
+index 1c7d95a..9b4abc4 100644
+--- a/src/styles/themes.css
++++ b/src/styles/themes.css
+@@ -116,3 +116,302 @@ html:has(#control-panel[open]) {
+   overflow: hidden;
+   scrollbar-gutter: stable;
+ }
++
++/* Card spotlight (any theme): a soft accent glow under the cursor.
++   --sx / --sy are set on the hovered card by the pointer tracker in Layout.astro. */
++html[data-fx-spotlight='on'] :is(.glass-card, .project-card, .testimonial-card, [data-tilt]):hover {
++  background-image: radial-gradient(
++    380px circle at var(--sx, -999px) var(--sy, -999px),
++    rgb(var(--accent-500) / 0.14),
++    transparent 62%
++  );
++}
++
++/* Moving scan band, only while scanlines are on (and animations are allowed) */
++html[data-fx-scanlines='on'] #fx-scan::before {
++  content: '';
++  position: absolute;
++  left: 0;
++  right: 0;
++  top: 0;
++  height: 140px;
++  background: linear-gradient(to bottom, transparent, rgb(var(--accent-500) / 0.06), transparent);
++  animation: fx-scan-band 8s linear infinite;
++}
++@keyframes fx-scan-band {
++  from { transform: translateY(-140px); }
++  to { transform: translateY(100vh); }
++}
++
++/* The light/dark toggle only applies to the Clean theme */
++html:not([data-theme='clean']) #theme-toggle {
++  display: none;
++}
++
++/* ==========================================================================
++   Shared "HUD" building blocks (Command Center + Terminal)
++   ========================================================================== */
++
++@property --b {
++  syntax: '<length>';
++  inherits: false;
++  initial-value: 12px;
++}
++
++/* A "panel" is any card-like surface on the site. */
++html:is([data-theme='command'], [data-theme='terminal'])
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])) {
++  position: relative;
++  border-color: rgb(var(--accent-500) / 0.24);
++  transition-property: border-color, box-shadow, background-color, transform, color;
++}
++/* Corner brackets: drawn with gradients so no markup changes are needed. */
++html:is([data-theme='command'], [data-theme='terminal'])
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky']))::after {
++  content: '';
++  position: absolute;
++  inset: -1px;
++  z-index: 5;
++  pointer-events: none;
++  --c: rgb(var(--accent-500) / 0.85);
++  background:
++    linear-gradient(var(--c), var(--c)) top left / var(--b) 2px no-repeat,
++    linear-gradient(var(--c), var(--c)) top left / 2px var(--b) no-repeat,
++    linear-gradient(var(--c), var(--c)) top right / var(--b) 2px no-repeat,
++    linear-gradient(var(--c), var(--c)) top right / 2px var(--b) no-repeat,
++    linear-gradient(var(--c), var(--c)) bottom left / var(--b) 2px no-repeat,
++    linear-gradient(var(--c), var(--c)) bottom left / 2px var(--b) no-repeat,
++    linear-gradient(var(--c), var(--c)) bottom right / var(--b) 2px no-repeat,
++    linear-gradient(var(--c), var(--c)) bottom right / 2px var(--b) no-repeat;
++  transition: --b 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
++}
++html:is([data-theme='command'], [data-theme='terminal'])
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])):hover {
++  --b: 26px;
++  border-color: rgb(var(--accent-500) / 0.55);
++}
++
++/* Thin scroll-progress line along the top edge (where supported) */
++@supports (animation-timeline: scroll()) {
++  html:is([data-theme='command'], [data-theme='terminal'])::before {
++    content: '';
++    position: fixed;
++    top: 0;
++    left: 0;
++    width: 100%;
++    height: 2px;
++    z-index: 10001;
++    background: rgb(var(--accent-500));
++    box-shadow: 0 0 10px rgb(var(--accent-500) / 0.8);
++    transform-origin: 0 50%;
++    transform: scaleX(0);
++    animation: fx-progress linear both;
++    animation-timeline: scroll(root block);
++    pointer-events: none;
++  }
++  @keyframes fx-progress {
++    to { transform: scaleX(1); }
++  }
++}
++
++/* ==========================================================================
++   THEME: Command Center
++   Dark control-room: steel-blue surfaces, a live grid that lights up around
++   the cursor, angular panels with corner brackets, precise type.
++   ========================================================================== */
++html[data-theme='command'] {
++  --zinc-50: 236 242 248;
++  --zinc-100: 220 230 241;
++  --zinc-200: 189 203 222;
++  --zinc-300: 150 168 193;
++  --zinc-400: 112 131 158;
++  --zinc-500: 84 103 128;
++  --zinc-600: 62 79 102;
++  --zinc-700: 44 58 78;
++  --zinc-800: 28 39 55;
++  --zinc-900: 16 24 36;
++  --zinc-950: 9 14 22;
++  --font-display: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
++  --font-data: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
++  --r-panel: 6px;
++  scrollbar-color: rgb(var(--accent-500) / 0.6) #0a0f14;
++}
++
++html.dark[data-theme='command'] body {
++  background-color: #070b11;
++  font-family: var(--font-display);
++}
++
++/* Type: display font for headings, data font for small technical labels */
++html[data-theme='command'] :is(h1, h2, h3, h4) {
++  font-family: var(--font-display);
++  font-weight: 700;
++}
++html[data-theme='command'] :is(.font-mono, [class*='tracking-widest'], [class*='tracking-[0.']) {
++  font-family: var(--font-data);
++}
++html[data-theme='command'] header nav > a:first-child {
++  font-family: var(--font-data);
++  letter-spacing: -0.04em;
++}
++html[data-theme='command'] :is(h1, h2) .text-accent-500 {
++  text-shadow: 0 0 28px rgb(var(--accent-500) / 0.45);
++}
++
++/* Shape: small radii everywhere, instead of soft pills */
++html[data-theme='command'] :is(
++  [class*='rounded-['], [class*='rounded-2xl'], [class*='rounded-3xl'], [class*='rounded-xl'],
++  .rounded-card, .rounded-card-lg
++) {
++  border-radius: var(--r-panel);
++}
++html[data-theme='command'] [class*='rounded-t-['] {
++  border-top-left-radius: var(--r-panel);
++  border-top-right-radius: var(--r-panel);
++}
++html[data-theme='command'] [class*='rounded-full']:is(a, button, nav, span[class*='px-'], div[class*='px-']) {
++  border-radius: 4px;
++}
++
++/* Surfaces */
++html[data-theme='command'] header nav {
++  border-color: rgb(var(--accent-500) / 0.3);
++  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), 0 14px 44px -14px rgb(var(--accent-500) / 0.3);
++}
++html[data-theme='command']
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])):hover {
++  box-shadow: 0 0 0 1px rgb(var(--accent-500) / 0.14), 0 0 34px -8px rgb(var(--accent-500) / 0.4);
++}
++
++/* The grid: faint everywhere, bright inside a ring that follows the cursor */
++html[data-theme='command'] #fx-grid {
++  display: block;
++  z-index: 0;
++  --g: rgb(var(--accent-500) / 0.07);
++  background-image:
++    linear-gradient(var(--g) 1px, transparent 1px),
++    linear-gradient(90deg, var(--g) 1px, transparent 1px);
++  background-size: 48px 48px;
++}
++html[data-theme='command'] #fx-grid::after {
++  content: '';
++  position: absolute;
++  inset: 0;
++  --g2: rgb(var(--accent-500) / 0.5);
++  background-image:
++    linear-gradient(var(--g2) 1px, transparent 1px),
++    linear-gradient(90deg, var(--g2) 1px, transparent 1px);
++  background-size: 48px 48px;
++  -webkit-mask-image: radial-gradient(circle 230px at var(--mx, -999px) var(--my, -999px), #000, transparent);
++  mask-image: radial-gradient(circle 230px at var(--mx, -999px) var(--my, -999px), #000, transparent);
++}
++html[data-theme='command'][data-fx-glow='off'] #fx-grid::after,
++html[data-theme='command'][data-perf='lite'] #fx-grid::after {
++  display: none;
++}
++
++/* ==========================================================================
++   THEME: Terminal
++   Monospace everything, glowing phosphor accent, square edges, a blinking
++   cursor after the main heading, scanlines and a soft vignette.
++   ========================================================================== */
++html[data-theme='terminal'] {
++  --zinc-50: 236 244 239;
++  --zinc-100: 216 229 220;
++  --zinc-200: 190 208 196;
++  --zinc-300: 152 174 160;
++  --zinc-400: 112 134 120;
++  --zinc-500: 84 104 91;
++  --zinc-600: 60 78 68;
++  --zinc-700: 41 55 47;
++  --zinc-800: 26 36 30;
++  --zinc-900: 13 19 15;
++  --zinc-950: 5 8 6;
++  --font-term: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
++  scrollbar-color: rgb(var(--accent-500) / 0.6) #040704;
++}
++
++html.dark[data-theme='terminal'] body {
++  background-color: #040704;
++  font-family: var(--font-term);
++  font-size: 0.95em;
++}
++html[data-theme='terminal'] :is(button, input, textarea, select) {
++  font-family: var(--font-term);
++}
++
++/* Square edges */
++html[data-theme='terminal'] :is(
++  [class*='rounded-['], [class*='rounded-2xl'], [class*='rounded-3xl'], [class*='rounded-xl'], [class*='rounded-lg'],
++  [class*='rounded-t-['], .rounded-card, .rounded-card-lg
++) {
++  border-radius: 0;
++}
++html[data-theme='terminal'] [class*='rounded-full']:is(a, button, nav, span[class*='px-'], div[class*='px-']) {
++  border-radius: 0;
++}
++
++/* Phosphor text: headings take the accent, body copy is tinted toward it */
++html.dark[data-theme='terminal'] :is(h1, h2, h3, h4) {
++  font-family: var(--font-term);
++  font-weight: 700;
++  color: rgb(var(--accent-400));
++  text-shadow: 0 0 14px rgb(var(--accent-500) / 0.5);
++}
++html.dark[data-theme='terminal'] h1 {
++  font-size: clamp(2.4rem, 5.4vw, 4.8rem);
++  letter-spacing: -0.05em;
++  line-height: 1;
++}
++html.dark[data-theme='terminal'] :is(h2, h3) {
++  letter-spacing: -0.03em;
++}
++html.dark[data-theme='terminal'] p:not([class*='text-accent']):not([class*='text-white']) {
++  color: color-mix(in srgb, rgb(var(--accent-400)) 38%, rgb(var(--zinc-200)));
++}
++html[data-theme='terminal'] .text-accent-500,
++html[data-theme='terminal'] .text-accent-600 {
++  text-shadow: 0 0 12px rgb(var(--accent-500) / 0.55);
++}
++
++/* Prompt furniture: blinking block after the page title, "> " before section titles */
++html[data-theme='terminal'] h1::after {
++  content: '\2588';
++  margin-left: 0.12em;
++  color: rgb(var(--accent-500));
++  animation: fx-blink 1.1s steps(1) infinite;
++}
++html[data-theme='terminal'] h2::before {
++  content: '> ';
++  color: rgb(var(--accent-500));
++  opacity: 0.7;
++}
++@keyframes fx-blink {
++  50% { opacity: 0; }
++}
++
++/* Surfaces */
++html[data-theme='terminal'] header nav {
++  border-color: rgb(var(--accent-500) / 0.4);
++  box-shadow: 0 0 0 1px #000, 0 0 28px -8px rgb(var(--accent-500) / 0.35);
++}
++html[data-theme='terminal']
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])) {
++  box-shadow: inset 0 0 36px -18px rgb(var(--accent-500) / 0.35);
++}
++html[data-theme='terminal']
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky'])):hover {
++  box-shadow: inset 0 0 36px -14px rgb(var(--accent-500) / 0.5), 0 0 30px -8px rgb(var(--accent-500) / 0.45);
++}
++html[data-theme='terminal']
++  :is(.glass-card, .project-card, .testimonial-card, [data-tilt]:not([class*='sticky']))::after {
++  --c: rgb(var(--accent-500) / 0.9);
++}
++
++/* CRT vignette rides along with the scanlines */
++html[data-theme='terminal'][data-fx-scanlines='on'] #fx-scan {
++  background:
++    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.45) 100%),
++    repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.2) 0, rgb(0 0 0 / 0.2) 1px, transparent 1px, transparent 3px);
++  mix-blend-mode: normal;
++}
+-- 
+2.43.0
+

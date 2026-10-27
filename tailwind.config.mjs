@@ -22,10 +22,22 @@ export default {
         'pill': '9999px',
       },
       colors: {
+        // Accent and zinc are driven by CSS variables (see src/styles/themes.css)
+        // so the Control Panel can swap colors and themes at runtime.
         accent: {
-          DEFAULT: '#f97316',
-          dark: '#ea580c',
+          DEFAULT: 'rgb(var(--accent-500) / <alpha-value>)',
+          dark: 'rgb(var(--accent-600) / <alpha-value>)',
+          50: 'rgb(var(--accent-50) / <alpha-value>)',
+          400: 'rgb(var(--accent-400) / <alpha-value>)',
+          500: 'rgb(var(--accent-500) / <alpha-value>)',
+          600: 'rgb(var(--accent-600) / <alpha-value>)',
         },
+        zinc: Object.fromEntries(
+          [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((n) => [
+            n,
+            `rgb(var(--zinc-${n}) / <alpha-value>)`,
+          ])
+        ),
       },
 
     },

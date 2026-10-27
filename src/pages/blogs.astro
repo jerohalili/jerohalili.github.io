@@ -21,7 +21,7 @@ const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
 
     <header class="mb-16 space-y-6" data-reveal>
       <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none dark:text-white italic">
-        Systems <br/> <span class="text-orange-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">Thinking.</span>
+        Systems <br/> <span class="text-accent-500 underline decoration-zinc-200 dark:decoration-zinc-800 underline-offset-8">Thinking.</span>
       </h1>
       <p class="text-xl text-zinc-800 dark:text-zinc-200 font-medium max-w-xl leading-relaxed">
         Writing about building local-first AI, scalable engineering, and the intersection of code and creativity.
@@ -37,7 +37,7 @@ const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
           id="blog-search"
           type="text"
           placeholder="Search posts..."
-          class="w-full pl-11 pr-4 py-3.5 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/50 transition-all duration-300"
+          class="w-full pl-11 pr-4 py-3.5 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 focus:border-accent-500/50 transition-all duration-300"
         />
       </div>
 
@@ -48,8 +48,8 @@ const filterOptions = ['All', ...new Set(posts.map(p => p.data.category))];
             class:list={[
               'px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all duration-300 hover:scale-105 active:scale-95',
               i === 0
-                ? 'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20'
-                : 'bg-transparent text-zinc-500 border-zinc-200 dark:border-zinc-800 dark:text-zinc-400 hover:border-orange-500/40 hover:text-orange-500 dark:hover:text-orange-500'
+                ? 'bg-accent-500 text-white border-accent-500 shadow-lg shadow-accent-500/20'
+                : 'bg-transparent text-zinc-500 border-zinc-200 dark:border-zinc-800 dark:text-zinc-400 hover:border-accent-500/40 hover:text-accent-500 dark:hover:text-accent-500'
             ]}
           >
             {opt}

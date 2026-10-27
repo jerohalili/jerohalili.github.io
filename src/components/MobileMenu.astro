@@ -20,14 +20,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <div class="flex flex-col items-center gap-6 p-8 pt-12 text-center overflow-y-auto">
     <a 
       href={`${base}/`} 
-      class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-orange-500 transition-colors"
+      class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-accent-500 transition-colors"
     >
       Home
     </a>
     {links.map((link: Link) => (
       <a 
         href={link.href} 
-        class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-orange-500 transition-colors"
+        class="mobile-link text-5xl font-black tracking-tighter uppercase italic dark:text-white hover:text-accent-500 transition-colors"
       >
         {link.name}
       </a>
@@ -36,9 +36,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <div class="mt-4 flex justify-center w-full">
       <a 
         href={`${base}/contact`} 
-        class="mobile-link group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-orange-500/10 px-10 py-5 transition-all hover:bg-orange-500 active:scale-95"
+        class="mobile-link group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-accent-500/10 px-10 py-5 transition-all hover:bg-accent-500 active:scale-95"
       >
-        <span class="relative z-10 text-5xl font-black tracking-tighter uppercase italic text-orange-500 transition-colors group-hover:text-white">
+        <span class="relative z-10 text-5xl font-black tracking-tighter uppercase italic text-accent-500 transition-colors group-hover:text-white">
           Let's Talk
         </span>
       </a>

@@ -75,11 +75,11 @@ export function initBlogFilters() {
       activeFilter = btn.dataset.filter || 'All';
 
       filterButtons.forEach(b => {
-        b.classList.remove('bg-orange-500', 'text-white', 'border-orange-500');
+        b.classList.remove('bg-accent-500', 'text-white', 'border-accent-500');
         b.classList.add('bg-transparent', 'text-zinc-500', 'border-zinc-200', 'dark:border-zinc-800', 'dark:text-zinc-400');
       });
 
-      btn.classList.add('bg-orange-500', 'text-white', 'dark:text-white', 'hover:text-white', 'dark:hover:text-white', 'border-orange-500');
+      btn.classList.add('bg-accent-500', 'text-white', 'dark:text-white', 'hover:text-white', 'dark:hover:text-white', 'border-accent-500');
       btn.classList.remove('bg-transparent', 'text-zinc-500', 'border-zinc-200', 'dark:border-zinc-800', 'dark:text-zinc-400');
 
       visibleCount = POSTS_PER_PAGE;

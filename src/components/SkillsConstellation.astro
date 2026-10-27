@@ -48,10 +48,23 @@ const legend = [
 
 <script define:vars={{ skills }}>
   let raf;
+  // Lets the Control Panel pause/resume the loop without rebuilding the canvas.
+  let skillsActive = false;
+  let skillsResume = null;
+
+  // Canvas can't read CSS variables, so pull the live accent color out of them.
+  function readAccent(level) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--accent-' + level).trim();
+    return v ? v.split(/\s+/).join(', ') : (level === 600 ? '234, 88, 12' : '249, 115, 22');
+  }
 
   function runCanvas() {
+    skillsResume = null;
+    skillsActive = false;
     // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
     if (document.documentElement.dataset.perf === 'lite') return;
+    // Particle effect switched off in the Control Panel.
+    if (document.documentElement.dataset.fxParticles === 'off') return;
     const canvas = document.getElementById('skillsCanvas');
     if (!canvas) return;
     
@@ -60,11 +73,24 @@ const legend = [
     let mouse = { x: null, y: null };
 
     const COLORS = {
-      eng: { node: '#f97316', text: '#ea580c' },
+      eng: { node: 'rgb(' + readAccent(500) + ')', text: 'rgb(' + readAccent(600) + ')' },
       ai: { node: '#3b82f6', text: '#2563eb' },
       des: { node: '#a855f7', text: '#9333ea' },
       tool: { node: '#71717a', text: '#52525b' }
     };
+
+    // Keep the accent-colored group in sync when the accent changes.
+    let accentLine = readAccent(500);
+    function refreshColors() {
+      accentLine = readAccent(500);
+      COLORS.eng.node = 'rgb(' + accentLine + ')';
+      COLORS.eng.text = 'rgb(' + readAccent(600) + ')';
+    }
+    if (!window.__skillsColorsBound) {
+      window.__skillsColorsBound = true;
+      window.addEventListener('appearance-change', () => { if (window.__skillsRefresh) window.__skillsRefresh(); });
+    }
+    window.__skillsRefresh = refreshColors;
 
     class Node {
       constructor(config) {
@@ -77,8 +103,6 @@ const legend = [
         this.y = 0;
         this.offsetX = 0;
         this.offsetY = 0;
-        this.colorNode = COLORS[this.group].node;
-        this.colorText = COLORS[this.group].text;
       }
 
       update() {
@@ -139,7 +163,7 @@ const legend = [
         // Increased stroke width and opacity
         ctx.lineWidth = 1.5;
         // Light mode: stronger gray | Dark mode: orange tint or brighter white
-        ctx.strokeStyle = isDark ? 'rgba(249, 115, 22, 0.15)' : 'rgba(0, 0, 0, 0.08)';
+        ctx.strokeStyle = isDark ? 'rgba(' + accentLine + ', 0.15)' : 'rgba(0, 0, 0, 0.08)';
         
         // Adding a subtle dash for an "interconnected" look
         ctx.setLineDash([5, 10]); 
@@ -159,11 +183,11 @@ const legend = [
         // Node Dot
         ctx.beginPath();
         ctx.arc(bubbleX + (paddingX * 0.8), this.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = this.colorNode;
+        ctx.fillStyle = COLORS[this.group].node;
         ctx.fill();
 
         // Text
-        ctx.fillStyle = isDark ? '#e4e4e7' : this.colorText;
+        ctx.fillStyle = isDark ? '#e4e4e7' : COLORS[this.group].text;
         ctx.textAlign = 'left';
         ctx.fillText(this.name, bubbleX + (paddingX * 1.4), this.y + (fontSize * 0.35));
       }
@@ -179,7 +203,10 @@ const legend = [
 
     function animate() {
       // If user flips to Lite mid-loop, stop scheduling further frames. No-op in Full.
-      if (document.documentElement.dataset.perf === 'lite') return;
+      if (document.documentElement.dataset.perf === 'lite' || document.documentElement.dataset.fxParticles === 'off') {
+        skillsActive = false;
+        return;
+      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       nodes.forEach(n => {
         n.update();
@@ -197,10 +224,24 @@ const legend = [
     canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
 
     init();
+    skillsResume = () => {
+      if (skillsActive) return;
+      skillsActive = true;
+      animate();
+    };
+    skillsActive = true;
     animate();
   }
 
   runCanvas();
+
+  // Control Panel: particles switched back on (or Lite -> Full) resumes the loop.
+  window.addEventListener('appearance-change', () => {
+    const root = document.documentElement;
+    if (root.dataset.fxParticles === 'off' || root.dataset.perf === 'lite') return;
+    if (skillsResume) skillsResume();
+    else if (document.getElementById('skillsCanvas')) runCanvas();
+  });
 
   document.addEventListener('astro:page-load', () => {
     if (raf) cancelAnimationFrame(raf);
@@ -216,7 +257,7 @@ const legend = [
 
 <style>
   canvas { touch-action: none; }
-  .legend-dot[data-group="eng"] { background-color: #f97316; }
+  .legend-dot[data-group="eng"] { background-color: rgb(var(--accent-500)); }
   .legend-dot[data-group="ai"] { background-color: #3b82f6; }
   .legend-dot[data-group="des"] { background-color: #a855f7; }
   .legend-dot[data-group="tool"] { background-color: #71717a; }

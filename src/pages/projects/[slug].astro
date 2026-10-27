@@ -35,20 +35,20 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
   type="article"
 >
 
-  <div id="reading-progress" class="fixed top-0 left-0 w-full h-[3px] bg-orange-500 origin-left z-[100]" style="transform: scaleX(0);"></div>
+  <div id="reading-progress" class="fixed top-0 left-0 w-full h-[3px] bg-accent-500 origin-left z-[100]" style="transform: scaleX(0);"></div>
 
   <div
     id="read-time-pill"
-    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-full shadow-2xl shadow-orange-500/10 flex items-center gap-2 transition-opacity duration-500 opacity-0"
+    class="fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-full shadow-2xl shadow-accent-500/10 flex items-center gap-2 transition-opacity duration-500 opacity-0"
   >
-    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+    <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
     <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono uppercase tracking-wider">
       <span id="read-time-value" data-read-mins>{readMinutes} min left</span>
     </span>
   </div>
 
   <main class="pt-32 pb-32 px-4 md:px-10 max-w-[1200px] mx-auto">
-    <a href={`${base}/projects`} class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-12 inline-flex items-center gap-2 hover:-translate-x-1 transition-transform duration-300 group">
+    <a href={`${base}/projects`} class="text-accent-500 font-bold text-xs uppercase tracking-widest mb-12 inline-flex items-center gap-2 hover:-translate-x-1 transition-transform duration-300 group">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="transition-transform duration-300 group-hover:-translate-x-1">
         <path d="M19 12H5m7-7-7 7 7 7"/>
       </svg>
@@ -60,15 +60,15 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
       prose-h3:text-2xl prose-h3:font-black prose-h3:tracking-tighter prose-h3:uppercase prose-h3:mt-10
       prose-p:text-lg prose-p:leading-relaxed prose-p:text-zinc-700 dark:prose-p:text-zinc-300
       prose-li:text-zinc-700 dark:prose-li:text-zinc-300
-      prose-strong:text-orange-500
-      prose-code:text-orange-500 prose-code:bg-orange-500/5 prose-code:px-1 prose-code:rounded
+      prose-strong:text-accent-500
+      prose-code:text-accent-500 prose-code:bg-accent-500/5 prose-code:px-1 prose-code:rounded
       prose-pre:border prose-pre:border-zinc-200 dark:prose-pre:border-zinc-800 prose-pre:rounded-2xl
       prose-table:text-sm prose-th:text-left prose-th:uppercase prose-th:tracking-wider prose-th:text-zinc-500 dark:prose-th:text-zinc-400
       prose-td:text-zinc-700 dark:prose-td:text-zinc-300">
 
       <header class="mb-16 not-prose" data-reveal>
         <div class="flex items-center gap-3 mb-6">
-          <span class="px-3 py-1 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
+          <span class="px-3 py-1 bg-accent-500/10 text-accent-500 border border-accent-500/20 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest">
             {entry.data.subtitle}
           </span>
           {entry.data.impact && (
@@ -103,7 +103,7 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
                 href={entry.data.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] bg-orange-500 text-white hover:bg-zinc-900 dark:hover:bg-white dark:hover:text-black transition-colors duration-300 flex items-center gap-2"
+                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] bg-accent-500 text-white hover:bg-zinc-900 dark:hover:bg-white dark:hover:text-black transition-colors duration-300 flex items-center gap-2"
               >
                 Live Demo
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17l10-10M17 17V7H7"/></svg>
@@ -114,7 +114,7 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
                 href={entry.data.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-orange-500 hover:text-orange-500 transition-colors duration-300 flex items-center gap-2"
+                class="px-6 py-3 rounded-full font-black uppercase tracking-widest text-[10px] border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-accent-500 hover:text-accent-500 transition-colors duration-300 flex items-center gap-2"
               >
                 GitHub Repo
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
@@ -135,27 +135,27 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
 
     <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4" data-reveal>
       {prev && (
-        <a href={`${base}/projects/${prev.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300">
+        <a href={`${base}/projects/${prev.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300">
           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
               <path d="M19 12H5m7-7-7 7 7 7"/>
             </svg>
             Previous
           </span>
-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300 leading-snug line-clamp-2">
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300 leading-snug line-clamp-2">
             {prev.data.title}
           </h3>
         </a>
       )}
       {next && (
-        <a href={`${base}/projects/${next.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300 text-right sm:col-start-2">
+        <a href={`${base}/projects/${next.id}`} data-tilt class="group p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300 text-right sm:col-start-2">
           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5 mb-3 justify-end">
             Next
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
               <path d="M5 12h14m-7-7 7 7-7 7"/>
             </svg>
           </span>
-          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300 leading-snug line-clamp-2">
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300 leading-snug line-clamp-2">
             {next.data.title}
           </h3>
         </a>
@@ -164,12 +164,12 @@ const readMinutes = Math.max(1, Math.round((entry.body?.split(/\s+/).length ?? 6
     </div>
 
     <footer class="mt-20 pt-10 border-t border-zinc-100 dark:border-zinc-900">
-        <div data-tilt class="bg-zinc-50 dark:bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300">
+        <div data-tilt class="bg-zinc-50 dark:bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/5 hover:-translate-y-1 transition-all duration-300">
             <h4 class="text-xl font-black uppercase italic dark:text-white mb-2">Case Studies</h4>
             <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-6">
                 Thanks for reading. I build end-to-end systems from local AI pipelines to full-stack web applications.
             </p>
-            <a href={`${base}/projects`} class="text-orange-500 font-bold text-xs uppercase tracking-widest hover:underline">
+            <a href={`${base}/projects`} class="text-accent-500 font-bold text-xs uppercase tracking-widest hover:underline">
                 Explore more projects &rarr;
             </a>
         </div>

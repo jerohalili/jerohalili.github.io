@@ -1,0 +1,463 @@
+---
+// Customize panel: theme, accent color, light/dark, effects and performance.
+// All state lives in window.__appearance (see Layout.astro) and localStorage.
+const themes = [
+  { id: 'clean', name: 'Clean', desc: 'The original look: soft, bright and airy.' },
+  { id: 'command', name: 'Command Center', desc: 'Dark control-room look: live grid, angular panels, precise type.' },
+  { id: 'terminal', name: 'Terminal', desc: 'Monospace, glowing phosphor text, scanlines and a blinking cursor.' },
+];
+
+const accents = [
+  { id: 'orange', name: 'Orange', hex: '#f97316' },
+  { id: 'rose', name: 'Rose', hex: '#f43f5e' },
+  { id: 'violet', name: 'Violet', hex: '#8b5cf6' },
+  { id: 'blue', name: 'Blue', hex: '#3b82f6' },
+  { id: 'cyan', name: 'Cyan', hex: '#0891b2' },
+  { id: 'emerald', name: 'Emerald', hex: '#059669' },
+];
+
+const effects = [
+  { id: 'motion', name: 'Animations', desc: 'Fade-ins, reveals and smooth transitions.' },
+  { id: 'particles', name: 'Particle network', desc: 'Animated constellations in the hero and skills.' },
+  { id: 'tilt', name: '3D card tilt', desc: 'Cards lean toward your cursor.' },
+  { id: 'magnetic', name: 'Magnetic buttons', desc: 'Buttons drift toward your cursor.' },
+  { id: 'glow', name: 'Cursor glow', desc: 'A soft light that trails the pointer.' },
+  { id: 'spotlight', name: 'Card spotlight', desc: 'Cards light up where your cursor is.' },
+  { id: 'scanlines', name: 'Scanlines', desc: 'Subtle retro screen lines over the page.' },
+];
+
+const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-400';
+---
+
+<dialog id="control-panel" class="cp" aria-labelledby="cp-title">
+  <div class="cp-shell flex h-full flex-col bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border-l border-zinc-200 dark:border-zinc-800">
+    <header class="flex items-start justify-between gap-4 p-6 pb-5 border-b border-zinc-200 dark:border-zinc-800">
+      <div>
+        <p class="font-mono text-[10px] uppercase tracking-[0.25em] font-bold text-accent-500">Customize</p>
+        <h2 id="cp-title" class="text-2xl font-black tracking-tight">Make it yours</h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Pick a look, a color and the effects. Saved on this device only.</p>
+      </div>
+      <button
+        type="button"
+        data-cp-close
+        aria-label="Close customize panel"
+        class="shrink-0 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:border-accent-500 hover:text-accent-500 transition-colors"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="pointer-events-none"><path d="M18 6L6 18M6 6l12 12" /></svg>
+      </button>
+    </header>
+
+    <div class="cp-scroll flex-1 overflow-y-auto p-6 space-y-8">
+      {themes.length > 1 && (
+        <section aria-labelledby="cp-h-theme">
+          <h3 id="cp-h-theme" class={`${label} mb-3`}>Theme</h3>
+          <div role="radiogroup" aria-labelledby="cp-h-theme" class="grid gap-3">
+            {themes.map((t) => (
+              <button
+                type="button"
+                role="radio"
+                aria-checked="false"
+                data-cp-theme={t.id}
+                class="cp-choice flex items-center gap-4 text-left p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-accent-500/60 aria-checked:border-accent-500 aria-checked:bg-accent-500/5 transition-colors"
+              >
+                <span class={`cp-thumb cp-thumb--${t.id}`} aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="flex-1">
+                  <span class="block font-bold">{t.name}</span>
+                  <span class="block text-xs text-zinc-500 dark:text-zinc-400 leading-snug">{t.desc}</span>
+                </span>
+                <span class="cp-tick" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7" /></svg>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section aria-labelledby="cp-h-accent">
+        <h3 id="cp-h-accent" class={`${label} mb-3`}>Accent color</h3>
+        <div role="radiogroup" aria-labelledby="cp-h-accent" class="flex flex-wrap items-center gap-3">
+          {accents.map((a) => (
+            <button
+              type="button"
+              role="radio"
+              aria-checked="false"
+              aria-label={a.name}
+              title={a.name}
+              data-cp-accent={a.id}
+              style={`--sw:${a.hex}`}
+              class="cp-swatch"
+            ></button>
+          ))}
+        </div>
+        <button
+          type="button"
+          data-cp-accent="auto"
+          aria-pressed="false"
+          class="mt-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-accent-500 aria-pressed:text-accent-500 transition-colors"
+        >
+          Match the theme's color
+        </button>
+      </section>
+
+      <section aria-labelledby="cp-h-mode">
+        <h3 id="cp-h-mode" class={`${label} mb-3`}>Light or dark</h3>
+        <div role="radiogroup" aria-labelledby="cp-h-mode" class="cp-seg">
+          <button type="button" role="radio" aria-checked="false" data-cp-mode="light">Light</button>
+          <button type="button" role="radio" aria-checked="false" data-cp-mode="dark">Dark</button>
+        </div>
+        <p data-cp-mode-note hidden class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">This theme is dark-only. Switch to Clean to use light mode.</p>
+      </section>
+
+      <section aria-labelledby="cp-h-fx">
+        <h3 id="cp-h-fx" class={`${label} mb-2`}>Effects</h3>
+        <ul class="-mx-3">
+          {effects.map((e) => (
+            <li>
+              <button
+                type="button"
+                role="switch"
+                aria-checked="true"
+                data-cp-fx={e.id}
+                class="cp-row w-full flex items-center justify-between gap-4 p-3 rounded-xl text-left hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+              >
+                <span>
+                  <span class="block text-sm font-semibold">{e.name}</span>
+                  <span class="block text-xs text-zinc-500 dark:text-zinc-400 leading-snug">{e.desc}</span>
+                </span>
+                <span class="cp-switch" aria-hidden="true"><span class="cp-knob"></span></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="cp-h-perf">
+        <h3 id="cp-h-perf" class={`${label} mb-3`}>Performance</h3>
+        <div role="radiogroup" aria-labelledby="cp-h-perf" class="cp-seg">
+          <button type="button" role="radio" aria-checked="false" data-cp-perf="full">Full</button>
+          <button type="button" role="radio" aria-checked="false" data-cp-perf="lite">Lite</button>
+        </div>
+        <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Lite pauses the canvases and cursor glow. Best for older phones and slow connections.</p>
+      </section>
+    </div>
+
+    <footer class="flex items-center justify-between gap-4 p-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+      <button
+        type="button"
+        data-cp-reset
+        class="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 hover:text-accent-500 transition-colors"
+      >
+        Reset to defaults
+      </button>
+      <button
+        type="button"
+        data-cp-close
+        class="bg-accent-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:scale-105 active:scale-95 transition-transform"
+      >
+        Done
+      </button>
+    </footer>
+  </div>
+</dialog>
+
+<style>
+  /* Right-hand drawer on desktop, full-width sheet on phones. */
+  .cp {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    inset: 0 0 0 auto;
+    width: min(26rem, 100vw);
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+  .cp[open] {
+    animation: cp-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .cp::backdrop {
+    background: rgb(0 0 0 / 0.45);
+    backdrop-filter: blur(3px);
+    animation: cp-fade 200ms ease-out;
+  }
+  @keyframes cp-in {
+    from { transform: translateX(2rem); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  @keyframes cp-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .cp-scroll { overscroll-behavior: contain; }
+
+  /* Keyboard focus, in the accent color */
+  .cp button:focus-visible {
+    outline: 2px solid rgb(var(--accent-500));
+    outline-offset: 2px;
+  }
+
+  /* Theme preview thumbnails (always show a theme's own default look) */
+  .cp-thumb {
+    position: relative;
+    flex: none;
+    width: 5.25rem;
+    height: 3.5rem;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    border: 1px solid rgb(128 128 128 / 0.3);
+    padding: 0.55rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .cp-thumb i { display: block; height: 0.3rem; border-radius: 99px; }
+  .cp-thumb i:nth-child(1) { width: 62%; }
+  .cp-thumb i:nth-child(2) { width: 42%; opacity: 0.55; }
+  .cp-thumb i:nth-child(3) { width: 1.5rem; height: 0.5rem; margin-top: auto; }
+
+  .cp-thumb--clean { background: linear-gradient(#fdfdfd, #f1f1f2); }
+  .cp-thumb--clean i:nth-child(1), .cp-thumb--clean i:nth-child(2) { background: #3f3f46; }
+  .cp-thumb--clean i:nth-child(3) { background: #f97316; }
+
+  .cp-thumb--command {
+    background:
+      linear-gradient(rgb(8 145 178 / 0.18) 1px, transparent 1px) 0 0 / 0.6rem 0.6rem,
+      linear-gradient(90deg, rgb(8 145 178 / 0.18) 1px, transparent 1px) 0 0 / 0.6rem 0.6rem,
+      #0a0f14;
+    border-color: rgb(34 211 238 / 0.45);
+  }
+  .cp-thumb--command i { border-radius: 1px; }
+  .cp-thumb--command i:nth-child(1), .cp-thumb--command i:nth-child(2) { background: #67e8f9; }
+  .cp-thumb--command i:nth-child(3) { background: transparent; border: 1px solid #22d3ee; }
+
+  .cp-thumb--terminal { background: #030803; border-color: rgb(52 211 153 / 0.45); }
+  .cp-thumb--terminal i { border-radius: 0; box-shadow: 0 0 6px rgb(52 211 153 / 0.6); }
+  .cp-thumb--terminal i:nth-child(1), .cp-thumb--terminal i:nth-child(2) { background: #34d399; }
+  .cp-thumb--terminal i:nth-child(3) { background: #34d399; width: 0.45rem; }
+
+  .cp-tick {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 99px;
+    background: rgb(var(--accent-500));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 200ms, transform 200ms;
+  }
+  .cp-choice[aria-checked='true'] .cp-tick { opacity: 1; transform: none; }
+
+  /* Accent swatches */
+  .cp-swatch {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 99px;
+    background: var(--sw);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
+    transition: transform 200ms, box-shadow 200ms;
+  }
+  .cp-swatch:hover { transform: scale(1.12); }
+  .cp-swatch[aria-checked='true'] {
+    box-shadow: 0 0 0 2px rgb(var(--zinc-50)), 0 0 0 4px var(--sw);
+  }
+  :global(.dark) .cp-swatch[aria-checked='true'] {
+    box-shadow: 0 0 0 2px rgb(var(--zinc-950)), 0 0 0 4px var(--sw);
+  }
+
+  /* Segmented control */
+  .cp-seg {
+    display: inline-flex;
+    padding: 0.25rem;
+    border-radius: 99px;
+    background: rgb(var(--zinc-100));
+    border: 1px solid rgb(var(--zinc-200));
+  }
+  :global(.dark) .cp-seg {
+    background: rgb(var(--zinc-900));
+    border-color: rgb(var(--zinc-800));
+  }
+  .cp-seg button {
+    padding: 0.45rem 1.25rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgb(var(--zinc-500));
+    transition: background-color 200ms, color 200ms;
+  }
+  .cp-seg button[aria-checked='true'] {
+    background: rgb(var(--accent-500));
+    color: #fff;
+  }
+  .cp-seg button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Switches */
+  .cp-switch {
+    flex: none;
+    position: relative;
+    width: 2.5rem;
+    height: 1.4rem;
+    border-radius: 99px;
+    background: rgb(var(--zinc-300));
+    transition: background-color 200ms;
+  }
+  :global(.dark) .cp-switch { background: rgb(var(--zinc-700)); }
+  .cp-knob {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 99px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+    transition: transform 200ms cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  .cp-row[aria-checked='true'] .cp-switch { background: rgb(var(--accent-500)); }
+  .cp-row[aria-checked='true'] .cp-knob { transform: translateX(1.1rem); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cp[open], .cp::backdrop { animation: none; }
+  }
+</style>
+
+<script>
+  import { apply as setPerf, isLite } from '../scripts/lite';
+
+  type Origin = { x: number; y: number };
+  const api = () => (window as any).__appearance;
+  const $$ = <T extends HTMLElement = HTMLElement>(sel: string) =>
+    Array.from(document.querySelectorAll<T>(sel));
+
+  function seen(): boolean {
+    try { return localStorage.getItem('ui-seen') === '1'; } catch { return true; }
+  }
+
+  function paint() {
+    const a = api();
+    if (!a) return;
+    const s = a.state();
+
+    $$('[data-cp-theme]').forEach((el) =>
+      el.setAttribute('aria-checked', String(el.dataset.cpTheme === s.theme)));
+
+    $$('[data-cp-accent]').forEach((el) => {
+      if (el.dataset.cpAccent === 'auto') el.setAttribute('aria-pressed', String(!s.userAccent));
+      else el.setAttribute('aria-checked', String(el.dataset.cpAccent === s.accent));
+    });
+
+    const modeLocked = s.theme !== 'clean';
+    $$<HTMLButtonElement>('[data-cp-mode]').forEach((el) => {
+      el.setAttribute('aria-checked', String(el.dataset.cpMode === s.mode));
+      el.disabled = modeLocked;
+    });
+    $$('[data-cp-mode-note]').forEach((el) => { el.hidden = !modeLocked; });
+
+    $$('[data-cp-fx]').forEach((el) =>
+      el.setAttribute('aria-checked', String(!!s.fx[el.dataset.cpFx as string])));
+
+    const perf = isLite() ? 'lite' : 'full';
+    $$('[data-cp-perf]').forEach((el) =>
+      el.setAttribute('aria-checked', String(el.dataset.cpPerf === perf)));
+
+    // Roving tabindex so each radio group is a single tab stop (arrow keys move within).
+    $$('[role="radiogroup"]').forEach((group) => {
+      const radios = Array.from(group.querySelectorAll<HTMLElement>('[role="radio"]'));
+      const active = radios.find((r) => r.getAttribute('aria-checked') === 'true') ?? radios[0];
+      radios.forEach((r) => { r.tabIndex = r === active ? 0 : -1; });
+    });
+
+    const hide = seen();
+    $$('[data-cp-ping]').forEach((el) => { el.hidden = hide; });
+  }
+
+  function originOf(e: MouseEvent, el: HTMLElement): Origin {
+    // Keyboard activation reports 0,0, so fall back to the control's own center.
+    if (e.detail === 0 && e.clientX === 0 && e.clientY === 0) {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function dialog(): HTMLDialogElement | null {
+    return document.getElementById('control-panel') as HTMLDialogElement | null;
+  }
+
+  function onClick(e: MouseEvent) {
+    const dlg = dialog();
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    // Click on the backdrop (the dialog element itself) closes the panel.
+    if (dlg && target === dlg) { dlg.close(); return; }
+
+    const el = target.closest<HTMLElement>(
+      '[data-cp-open],[data-cp-close],[data-cp-theme],[data-cp-accent],[data-cp-mode],[data-cp-fx],[data-cp-perf],[data-cp-reset]'
+    );
+    const a = api();
+    if (!el || !a) return;
+    const d = el.dataset;
+    const origin = originOf(e, el);
+
+    if (d.cpOpen !== undefined) {
+      try { localStorage.setItem('ui-seen', '1'); } catch { /* ignore */ }
+      if (dlg && !dlg.open) dlg.showModal();
+      paint();
+    } else if (d.cpClose !== undefined) {
+      dlg?.close();
+    } else if (d.cpTheme) {
+      a.setTheme(d.cpTheme, origin);
+    } else if (d.cpAccent) {
+      a.setAccent(d.cpAccent === 'auto' ? null : d.cpAccent, origin);
+    } else if (d.cpMode) {
+      if (!(el as HTMLButtonElement).disabled) a.setMode(d.cpMode, origin);
+    } else if (d.cpFx) {
+      a.setFx(d.cpFx, el.getAttribute('aria-checked') !== 'true');
+    } else if (d.cpPerf) {
+      setPerf(d.cpPerf as 'full' | 'lite');
+      paint();
+    } else if (d.cpReset !== undefined) {
+      a.reset(origin);
+      setPerf('full');
+      paint();
+    }
+  }
+
+  // Arrow keys move through a radio group, like native radio buttons.
+  function onKey(e: KeyboardEvent) {
+    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
+    const radio = (e.target as HTMLElement | null)?.closest<HTMLElement>('[role="radio"]');
+    const group = radio?.closest('[role="radiogroup"]');
+    if (!radio || !group) return;
+    const radios = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="radio"]:not(:disabled)'));
+    const i = radios.indexOf(radio as HTMLButtonElement);
+    if (i < 0) return;
+    const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
+    const next = radios[(i + step + radios.length) % radios.length];
+    e.preventDefault();
+    next.focus();
+    next.click();
+  }
+
+  let bound = false;
+  function bind() {
+    if (bound) return;
+    bound = true;
+    // Delegated, so it survives client-side navigation re-rendering the panel.
+    document.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('appearance-change', paint);
+    window.addEventListener('perf-change', paint);
+    document.addEventListener('astro:page-load', paint);
+  }
+
+  bind();
+  paint();
+</script>

@@ -1,3 +1,5 @@
+let offWired = false;
+
 export function initMagneticElements() {
   document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
     // Avoid stacking duplicate listeners across View Transitions re-inits.
@@ -12,7 +14,7 @@ export function initMagneticElements() {
       document.documentElement.dataset.perf === 'lite' && isProfilePhoto();
 
     const onMove = (e: MouseEvent) => {
-      if (skipForLite()) return;
+      if (skipForLite() || document.documentElement.dataset.fxMagnetic === 'off') return;
       const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
@@ -21,7 +23,7 @@ export function initMagneticElements() {
     };
 
     const onLeave = () => {
-      if (skipForLite()) return;
+      if (skipForLite() || document.documentElement.dataset.fxMagnetic === 'off') return;
       el.style.transform = 'translate(0, 0)';
       el.style.transition = 'transform 400ms ease-out';
     };
@@ -41,6 +43,17 @@ export function initMagneticElements() {
         .forEach((photo) => {
           photo.style.transform = '';
         });
+    });
+  }
+
+  // Switching the effect off in the Control Panel settles every element back in place.
+  if (!offWired) {
+    offWired = true;
+    window.addEventListener('appearance-change', () => {
+      if (document.documentElement.dataset.fxMagnetic !== 'off') return;
+      document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+        el.style.transform = '';
+      });
     });
   }
 }

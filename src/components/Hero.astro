@@ -40,8 +40,8 @@ const stats = [
   }
 
   .glow-border:hover {
-    @apply lg:border-orange-500 lg:shadow-orange-500/20;
-    box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.4);
+    @apply lg:border-accent-500 lg:shadow-accent-500/20;
+    box-shadow: 0 0 20px -5px rgb(var(--accent-500) / 0.4);
   }
 
   .animate-stable {
@@ -59,12 +59,12 @@ const stats = [
 
   <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 relative z-10 w-full">
     
-    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center hover:border-orange-500/30 hover:shadow-orange-500/10">
-        <p class="text-orange-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
+    <div data-reveal data-tilt class="lg:col-span-8 glass-card p-4 sm:p-8 md:p-16 rounded-2xl md:rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col justify-center hover:border-accent-500/30 hover:shadow-accent-500/10">
+        <p class="text-accent-500 font-mono tracking-widest font-bold uppercase text-[10px] md:text-xs mb-4">
           Computer Scientist · Full-Stack Developer · AI Engineer
         </p>
         <h1 class="text-6xl custom:text-7xl xl:text-[90px] font-black tracking-tighter leading-[0.9] text-zinc-900 dark:text-white mb-8">
-          I BUILD SYSTEMS <br /> THAT <span class="text-orange-500 italic">SCALE & GROW</span>
+          I BUILD SYSTEMS <br /> THAT <span class="text-accent-500 italic">SCALE & GROW</span>
         </h1>
         <p class="text-zinc-500 dark:text-zinc-300 text-lg md:text-xl max-w-xl leading-relaxed">
           I build databases, analytics, and AI automations for startups and local businesses.
@@ -121,16 +121,16 @@ const stats = [
           <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-white/20 dark:border-zinc-700/30 p-5 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-transform duration-300 group-hover:-translate-y-2">
               <div class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-orange-500">View Bio</p>
-                    <div class="bg-orange-500 p-1.5 rounded-full shadow-lg">
+                    <p class="text-[10px] uppercase tracking-[0.2em] font-black text-accent-500">View Bio</p>
+                    <div class="bg-accent-500 p-1.5 rounded-full shadow-lg">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M7 7l10 10M17 7H7v10"/></svg>
                     </div>
                 </div>
                 <h3 class="text-lg md:text-xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight">
-                  <span id="typing-prefix">Turning workflows </span><span id="typing-text" class="italic font-medium text-orange-600"></span><span id="typing-cursor" class="italic font-medium text-orange-600 border-r-2 border-orange-600 animate-pulse">&nbsp;</span>
+                  <span id="typing-prefix">Turning workflows </span><span id="typing-text" class="italic font-medium text-accent-600"></span><span id="typing-cursor" class="italic font-medium text-accent-600 border-r-2 border-accent-600 animate-pulse">&nbsp;</span>
                 </h3>
                 <div class="flex items-center gap-2 border-t border-zinc-200/50 dark:border-zinc-700/50 pt-3">
-                    <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-accent-500 animate-pulse"></span>
                     <p class="text-xs font-medium text-zinc-700 dark:text-zinc-300">PERN Stack · AI Orchestration</p>
                 </div>
               </div>
@@ -141,14 +141,14 @@ const stats = [
     <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {stats.map((stat, i) => (
         <div data-reveal data-reveal-delay={i * 80} class="glass-card glow-border p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group">
-            <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-orange-500/70 transition-colors duration-300">{stat.label}</p>
-            <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-orange-500 transition-colors duration-300">{stat.val}</p>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-zinc-400 mb-1 group-hover:text-accent-500/70 transition-colors duration-300">{stat.label}</p>
+            <p class="text-2xl font-black text-zinc-900 dark:text-white group-hover:text-accent-500 transition-colors duration-300">{stat.val}</p>
         </div>
         ))}
         
-        <a href={`${base}/blogs`} data-magnetic="0.2" class="animate-stable bg-orange-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-orange-500/20">
+        <a href={`${base}/blogs`} data-magnetic="0.2" class="animate-stable bg-accent-500 p-6 rounded-[1.5rem] flex flex-col justify-center items-center text-center group hover:bg-zinc-900 dark:hover:bg-white transition-colors duration-300 ease-out hover:scale-[1.05] active:scale-95 shadow-lg shadow-accent-500/20">
           <p class="text-[10px] uppercase tracking-widest font-bold text-white group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors duration-300">My Blog</p>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-orange-500 mt-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white group-hover:text-accent-500 mt-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <path d="M7 17l10-10M17 17V7H7"/>
           </svg>
         </a>
@@ -157,11 +157,20 @@ const stats = [
 </section>
 
 <script>
+  import { accentRGB } from '../scripts/accent';
+
   let heroRaf: number;
+  // Lets the Control Panel pause/resume the loop without rebuilding the canvas.
+  let heroActive = false;
+  let heroResume: (() => void) | null = null;
 
   function initHeroConstellation() {
+    heroResume = null;
+    heroActive = false;
     // Lite kill-switch: skip heavy canvas entirely. Full path below untouched.
     if (document.documentElement.dataset.perf === 'lite') return;
+    // Particle effect switched off in the Control Panel.
+    if (document.documentElement.dataset.fxParticles === 'off') return;
     const canvas = document.getElementById('hero-constellation') as HTMLCanvasElement;
     if (!canvas) return;
     // Do not attach to a stale/detached canvas left over from a view transition.
@@ -254,7 +263,13 @@ const stats = [
 
     function animate() {
       // If user flips to Lite mid-loop, stop scheduling further frames. No-op in Full.
-      if (document.documentElement.dataset.perf === 'lite') return;
+      const rootEl = document.documentElement;
+      if (rootEl.dataset.perf === 'lite' || rootEl.dataset.fxParticles === 'off') {
+        heroActive = false;
+        return;
+      }
+      const rgb = accentRGB();
+      const isDarkTheme = rootEl.classList.contains('dark');
       ctx.clearRect(0, 0, w, h);
 
       for (const dot of dots) {
@@ -315,7 +330,7 @@ const stats = [
             ctx.beginPath();
             ctx.moveTo(dots[i].x, dots[i].y);
             ctx.lineTo(dots[j].x, dots[j].y);
-            ctx.strokeStyle = `rgba(249, 115, 22, ${alpha})`;
+            ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -325,7 +340,7 @@ const stats = [
       for (const dot of dots) {
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(249, 115, 22, ${dot.opacity})`;
+        ctx.fillStyle = `rgba(${rgb}, ${dot.opacity})`;
         ctx.fill();
       }
 
@@ -333,11 +348,11 @@ const stats = [
       for (const t of travelers) {
         ctx.beginPath();
         ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2);
-        ctx.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(200, 200, 200, 1)' : 'rgba(51, 51, 51, 1)';
+        ctx.fillStyle = isDarkTheme ? 'rgba(200, 200, 200, 1)' : 'rgba(51, 51, 51, 1)';
         ctx.fill();
         ctx.beginPath();
         ctx.arc(t.x, t.y, t.radius * 2.2, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(249, 115, 22, 0.4)`;
+        ctx.strokeStyle = `rgba(${rgb}, 0.4)`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -368,12 +383,29 @@ const stats = [
 
     resize();
     createDots();
+    heroResume = () => {
+      if (heroActive) return;
+      heroActive = true;
+      animate();
+    };
+    heroActive = true;
     animate();
   }
 
   initHeroConstellation();
   // Stop the loop when navigating away so it does not run on a removed canvas.
-  document.addEventListener('astro:before-swap', () => cancelAnimationFrame(heroRaf));
+  document.addEventListener('astro:before-swap', () => {
+    cancelAnimationFrame(heroRaf);
+    heroActive = false;
+    heroResume = null;
+  });
+  // Control Panel: particles switched back on (or Lite -> Full) resumes the loop.
+  window.addEventListener('appearance-change', () => {
+    const root = document.documentElement;
+    if (root.dataset.fxParticles === 'off' || root.dataset.perf === 'lite') return;
+    if (heroResume) heroResume();
+    else if (document.getElementById('hero-constellation')) initHeroConstellation();
+  });
   // Re-start the loop when returning to home via client-side navigation.
   document.addEventListener('astro:page-load', initHeroConstellation);
   // Lite toggle: Lite->Full (re)starts loop once; Full->Lite stops via guard above.
