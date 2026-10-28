@@ -7,11 +7,8 @@ export function initMagneticElements() {
     if (el.dataset.magInit === '1') return;
     el.dataset.magInit = '1';
     const strength = parseFloat(el.getAttribute('data-magnetic') || '0.3');
-    // Lite-only: profile photo behaves like main card (no inner float).
-    // Other [data-magnetic] buttons untouched. Full falls through identical.
-    const isProfilePhoto = () => !!el.closest('a[href*="/about"]');
-    const skipForLite = () =>
-      document.documentElement.dataset.perf === 'lite' && isProfilePhoto();
+    // Lite mode turns magnetic buttons off entirely.
+    const skipForLite = () => document.documentElement.dataset.perf === 'lite';
 
     const onMove = (e: MouseEvent) => {
       if (skipForLite() || document.documentElement.dataset.fxMagnetic === 'off') return;
@@ -32,17 +29,14 @@ export function initMagneticElements() {
     el.addEventListener('mouseleave', onLeave);
   });
 
-  // Lite-only reset: clear any Full leftover transform on the profile photo
-  // when toggling Full -> Lite. Full path untouched.
+  // Lite: settle every magnetic element back in place when switching Full -> Lite.
   if (!document.documentElement.dataset.magLiteWired) {
     document.documentElement.dataset.magLiteWired = '1';
     window.addEventListener('perf-change', (e) => {
       if ((e as CustomEvent).detail !== 'lite') return;
-      document
-        .querySelectorAll<HTMLElement>('a[href*="/about"] [data-magnetic]')
-        .forEach((photo) => {
-          photo.style.transform = '';
-        });
+      document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+        el.style.transform = '';
+      });
     });
   }
 

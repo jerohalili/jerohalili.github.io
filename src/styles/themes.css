@@ -126,7 +126,7 @@ html:has(#control-panel[open]) {
 
 /* Card spotlight (any theme): a soft accent glow under the cursor.
    --sx / --sy are set on the hovered card by the pointer tracker in Layout.astro. */
-html[data-fx-spotlight='on'] :is(.glass-card, .project-card, .testimonial-card, [data-tilt]):hover {
+html[data-fx-spotlight='on']:not([data-perf='lite']) :is(.glass-card, .project-card, .testimonial-card, [data-tilt]):hover {
   background-image: radial-gradient(
     380px circle at var(--sx, -999px) var(--sy, -999px),
     rgb(var(--accent-500) / 0.14),
@@ -503,4 +503,9 @@ html[data-theme='terminal']:not(.dark)[data-fx-scanlines='on'] #fx-scan {
     transparent 1px,
     transparent 3px
   );
+}
+
+/* Lite mode: no scanline overlay (spotlight and magnetic are skipped in script/CSS above) */
+html[data-perf='lite'] #fx-scan {
+  display: none !important;
 }

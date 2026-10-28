@@ -1,16 +1,19 @@
-const off = () => document.documentElement.dataset.fxTilt === 'off';
+const off = () =>
+  document.documentElement.dataset.fxTilt === 'off' || document.documentElement.dataset.perf === 'lite';
 let wired = false;
 
 export function initTiltElements() {
   // Switching the effect off in the Control Panel settles every card back to flat.
   if (!wired) {
     wired = true;
-    window.addEventListener('appearance-change', () => {
+    const settle = () => {
       if (!off()) return;
       document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
         el.style.transform = '';
       });
-    });
+    };
+    window.addEventListener('appearance-change', settle);
+    window.addEventListener('perf-change', settle);
   }
 
   document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {

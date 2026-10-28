@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Contact from '../components/Contact.astro';
 import ControlPanel from '../components/ControlPanel.astro';
 import '../styles/themes.css';
+import { themeDefaults, effectDefaults } from '../config/themeDefaults';
 interface Props {
   title: string;
   description?: string;
@@ -49,19 +50,17 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
         <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" /></noscript>
 
-        <script is:inline>
+        <script is:inline define:vars={{ themeDefaults, effectDefaults }}>
             // Appearance runtime: theme, accent, light/dark and effect toggles.
             // Runs before first paint (no flash) and re-applies itself on every
             // client-side navigation. The Control Panel talks to window.__appearance.
+            // First-visit defaults per theme live in src/config/themeDefaults.ts.
             (function () {
                 if (window.__appearance) { window.__appearance.apply(); return; }
 
                 var root = document.documentElement;
-                var THEMES = { clean: 'orange', command: 'cyan', terminal: 'emerald' }; // theme -> default accent
                 var ACCENTS = ['orange', 'rose', 'violet', 'blue', 'cyan', 'emerald'];
                 var FX = ['motion', 'particles', 'tilt', 'magnetic', 'glow', 'spotlight', 'scanlines'];
-                var FX_DEFAULT = { motion: true, particles: true, tilt: true, magnetic: true, glow: true, spotlight: false, scanlines: false };
-                var THEME_FX = { command: { spotlight: true }, terminal: { spotlight: true, scanlines: true } };
                 var FONTS = 'https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap';
 
                 function has(obj, key) { return Object.prototype.hasOwnProperty.call(obj, key); }
@@ -69,31 +68,73 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                 function write(k, v) {
                     try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {}
                 }
-                function readFx() {
-                    try { var o = JSON.parse(read('ui-fx') || '{}'); return o && typeof o === 'object' ? o : {}; }
+                function readJson(k) {
+                    try { var o = JSON.parse(read(k) || '{}'); return o && typeof o === 'object' ? o : {}; }
                     catch (e) { return {}; }
                 }
+                function isMode(m) { return m === 'light' || m === 'dark'; }
+
+                // ---- Defaults (from src/config/themeDefaults.ts) ----
+                function currentTheme() {
+                    var t = read('ui-theme');
+                    return t && has(themeDefaults, t) ? t : 'clean';
+                }
+                function defAccent(theme) {
+                    var a = themeDefaults[theme].accent;
+                    return ACCENTS.indexOf(a) >= 0 ? a : 'orange';
+                }
+                function defMode(theme) {
+                    var m = themeDefaults[theme].mode;
+                    if (isMode(m)) return m;
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                function fxDefault(theme, k) {
+                    var over = themeDefaults[theme].effects;
+                    if (over && has(over, k)) return !!over[k];
+                    return !!effectDefaults[k];
+                }
+
+                // ---- Visitor choices, remembered per theme: { command: { mode, accent } } ----
+                function prefs() { return readJson('ui-prefs'); }
+                function setPref(theme, key, value) {
+                    var p = prefs();
+                    var t = p[theme] && typeof p[theme] === 'object' ? p[theme] : {};
+                    if (value === null) delete t[key]; else t[key] = value;
+                    if (Object.keys(t).length) p[theme] = t; else delete p[theme];
+                    write('ui-prefs', Object.keys(p).length ? JSON.stringify(p) : null);
+                }
+                // Older versions stored one global mode ('theme') and accent ('ui-accent').
+                (function migrate() {
+                    var legacyMode = read('theme');
+                    var legacyAccent = read('ui-accent');
+                    if (legacyMode === null && legacyAccent === null) return;
+                    if (isMode(legacyMode) && !(prefs().clean && prefs().clean.mode)) setPref('clean', 'mode', legacyMode);
+                    if (ACCENTS.indexOf(legacyAccent) >= 0) {
+                        var t = currentTheme();
+                        if (!(prefs()[t] && prefs()[t].accent)) setPref(t, 'accent', legacyAccent);
+                    }
+                    write('theme', null);
+                    write('ui-accent', null);
+                })();
 
                 function state() {
-                    var theme = read('ui-theme');
-                    if (!theme || !has(THEMES, theme)) theme = 'clean';
-                    var userAccent = read('ui-accent');
-                    if (ACCENTS.indexOf(userAccent) < 0) userAccent = null;
-                    var stored = read('theme'); // existing light/dark key
-                    var wantsDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    var saved = readFx();
+                    var theme = currentTheme();
+                    var mine = prefs()[theme] || {};
+                    var userAccent = ACCENTS.indexOf(mine.accent) >= 0 ? mine.accent : null;
+                    var userMode = isMode(mine.mode) ? mine.mode : null;
+                    var mode = userMode || defMode(theme);
+                    var saved = readJson('ui-fx');
                     var fx = {};
                     FX.forEach(function (k) {
-                        var d = FX_DEFAULT[k];
-                        if (has(THEME_FX, theme) && has(THEME_FX[theme], k)) d = THEME_FX[theme][k];
-                        fx[k] = typeof saved[k] === 'boolean' ? saved[k] : d;
+                        fx[k] = typeof saved[k] === 'boolean' ? saved[k] : fxDefault(theme, k);
                     });
                     return {
                         theme: theme,
-                        accent: userAccent || THEMES[theme],
+                        accent: userAccent || defAccent(theme),
                         userAccent: userAccent,
-                        mode: wantsDark ? 'dark' : 'light',
-                        dark: wantsDark,
+                        mode: mode,
+                        userMode: userMode,
+                        dark: mode === 'dark',
                         fx: fx
                     };
                 }
@@ -120,24 +161,48 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                 // Changes go through a circular reveal where the browser supports it.
                 // While the look changes, CSS transitions are frozen (data-vt) so colors
                 // switch cleanly instead of fading in from the old values.
+                // `seq` identifies the latest transition: only the latest one may clear
+                // data-vt, so a fast second change can't strip it mid-way (which used to
+                // flash the previous look for a moment).
+                var seq = 0;
+                var active = null;
                 function commit(origin) {
                     var run = function () {
                         var s = apply();
                         window.dispatchEvent(new CustomEvent('appearance-change', { detail: s }));
                     };
-                    var settle = function () { root.removeAttribute('data-vt'); };
-                    var s = state();
-                    if (document.startViewTransition && s.fx.motion && origin) {
+                    var quiet = function () {}; // a skipped transition is normal, not an error
+                    var canReveal = document.startViewTransition && state().fx.motion && origin;
+
+                    if (!canReveal && active) {
+                        // A reveal is still running: update the live page and leave it alone.
+                        run();
+                        return;
+                    }
+
+                    var mine = ++seq;
+                    var settle = function () {
+                        if (mine !== seq) return;
+                        root.removeAttribute('data-vt');
+                        active = null;
+                    };
+
+                    if (canReveal) {
+                        if (active) { try { active.skipTransition(); } catch (e) {} }
                         root.style.setProperty('--vt-x', origin.x + 'px');
                         root.style.setProperty('--vt-y', origin.y + 'px');
                         root.setAttribute('data-vt', 'reveal');
                         var t = document.startViewTransition(run);
-                        var quiet = function () {}; // a skipped transition is normal, not an error
+                        active = t;
                         t.ready.catch(quiet);
                         t.updateCallbackDone.catch(quiet);
                         t.finished.then(settle, settle);
                         // Safety net: never leave the page covered by a stuck transition.
-                        setTimeout(function () { try { t.skipTransition(); } catch (e) {} settle(); }, 1500);
+                        setTimeout(function () {
+                            if (mine !== seq) return;
+                            try { t.skipTransition(); } catch (e) {}
+                            settle();
+                        }, 1500);
                     } else {
                         root.setAttribute('data-vt', 'instant');
                         run();
@@ -146,17 +211,29 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                 }
 
                 window.__appearance = {
-                    themes: THEMES, accents: ACCENTS, effects: FX,
+                    themes: Object.keys(themeDefaults), accents: ACCENTS, effects: FX,
                     state: state, apply: apply,
-                    setTheme: function (t, origin) { if (has(THEMES, t)) { write('ui-theme', t); commit(origin); } },
-                    setAccent: function (a, origin) { write('ui-accent', ACCENTS.indexOf(a) < 0 ? null : a); commit(origin); },
-                    setMode: function (m, origin) { write('theme', m === 'dark' ? 'dark' : 'light'); commit(origin); },
+                    setTheme: function (t, origin) { if (has(themeDefaults, t)) { write('ui-theme', t); commit(origin); } },
+                    setAccent: function (a, origin) {
+                        setPref(currentTheme(), 'accent', ACCENTS.indexOf(a) < 0 ? null : a);
+                        commit(origin);
+                    },
+                    setMode: function (m, origin) {
+                        setPref(currentTheme(), 'mode', isMode(m) ? m : null);
+                        commit(origin);
+                    },
                     setFx: function (k, on) {
                         if (FX.indexOf(k) < 0) return;
-                        var f = readFx(); f[k] = !!on; write('ui-fx', JSON.stringify(f)); commit();
+                        // Only remember choices that differ from the theme's default, so switching
+                        // themes keeps picking up each theme's own defaults.
+                        var f = readJson('ui-fx');
+                        if (!!on === fxDefault(currentTheme(), k)) delete f[k]; else f[k] = !!on;
+                        write('ui-fx', Object.keys(f).length ? JSON.stringify(f) : null);
+                        commit();
                     },
                     reset: function (origin) {
-                        write('ui-theme', null); write('ui-accent', null); write('ui-fx', null); commit(origin);
+                        write('ui-theme', null); write('ui-prefs', null); write('ui-fx', null);
+                        commit(origin);
                     }
                 };
 
@@ -304,7 +381,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
             const SPOT = '.glass-card, .project-card, .testimonial-card, [data-tilt]';
             let spotFrame = 0;
             document.addEventListener('pointermove', (e) => {
-                if (document.documentElement.dataset.fxSpotlight !== 'on' || e.pointerType === 'touch') return;
+                if (document.documentElement.dataset.fxSpotlight !== 'on' || document.documentElement.dataset.perf === 'lite' || e.pointerType === 'touch') return;
                 const card = (e.target as Element | null)?.closest?.(SPOT) as HTMLElement | null;
                 if (!card) return;
                 cancelAnimationFrame(spotFrame);
