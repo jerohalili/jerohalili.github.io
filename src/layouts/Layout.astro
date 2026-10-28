@@ -158,28 +158,42 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                     return s;
                 }
 
-                // Changes go through a circular reveal where the browser supports it.
-                // While the look changes, CSS transitions are frozen (data-vt) so colors
+                // How a change is presented:
+                //  - Control Panel open (where people click through options quickly): the page
+                //    switches instantly and a soft ripple spreads from the click. A view
+                //    transition would cover the page and swallow the next clicks, and
+                //    restarting it on every click re-shows the previous look (flicker).
+                //  - Panel closed (e.g. the sun/moon button): a circular reveal where supported.
+                // CSS transitions are frozen while the look changes (data-vt) so colors
                 // switch cleanly instead of fading in from the old values.
-                // `seq` identifies the latest transition: only the latest one may clear
-                // data-vt, so a fast second change can't strip it mid-way (which used to
-                // flash the previous look for a moment).
                 var seq = 0;
                 var active = null;
+
+                function ripple(origin) {
+                    var host = document.body;
+                    if (!host) return;
+                    var old = host.querySelectorAll('.fx-ripple');
+                    for (var i = 0; i <= old.length - 4; i++) old[i].remove(); // keep at most 4
+                    var r = document.createElement('div');
+                    r.className = 'fx-ripple';
+                    r.setAttribute('aria-hidden', 'true');
+                    r.style.left = origin.x + 'px';
+                    r.style.top = origin.y + 'px';
+                    r.addEventListener('animationend', function () { r.remove(); });
+                    setTimeout(function () { r.remove(); }, 900); // fallback if animationend never fires
+                    host.appendChild(r);
+                }
+
                 function commit(origin) {
                     var run = function () {
                         var s = apply();
                         window.dispatchEvent(new CustomEvent('appearance-change', { detail: s }));
                     };
-                    var quiet = function () {}; // a skipped transition is normal, not an error
-                    var canReveal = document.startViewTransition && state().fx.motion && origin;
+                    if (active) { run(); return; }
 
-                    if (!canReveal && active) {
-                        // A reveal is still running: update the live page and leave it alone.
-                        run();
-                        return;
-                    }
-
+                    var motion = state().fx.motion;
+                    var panel = document.getElementById('control-panel');
+                    var panelOpen = !!(panel && panel.open);
                     var mine = ++seq;
                     var settle = function () {
                         if (mine !== seq) return;
@@ -187,8 +201,8 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                         active = null;
                     };
 
-                    if (canReveal) {
-                        if (active) { try { active.skipTransition(); } catch (e) {} }
+                    if (document.startViewTransition && motion && origin && !panelOpen) {
+                        var quiet = function () {}; // a skipped transition is normal, not an error
                         root.style.setProperty('--vt-x', origin.x + 'px');
                         root.style.setProperty('--vt-y', origin.y + 'px');
                         root.setAttribute('data-vt', 'reveal');
@@ -202,10 +216,11 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                             if (mine !== seq) return;
                             try { t.skipTransition(); } catch (e) {}
                             settle();
-                        }, 1500);
+                        }, 1200);
                     } else {
                         root.setAttribute('data-vt', 'instant');
                         run();
+                        if (motion && origin) ripple(origin);
                         requestAnimationFrame(function () { requestAnimationFrame(settle); });
                     }
                 }

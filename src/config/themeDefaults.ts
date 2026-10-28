@@ -25,7 +25,7 @@ export const themeDefaults = {
   terminal: {
     mode: 'dark',
     accent: 'emerald',
-    effects: { spotlight: true, scanlines: true },
+    effects: { spotlight: false, scanlines: true },
   },
 } as const;
 

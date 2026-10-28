@@ -111,7 +111,7 @@ html[data-vt='reveal']::view-transition-new(root) {
   mix-blend-mode: normal;
 }
 html[data-vt='reveal']::view-transition-new(root) {
-  animation: vt-reveal 650ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: vt-reveal 500ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 @keyframes vt-reveal {
   from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%)); }
@@ -508,4 +508,31 @@ html[data-theme='terminal']:not(.dark)[data-fx-scanlines='on'] #fx-scan {
 /* Lite mode: no scanline overlay (spotlight and magnetic are skipped in script/CSS above) */
 html[data-perf='lite'] #fx-scan {
   display: none !important;
+}
+
+/* Ripple that spreads from the click when a setting changes inside the Control Panel.
+   Purely decorative and never intercepts the pointer. */
+.fx-ripple {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10050;
+  background: radial-gradient(
+    circle,
+    rgb(var(--accent-500) / 0.18) 0,
+    rgb(var(--accent-500) / 0.18) 54%,
+    rgb(var(--accent-500) / 0.5) 60%,
+    transparent 68%
+  );
+  transform: scale(0);
+  animation: fx-ripple 650ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes fx-ripple {
+  to { transform: scale(110); opacity: 0; }
+}
+html[data-fx-motion='off'] .fx-ripple {
+  display: none;
 }
