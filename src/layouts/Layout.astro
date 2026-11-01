@@ -60,8 +60,8 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
 
                 var root = document.documentElement;
                 var ACCENTS = ['orange', 'rose', 'violet', 'blue', 'cyan', 'emerald'];
-                var FX = ['motion', 'particles', 'tilt', 'magnetic', 'glow', 'spotlight', 'scanlines'];
-                var FONTS = 'https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap';
+                var FX = ['motion', 'particles', 'tilt', 'magnetic', 'glow', 'spotlight', 'scanlines', 'gridlines', 'dots'];
+                var FONTS = 'https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap';
 
                 function has(obj, key) { return Object.prototype.hasOwnProperty.call(obj, key); }
                 function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -329,6 +329,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
         ></div>
         
         <div id="fx-grid" aria-hidden="true"></div>
+        <div id="fx-dots" aria-hidden="true"></div>
         <div id="fx-scan" aria-hidden="true"></div>
 
         <Navbar />
@@ -347,6 +348,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
 
             let blob: HTMLElement | null = null;
             let grid: HTMLElement | null = null;
+            let dotsEl: HTMLElement | null = null;
             let curX = 0, curY = 0, tgX = 0, tgY = 0;
             let animationFrameId: number;
             let isVisible = true;
@@ -358,6 +360,7 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                 if (document.documentElement.dataset.perf === 'lite') return;
                 blob = document.getElementById('cursor-blob');
                 grid = document.getElementById('fx-grid');
+                dotsEl = document.getElementById('fx-dots');
                 if (isTouchDevice) {
                     if (blob) {
                         blob.style.opacity = "0.6";
@@ -385,9 +388,16 @@ const ogImage = image && image.startsWith('/') ? new URL(image, canonicalURL).hr
                     const offset = window.innerWidth < 640 ? 150 : 300;
                     blob.style.transform = `translate3d(${curX - offset}px, ${curY - offset}px, 0)`;
                 }
-                if (grid && document.documentElement.dataset.theme === 'command' && document.documentElement.dataset.fxGlow !== 'off') {
-                    grid.style.setProperty('--mx', `${curX}px`);
-                    grid.style.setProperty('--my', `${curY}px`);
+                const ds = document.documentElement.dataset;
+                if (ds.fxGlow !== 'off') {
+                    if (grid && ds.fxGridlines === 'on') {
+                        grid.style.setProperty('--mx', `${curX}px`);
+                        grid.style.setProperty('--my', `${curY}px`);
+                    }
+                    if (dotsEl && ds.fxDots === 'on') {
+                        dotsEl.style.setProperty('--mx', `${curX}px`);
+                        dotsEl.style.setProperty('--my', `${curY}px`);
+                    }
                 }
                 animationFrameId = requestAnimationFrame(render);
             }

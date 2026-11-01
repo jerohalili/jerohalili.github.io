@@ -3,6 +3,7 @@
 // All state lives in window.__appearance (see Layout.astro) and localStorage.
 const themes = [
   { id: 'clean', name: 'Clean', desc: 'The original look: soft, bright and airy.' },
+  { id: 'studio', name: 'Studio', desc: 'Editorial light look: warm paper, serif headlines, dotted grid and numbered sections.' },
   { id: 'command', name: 'Command Center', desc: 'Dark control-room look: live grid, angular panels, precise type.' },
   { id: 'terminal', name: 'Terminal', desc: 'Monospace, glowing phosphor text, scanlines and a blinking cursor.' },
 ];
@@ -23,6 +24,8 @@ const effects = [
   { id: 'magnetic', name: 'Magnetic buttons', desc: 'Buttons drift toward your cursor.' },
   { id: 'glow', name: 'Cursor glow', desc: 'A soft light that trails the pointer.' },
   { id: 'spotlight', name: 'Card spotlight', desc: 'Cards light up where your cursor is.' },
+  { id: 'dots', name: 'Dot grid', desc: 'Dotted grid behind the page that lights up near your cursor.' },
+  { id: 'gridlines', name: 'Grid lines', desc: 'Blueprint grid behind the page that lights up near your cursor.' },
   { id: 'scanlines', name: 'Scanlines', desc: 'Subtle retro screen lines over the page.' },
 ];
 
@@ -111,7 +114,7 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
       <section aria-labelledby="cp-h-fx">
         <h3 id="cp-h-fx" class={`${label} mb-2`}>Effects</h3>
         <p data-cp-lite-hint hidden class="mb-2 text-xs text-accent-600 dark:text-accent-400 font-semibold">
-          Lite mode is on, so Particle network, 3D card tilt, Magnetic buttons, Cursor glow, Card spotlight and Scanlines are paused. Switch to Full below to bring them back.
+          Lite mode is on, so Particle network, 3D card tilt, Magnetic buttons, Cursor glow, Card spotlight, Dot grid, Grid lines and Scanlines are paused. Switch to Full below to bring them back.
         </p>
         <ul class="-mx-3">
           {effects.map((e) => (
@@ -140,7 +143,7 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
           <button type="button" role="radio" aria-checked="false" data-cp-perf="full">Full</button>
           <button type="button" role="radio" aria-checked="false" data-cp-perf="lite">Lite</button>
         </div>
-        <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Lite pauses the particle canvases, 3D card tilt, magnetic buttons, cursor glow, card spotlight and scanlines. Best for older phones and slow connections.</p>
+        <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Lite pauses the particle canvases, 3D card tilt, magnetic buttons, cursor glow, card spotlight, dot grid, grid lines and scanlines. Best for older phones and slow connections.</p>
       </section>
     </div>
 
@@ -224,6 +227,16 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
   .cp-thumb--clean { background: linear-gradient(#fdfdfd, #f1f1f2); }
   .cp-thumb--clean i:nth-child(1), .cp-thumb--clean i:nth-child(2) { background: #3f3f46; }
   .cp-thumb--clean i:nth-child(3) { background: #f97316; }
+
+  .cp-thumb--studio {
+    background:
+      radial-gradient(rgb(40 38 35 / 0.28) 1px, transparent 1.3px) 0 0 / 0.55rem 0.55rem,
+      #f6f4ef;
+    border-radius: 0.6rem;
+  }
+  .cp-thumb--studio i:nth-child(1), .cp-thumb--studio i:nth-child(2) { background: #2b2926; }
+  .cp-thumb--studio i:nth-child(1) { height: 0.38rem; }
+  .cp-thumb--studio i:nth-child(3) { background: #f43f5e; }
 
   .cp-thumb--command {
     background:
@@ -366,7 +379,7 @@ const label = 'font-mono text-[10px] uppercase tracking-[0.2em] font-bold text-z
     $$('[data-cp-perf]').forEach((el) =>
       el.setAttribute('aria-checked', String(el.dataset.cpPerf === perf)));
     // Lite pauses the canvases and glow, so say so instead of showing them as plain "on".
-    $$('[data-cp-fx="particles"],[data-cp-fx="tilt"],[data-cp-fx="magnetic"],[data-cp-fx="glow"],[data-cp-fx="spotlight"],[data-cp-fx="scanlines"]').forEach((el) => {
+    $$('[data-cp-fx="particles"],[data-cp-fx="tilt"],[data-cp-fx="magnetic"],[data-cp-fx="glow"],[data-cp-fx="spotlight"],[data-cp-fx="scanlines"],[data-cp-fx="gridlines"],[data-cp-fx="dots"]').forEach((el) => {
       el.style.opacity = lite ? '0.5' : '';
     });
     $$('[data-cp-lite-hint]').forEach((el) => { el.hidden = !lite; });

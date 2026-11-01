@@ -17,10 +17,15 @@ export const themeDefaults = {
     accent: 'orange',
     effects: {},
   },
+  studio: {
+    mode: 'light',
+    accent: 'rose',
+    effects: { spotlight: true, dots: true },
+  },
   command: {
     mode: 'dark',
     accent: 'cyan',
-    effects: { spotlight: true },
+    effects: { spotlight: true, gridlines: true },
   },
   terminal: {
     mode: 'dark',
@@ -38,4 +43,6 @@ export const effectDefaults = {
   glow: true, // soft light trailing the pointer
   spotlight: false, // cards light up under the cursor
   scanlines: false, // retro screen lines
+  gridlines: false, // blueprint grid lines that light up near the cursor
+  dots: false, // dotted grid that lights up near the cursor
 } as const;
