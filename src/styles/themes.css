@@ -595,12 +595,13 @@ html[data-theme='studio'] :is(.font-mono, [class*='tracking-widest'], [class*='t
   font-family: var(--font-data);
 }
 
-/* Full-width bands that hard-code white/black in their markup: let the paper show through */
+/* Full-width bands that hard-code white/black in their markup: marquee is solid, services stays lightly translucent */
 html[data-theme='studio'] #marquee-section {
-  background-color: transparent;
+  background-color: #fffefc; /* solid, so the dot grid and nav never show through the band */
   border-block: 1px solid rgb(var(--zinc-900) / 0.1);
 }
 html.dark[data-theme='studio'] #marquee-section {
+  background-color: rgb(var(--zinc-900));
   border-block-color: rgb(var(--zinc-100) / 0.1);
 }
 html[data-theme='studio']:not(.dark) #services { background-color: rgb(255 254 252 / 0.55); }
